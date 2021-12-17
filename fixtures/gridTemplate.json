@@ -1,0 +1,288 @@
+{
+  "style": {
+    "gridTemplateRows": [
+      {
+        "name": "system_0_staves",
+        "children": [
+          {
+            "name": "system_0_staff_0",
+            "type": "staff",
+            "children": [
+              {
+                "name": "system_0_staff_0_line_0",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_0_space_0",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_0_line_1",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_0_space_1",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_0_line_2",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_0_space_2",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_0_line_3",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_0_space_3",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_0_line_4",
+                "type": "line",
+                "value": "0.1fr"
+              }
+            ]
+          },
+          {
+            "name": "system_0_inter-staff-space_0",
+            "type": "inter-staff-space",
+            "value": "1.6fr"
+          },
+          {
+            "name": "system_0_staff_1",
+            "type": "staff",
+            "children": [
+              {
+                "name": "system_0_staff_1_line_0",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_1_space_0",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_1_line_1",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_1_space_1",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_1_line_2",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_1_space_2",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_1_line_3",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_1_space_3",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_1_line_4",
+                "type": "line",
+                "value": "0.1fr"
+              }
+            ]
+          },
+          {
+            "name": "system_0_inter-staff-space_1",
+            "type": "inter-staff-space",
+            "value": "1.6fr"
+          },
+          {
+            "name": "system_0_staff_2",
+            "children": [
+              {
+                "name": "system_0_staff_2_line_0",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_2_space_0",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_2_line_1",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_2_space_1",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_2_line_2",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_2_space_2",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_2_line_3",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_2_space_3",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_2_line_4",
+                "type": "line",
+                "value": "0.1fr"
+              }
+            ]
+          },
+          {
+            "name": "system_0_inter-staff-space_2",
+            "type": "inter-staff-space",
+            "value": "1.6fr"
+          },
+          {
+            "name": "system_0_staff_3",
+            "type": "staff",
+            "children": [
+              {
+                "name": "system_0_staff_3_line_0",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_3_space_0",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_3_line_1",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_3_space_1",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_3_line_2",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_3_space_2",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_3_line_3",
+                "type": "line",
+                "value": "0.1fr"
+              },
+              {
+                "name": "system_0_staff_3_space_3",
+                "type": "space",
+                "value": "1fr"
+              },
+              {
+                "name": "system_0_staff_3_line_4",
+                "type": "line",
+                "value": "0.1fr"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "gridTemplateColumns": [
+      {
+        "name": "system_0",
+        "type": "system",
+        "children": [
+          {
+            "name": "system_0_marginalia",
+            "type": "marginalia",
+            "children": [
+              {
+                "name": "names",
+                "value": "auto"
+              },
+              {
+                "name": "brackets",
+                "value": "auto"
+              }
+            ]
+          },
+          {
+            "name": "system_0_incipit",
+            "type": "incipit",
+            "children": [
+              {
+                "name": "system_0_cautionary_key",
+                "type": "cautionary_key",
+                "value": "auto"
+              },
+              {
+                "name": "system_0_clef",
+                "type": "clef",
+                "value": "auto"
+              },
+              {
+                "name": "system_0_key_signature",
+                "type": "key_signature",
+                "value": "auto"
+              },
+              {
+                "name": "system_0_time_signature",
+                "type": "time_signature",
+                "value": "auto"
+              }
+            ]
+          },
+          {
+            "name": "system_0_content",
+            "type": "content",
+            "children": [
+              {
+                "name": "measure_0",
+                "type": "measure",
+                "value": "1fr"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -4,17 +4,14 @@ import Image from 'next/image'
 import styled from 'styled-components';
 import StavesProvider from '../contexts/useStaves';
 import GridProvider from '../contexts/useGrid';
+import { sizes } from '../constants/sizes';
+import { createGridStaff, createSVGStaff } from '../utils/createStaff';
+import { parseGridTemplate } from '../utils/parseGridTemplate';
+
 const gridTemplate = require('../fixtures/gridTemplate.json');
 
-// size enums
-const sizes = {
-  SPACE: 1,
-  SPACE_BETWEEN_STAVES: 3 / 2,
-  SPACE_BETWEEN_STAFF_GROUPS: 16 / 5,
-  STAFF_LINE_STROKE_WIDTH: 0.1,
-};
-
 const Wrapper = styled.main`
+  position: relative;
   box-sizing: border-box;
   width: 100%;
   min-height: 100vh;
@@ -37,11 +34,12 @@ const StavesAndGrid = styled.article`
 `;
 
 const Staves = styled.svg.attrs(({ $height }) => ({
-  viewBox: `0 0 1 ${$height}`,
+  viewBox: `0 0 100 ${$height}`,
   preserveAspectRatio: 'none',
   width: '100%',
   height: `${$height}rem`,
 }))`
+  position: absolute;
   inset: 0;
   overflow: visible;
   grid-area: system_0_staves_start / system_0_content_start / system_0_staves_end / system_0_content_end;
@@ -53,8 +51,25 @@ const Line = styled.line`
   stroke: white;
 `;
 
+const GridLine = styled.div`
+  width: 100%;
+  height: 100%;
+  background: white;
+`;
+
 const Readouts = styled.footer`
-  margin-top: ${({ $offset }) => $offset}rem;
+z-index: 2;
+position: fixed;
+bottom: 0;
+transform: translateY(calc(100% - 32px));
+${({ $offset }) => `
+  padding: ${$offset}rem; 
+`}
+background: black;
+transition: transform 0.32s ease-out;
+&:hover {
+  transform: translateY(0);
+}
 `;
 
 const Readout = styled.p`
@@ -68,48 +83,10 @@ const GridWrapper = styled.div`
 `;
 
 const Grid = styled.section`
-  position: relative;
   display: contents;
 `;
 
 const GridItem = styled.article``;
-
-const parseGridTemplate = (input) => {
-  let output = "[";
-  const fn = (arr) => {
-    return arr.map((object) => {
-      if (object.children) {
-        return ` ${object.name}_start ${fn(object.children)} ${object.name}_end `;
-      } else {
-        return ` ${object.name}_start] ${object.value} [${object.name}_end `;
-      }
-    }).join("").trim()
-  }
-  output += fn(input);
-  output += "]";
-  return output;
-}
-
-// Staff type definition
-const createStaff = (staffIndex, lineCount, staves, pixelRatio) => {
-  // How many staff lines (and spaces) previous to this staff do we need to account for?
-  const offset = staves.items.reduce((a, s, i) => {
-    if (staffIndex - 1 >= 0 && i <= (staffIndex - 1)) {
-      return a + ((s.lineCount - 1) * sizes.SPACE) + staves.spacing[staffIndex] + (s.lineCount * sizes.STAFF_LINE_STROKE_WIDTH)
-    } else {
-      return a
-    }
-  }, 0);
-  return Array(lineCount).fill().map((_, index) => (
-    {
-      id: `staff_${staffIndex}_line_${index}`,
-      y: (offset + index + (sizes.STAFF_LINE_STROKE_WIDTH * (index + 1)) - (sizes.STAFF_LINE_STROKE_WIDTH / 2)).toFixed(2),
-      x1: 0,
-      x2: '100%',
-      strokeWidth: sizes.STAFF_LINE_STROKE_WIDTH * (2 / pixelRatio.current),
-    }
-  ));
-};
 
 export default function Home() {
   const staves = {
@@ -149,16 +126,13 @@ export default function Home() {
     get spaceCount() {
       return this.items.reduce((a, s) => a + s.spaceCount, 0);
     },
-    get lineStrokeWidthTotal() {
-      return this.items.reduce((a, s) => a + (s.lineCount * sizes.STAFF_LINE_STROKE_WIDTH * (2 / pixelRatio.current)), 0);
-    },
     get spacing() {
       return this.items.map((_, i) => i > 0 ? sizes.SPACE_BETWEEN_STAFF_GROUPS : 0);
     },
     get height() {
       return (
-        (sizes.SPACE * this.spaceCount) + this.spacing.reduce((a, c) => a + c, 0) + this.lineStrokeWidthTotal
-      ).toFixed(2);
+        (sizes.SPACE * this.spaceCount) + this.spacing.reduce((a, c) => a + c, 0)
+      ).toFixed(1);
     },
   };
 
@@ -206,17 +180,6 @@ export default function Home() {
 
   const grid = {
     style: {
-      // This only works for one system; we'll need StaffSystemContext to tell us about systems
-      //
-      // TODO: Maybe replace with a walker for JSON input?
-      //
-      // gridTemplateRows: `[${staves.items.map((item, itemIndex) => `${itemIndex === 0 ? `staves_start staff_${item.id}_start ` : ''}${Array(item.spaceCount).fill().map((_, space) => {
-      //   const staffSpaceString = `staff_${item.id}_space_${space}_start] ${sizes.SPACE}fr [staff_${item.id}_space_${space}_end`;
-      //   const betweenStavesString = `staff_${item.id}_end${staves.items.length > itemIndex + 1 ? `] ${staves.spacing[itemIndex + 1]}fr [staff_${staves.items[itemIndex + 1].id}_start` : null}`;
-      //   return item.spaceCount - 1 === space && itemIndex !== staves.items.length - 1 ? `${staffSpaceString} ${betweenStavesString}` : staffSpaceString;
-      // }).join(' ')}${itemIndex === staves.items.length - 1 ? ` staff_${item.id}_end staves_end` : ''}`
-      // ).join(' ')}]`,
-      // gridTemplateColumns: `[system_0_start names_start] auto [names_end brackets_start] auto [brackets_end incipit_start cautionary_key_start] auto [cautionary_key_end clef_start] auto [clef_end key_signature_start] auto [key_signature_end time_signature_start] auto [time_signature_end incipit_end measures_start measure_0_start] 1fr [measure_0_end measures_end system_0_end]`,
       gridTemplateRows: parseGridTemplate(gridTemplate.style.gridTemplateRows),
       gridTemplateColumns: parseGridTemplate(gridTemplate.style.gridTemplateColumns),
     },
@@ -229,13 +192,15 @@ export default function Home() {
         <Wrapper>
           <StavesAndGrid $height={staves.height} $gridStyle={grid.style}>
             <Staves $height={staves.height}>
-              {staves.items.map((staff, staffIndex) => (
-                <Staff key={staff.id}>
-                  {createStaff(staffIndex, staff.lineCount, staves, pixelRatio).map((line) => (
-                    <Line key={line.id} vectorEffect="non_scaling-stroke" strokeWidth={line.strokeWidth} x1={line.x1} x2={line.x2} y1={line.y} y2={line.y} />
-                  ))}
-                </Staff>
-              ))}
+              {
+                staves.items.map((staff, staffIndex) => (
+                  <Staff key={staff.id}>
+                    {createSVGStaff(staffIndex, staff.lineCount, staves, pixelRatio).map((line) => (
+                      <Line key={line.id} x1={line.x1} x2={line.x2} y1={line.y} y2={line.y} strokeWidth={line.strokeWidth} />
+                    ))}
+                  </Staff>
+                ))
+              }
             </Staves>
             <Grid>
               <GridItem style={{gridArea: 'system_0_staff_0_start / names_start / system_0_staff_0_end / names_end', justifySelf: 'end'}}>Vln.I</GridItem>
@@ -244,7 +209,7 @@ export default function Home() {
               <GridItem style={{gridArea: 'system_0_staff_3_start / names_start / system_0_staff_3_end / names_end', justifySelf: 'end'}}>Vc.</GridItem>
               <GridItem style={{gridArea: 'system_0_staff_1_space_2_start / measure_0_start / system_0_staff_1_space_3_end / measure_0_end'}}>hi</GridItem>
               <GridItem style={{gridArea: 'system_0_staff_0_space_3_start / measure_0_start / system_0_staff_0_space_3_end / measure_0_end', justifySelf: 'center'}}>hello</GridItem>
-              <GridItem style={{gridArea: 'system_0_staff_0_start / names_start / system_0_staff_2_space_0_start / measure_0_start / system_0_staff_2_space_0_end / measure_0_end', justifySelf: 'end'}}>how are you?</GridItem>
+              <GridItem style={{gridArea: 'system_0_staff_2_space_0_start / measure_0_start / system_0_staff_2_space_0_end / measure_0_end', justifySelf: 'end'}}>how are you?</GridItem>
               <GridItem style={{gridArea: 'system_0_staff_3_space_1_start / measure_0_start / system_0_staff_3_space_2_end / measure_0_end', justifySelf: 'center'}}>Heyo</GridItem>
             </Grid>
           </StavesAndGrid>

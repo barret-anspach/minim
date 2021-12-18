@@ -1,0 +1,6 @@
+export const sizes = {
+  SPACE: 1,
+  SPACE_BETWEEN_STAVES: 3 / 2,
+  SPACE_BETWEEN_STAFF_GROUPS: 16 / 5,
+  STAFF_LINE_STROKE_WIDTH: 0.1,
+}

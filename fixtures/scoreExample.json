@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "attribution": [
+      {
+        "object": "attribution",
+        "id": "composition_title",
+        "label": "Composition title",
+        "value": "Untitled"
+      },
+      {
+        "object": "attribution",
+        "id": "composer",
+        "label": "Composer",
+        "value": "M. Feldman"
+      }
+    ],
+    "instruments": [
+      {
+        "object": "instrument",
+        "id": "Vln.1",
+        "labels": [
+          {
+            "label": "Violin 1",
+            "type": "Instrument name, full"
+          },
+          {
+            "label": "Vln.1",
+            "type": "Instrument name, abbreviated"
+          }
+        ],
+        "defaults": [
+          {
+            "object": "lineCount",
+            "value": 5,
+            "valueType": "number"
+          }
+        ]
+      }
+    ],
+    "players": [
+      {
+        "object": "player",
+        "id": "Violinist 1",
+        "labels": [
+          {
+            "label": "Violinist 1",
+            "type": "Player type"
+          }
+        ]
+      }
+    ]
+  },
+  "displayData": [
+    {
+      "object": "display",
+      "type": "staff",
+      "id": "staff_0",
+      "belongsTo": [
+        {
+          "instrument": "Vln.1",
+          "player": "Violinist 1",
+          "system": "system_0"
+        }
+      ],
+      "attributes": {
+        "lineCount": 5
+      }
+    },
+    {
+      "object": "display",
+      "type": "key signature",
+      "id": "ksig_0",
+      "belongsTo": [
+        {
+          "instrument": "Vln.1",
+          "player": "Violinist 1",
+          "system": "system_0"
+        }
+      ],
+      "attributes": {
+        "key": "f#m"
+      }
+    },
+    {
+      "object": "display",
+      "type": "time signature",
+      "id": "tsig_0",
+      "belongsTo": [
+        {
+          "instrument": "Vln.1",
+          "player": "Violinist 1",
+          "system": "system_0"
+        }
+      ],
+      "attributes": {
+        "key": "f#m"
+      }
+    }
+  ],
+  "eventData": [
+    {
+      "object": "event",
+      "type": "duration",
+      "value": 2048,
+      "belongsTo": [
+        {
+          "system": "system_0"
+        },
+        {
+          "staff": "system_0_staff_0"
+        },
+        {
+          "measure": "system_0_measure_0"
+        }
+      ]
+    },
+    {
+      "object": "event",
+      "type": "duration",
+      "value": 1024,
+      "belongsTo": [
+        {
+          "system": "system_0"
+        },
+        {
+          "staff": "system_0_staff_0"
+        },
+        {
+          "measure": "system_0_measure_1"
+        }
+      ]
+    },
+    {
+      "object": "event",
+      "type": "duration",
+      "value": 512,
+      "belongsTo": [
+        {
+          "system": "system_0"
+        },
+        {
+          "staff": "system_0_staff_0"
+        },
+        {
+          "measure": "system_0_measure_2"
+        }
+      ]
+    },
+    {
+      "object": "event",
+      "type": "duration",
+      "value": 512,
+      "belongsTo": [
+        {
+          "system": "system_0"
+        },
+        {
+          "staff": "system_0_staff_0"
+        },
+        {
+          "measure": "system_0_measure_3"
+        }
+      ]
+    },
+    {
+      "object": "event",
+      "type": "duration",
+      "value": 512,
+      "belongsTo": [
+        {
+          "system": "system_0"
+        },
+        {
+          "staff": "system_0_staff_0"
+        },
+        {
+          "measure": "system_0_measure_4"
+        }
+      ]
+    }
+  ]
+}

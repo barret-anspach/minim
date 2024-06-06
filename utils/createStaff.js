@@ -1,6 +1,6 @@
 import { sizes } from '../constants/sizes';
 
-export const createSVGStaff = (staffIndex, lineCount, staves, pixelRatio) => {
+export const createSVGStaff = (staffIndex, lineCount, staves, pixelRatio, strokeWidth) => {
   // How many staff lines (and spaces) previous to this staff do we need to account for?
   const offset = staves.items.reduce((a, s, i) => {
     if (staffIndex - 1 >= 0 && i <= (staffIndex - 1)) {
@@ -16,18 +16,6 @@ export const createSVGStaff = (staffIndex, lineCount, staves, pixelRatio) => {
       x1: 0,
       x2: '100%',
       strokeWidth: sizes.STAFF_LINE_STROKE_WIDTH * (2 / pixelRatio.current),
-    }
-  ));
-};
-
-export const createGridStaff = (systemIndex, staffIndex, lineCount) => {
-  return Array(lineCount).fill().map((_, index) => (
-    {
-      id: `system_${systemIndex}_staff_${staffIndex}_line_${index}`,
-      get gridArea() {
-        // row / column / row / column
-        return `${this.id}_start / system_${systemIndex}_content_start / ${this.id}_end / system_${systemIndex}_content_end`;
-      }
     }
   ));
 };

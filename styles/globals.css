@@ -5,6 +5,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
 a {
@@ -14,4 +15,14 @@ a {
 
 *, *:before, *:after {
   box-sizing: inherit;
+}
+
+@font-face {
+  font-family: 'Bravura';
+  src:
+    url(../public/fonts/bravura/woff/Bravura.woff) format('woff'),
+    url(../public/fonts/bravura/woff/Bravura.woff2) format('woff2'),
+    url(../public/fonts/bravura/eot/Bravura.eot) format('eot'),
+    url(../public/fonts/bravura/otf/Bravura.otf) format('otf'),
+    url(../public/fonts/bravura/svg/Bravura.svg) format('svg');
 }

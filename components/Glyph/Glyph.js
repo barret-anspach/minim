@@ -4,7 +4,7 @@ import { sizes } from '../../constants/sizes';
 
 const Wrapper = styled.span`
   font-family: Bravura, sans-serif;
-  font-size: ${sizes.STAFF_HEIGHT}rem;
+  font-size: ${sizes.BASE_HEIGHT}rem;
 `;
 
 export default function Glyph({ hex, ...rest }) {

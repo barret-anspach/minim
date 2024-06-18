@@ -6,7 +6,8 @@ import StavesProvider from '../contexts/useStavesContext';
 import GridProvider from '../contexts/useGridContext';
 
 import { parseGridTemplate } from '../utils/parseGridTemplate';
-import { useStaves, useZoom } from '../hooks';
+import { sizes } from '../constants/sizes';
+import { useGrid, useStaves, useZoom } from '../hooks';
 
 import Event from '../components/Event';
 
@@ -46,6 +47,7 @@ const System = styled.svg.attrs(({ $width, $height, $duration = $width, $getZoom
   preserveAspectRatio: 'none',
   width: '100%',
   height: $height,
+  overflow: 'visible',
 }))`
   position: absolute;
   inset: 0;
@@ -64,9 +66,6 @@ const Line = styled.line`
 
 const Barline = styled.line`
   ${lineStyle}
-  ${({ $strokeWidth }) => `
-    stroke-width: ${$strokeWidth};
-  `}
 `;
 
 const Readouts = styled.footer`
@@ -116,12 +115,7 @@ export default function Home() {
 
   const { staves, createSVGStaff } = useStaves({ score });
 
-  const grid = {
-    style: {
-      gridTemplateRows: parseGridTemplate(gridTemplate.style.gridTemplateRows),
-      gridTemplateColumns: parseGridTemplate(gridTemplate.style.gridTemplateColumns),
-    },
-  };
+  const { grid } = useGrid();
 
   return (
     <StavesProvider value={staves}>
@@ -149,8 +143,8 @@ export default function Home() {
                   </Fragment>
                 ))
               }
-              <Barline x1={0} x2={0} y1={0} y2={`${staves.height}rem`} $strokeWidth={strokeWidth} />
-              <Barline x1={'100%'} x2={'100%'} y1={0} y2={`${staves.height}rem`} $strokeWidth={strokeWidth} />
+              <Barline x1={0} x2={0} y1={0} y2={`${staves.height}rem`} strokeWidth={sizes.BARLINE_THICKNESS.THIN} />
+              <Barline x1={'100%'} x2={'100%'} y1={0} y2={`${staves.height}rem`} strokeWidth={sizes.BARLINE_THICKNESS.THIN} />
             </System>
             {
               score.eventData.map((event, eventIndex) => (

@@ -8,13 +8,9 @@ High level goals
 
 
 Score
-- JSON format?
-- Text/Markdown format?
+- Saved to/read from JSON
+  - [MNX](https://w3c.github.io/mnx/docs/)
+- Edit b/w/o text/Markdown
   - Some kind of SVG-like set of string commands would be the most extensible
 
-
-
 ---
-
-
-How to determine when the contents of a given system are overflowing (larger than min-content)?

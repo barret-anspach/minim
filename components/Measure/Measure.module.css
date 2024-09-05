@@ -1,0 +1,36 @@
+.measure {
+  --duration: 1024;
+  display: grid;
+  /* TODO: rows need to be passed in */
+  grid-template-rows: [staff1] auto [staff2] auto;
+  row-gap: 1rem;
+  grid-template-columns: 
+    [m-start m-text] auto
+    [m-bracket] auto
+    [m-bar] auto
+    [m-cle] auto
+    [m-key] auto
+    [m-tim] auto
+    [m-con] repeat(var(--duration), [e] auto)
+    [me-cle] auto
+    [me-key] auto
+    [me-bar] auto
+    [me-tim] auto
+    [m-end];
+  /* TODO: include measure's display characters' total width somehow?
+           Aren't these incompatible units?
+           HMM. Should the non-proportional/display bits (time sig,
+           key sig, clefs) just *not* be a part of the flex-grow value?
+   */
+  flex: var(--duration) var(--duration) auto;
+  transition: background 0.5s ease-in-out;
+}
+.measure.first {
+  background: yellow;
+}
+.measure.last {
+  background: magenta;
+}
+.measure.first.last {
+  background: goldenrod;
+}

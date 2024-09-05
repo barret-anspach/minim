@@ -44,7 +44,7 @@ export default function Staff({
   clef,
   duration,
   lined = true,
-  lines = { start: 'm-start', end: 'm-end' },
+  lines = { start: 'm-bar', end: 'm-end' },
   start = 'm-start',
   end = 'm-end',
   children

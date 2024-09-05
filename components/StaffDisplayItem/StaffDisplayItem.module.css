@@ -1,0 +1,20 @@
+.staffDisplayItem {
+  --main-axis: 1fr;
+  --start: m-bar;
+  justify-self: start;
+  grid-row: 1 / -1;
+  grid-column-start: var(--start);
+  display: inline-grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr;
+  grid-template-rows: subgrid;
+  margin-right: 0.1rem;
+}
+.staffDisplayItem.row {
+  grid-auto-flow: row;
+  grid-template-columns: var(--main-axis, 1fr);
+}
+.staffDisplayItem.column {
+  grid-auto-flow: column;
+  grid-template-columns: var(--main-axis, 1fr);
+}

@@ -1,0 +1,12 @@
+.barline {
+  --column: m-bar;
+  --row: 1 / -1;
+  --separation: 0.1rem;
+  justify-self: end;
+  height: 100%;
+  grid-column: var(--column);
+  grid-row: var(--row);
+}
+.barline.separation {
+  margin-right: var(--separation);
+}

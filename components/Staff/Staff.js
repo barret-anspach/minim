@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import { withNoSSR } from '../../hooks/withNoSSR';
 
 const metadata = require('../../public/fonts/bravura/bravura_metadata.json');
 const range = require('../../fixtures/pitch/range.json');
@@ -39,7 +40,7 @@ export const Line = styled.hr`
   `}
 `
 
-export default function Staff({
+function Staff({
   number,
   clef,
   duration,
@@ -82,3 +83,5 @@ export default function Staff({
     </Container>
   )
 }
+
+export default withNoSSR(Staff);

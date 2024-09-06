@@ -23,14 +23,7 @@
            key sig, clefs) just *not* be a part of the flex-grow value?
    */
   flex: var(--duration) var(--duration) auto;
-  transition: background 0.5s ease-in-out;
+  min-width: fit-content;
+  /* transition: background 0.5s ease-in-out; */
 }
-.measure.first {
-  background: yellow;
-}
-.measure.last {
-  background: magenta;
-}
-.measure.first.last {
-  background: goldenrod;
-}
+

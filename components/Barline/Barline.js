@@ -5,8 +5,9 @@ import useVars from '../../hooks/useVars';
 import metadata from './../../public/fonts/bravura/bravura_metadata.json';
 
 import styles from './Barline.module.css';
+import { withNoSSR } from '../../hooks/withNoSSR';
 
-export default function Barline({ children, final, column, row = '1 / -1', separation }) {
+function Barline({ children, final = false, column, row = '1 / -1', separation }) {
   const barlineRef = useRef(null);
   const className = useVars({
     varRef: barlineRef,
@@ -15,12 +16,12 @@ export default function Barline({ children, final, column, row = '1 / -1', separ
     key: '--separation',
     value: `${metadata.engravingDefaults.barlineSeparation / 4}rem`,
   })
-  const columnClass = useVars({
+  useVars({
     varRef: barlineRef,
     key: '--column',
-    value: column,
+    value: final ? 'me-bar / m-end' : column,
   })
-  const rowClass = useVars({
+  useVars({
     varRef: barlineRef,
     key: '--row',
     value: row,
@@ -36,9 +37,34 @@ export default function Barline({ children, final, column, row = '1 / -1', separ
       height="100%"
       preserveAspectRatio='none'
       overflow="visible"
-      className={clsx([...className, ...columnClass, ...rowClass])}
+      className={clsx(className)}
     >
       {children}
+      {final ? (
+        <>
+          <rect
+            x={0}
+            y={0}
+            width={metadata.engravingDefaults.thinBarlineThickness / 4}
+            height={1}
+          />
+          <rect
+            x={
+              (
+                metadata.engravingDefaults.thinBarlineThickness
+                + metadata.engravingDefaults.barlineSeparation
+              ) / 4
+            }
+            y={0}
+            width={metadata.engravingDefaults.thickBarlineThickness / 4}
+            height={1}
+          />
+        </>
+      ) : (
+        <rect x={0} y={0} width={1} height={1} />
+       )}
     </svg>
   );
 }
+
+export default withNoSSR(Barline);

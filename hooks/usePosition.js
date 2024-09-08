@@ -5,30 +5,34 @@ import { useMeasuresContext } from '../contexts/MeasuresContext';
 import { approxEqual } from '../utils/methods';
 
 export const usePosition = (target, index) => {
-  const { context: { page }, actions } = useMeasuresContext();
+  const { context: { measures, page }, actions } = useMeasuresContext();
   const [position, setPosition] = useState({first: false, last: false});
   
   useLayoutEffect(() => {
     const offset = {
       top: target.current.offsetTop,
       left: target.current.offsetLeft,
-      right: target.current.offsetLeft + target.current.offsetWidth,
+      right: Math.round(target.current.getBoundingClientRect().right),
     }
     setPosition({
-      first: approxEqual(offset.left, page.left),
-      last: approxEqual(offset.right, page.right),
+      first: offset.left === page.left,
+      last: !measures[index + 1]
+        || offset.top !== measures[index + 1].top
+        || approxEqual(page.right, offset.right),
     })
-  }, [target]);
+  }, [measures[index + 1], page.left, page.right, target]);
   
   useResizeObserver(target, (entry) => {
     const offset = {
       top: entry.target.offsetTop,
       left: entry.target.offsetLeft,
-      right: entry.target.offsetLeft + entry.target.offsetWidth,
+      right: Math.round(entry.target.getBoundingClientRect().right),
     }
     const _position = {
-      first: approxEqual(offset.left, page.left),
-      last: approxEqual(offset.right, page.right),
+      first: offset.left === page.left,
+      last: !measures[index + 1]
+        || offset.top !== measures[index + 1].top
+        || approxEqual(page.right, offset.right),
     }
     actions.updateMeasure({ index, measure: { ..._position, ...offset } })
     setPosition(_position)

@@ -2,6 +2,9 @@ import { useRef } from 'react';
 import clsx from 'clsx';
 
 import Barline from '../Barline';
+import Item from '../Item';
+import Staff from '../Staff';
+
 import { usePosition } from '../../hooks/usePosition';
 import useVars from '../../hooks/useVars';
 import { withNoSSR } from '../../hooks/withNoSSR';
@@ -9,7 +12,7 @@ import { withNoSSR } from '../../hooks/withNoSSR';
 const metadata = require('../../public/fonts/bravura/bravura_metadata.json');
 import styles from './Measure.module.css';
 
-function Measure({ children, handleResize, index, measure, ...rest }) {
+function Measure({ children, final, handleResize, initial, index, measure, parts, ...rest }) {
   const ref = useRef(null);
   const { first, last } = usePosition(ref, index);
 
@@ -23,6 +26,16 @@ function Measure({ children, handleResize, index, measure, ...rest }) {
     key: '--duration',
     value: measure.duration,
   });
+  useVars({
+    varRef: ref,
+    key: '--indent',
+    value: index === 0 ? '3rem' : 'auto',
+  })
+  useVars({
+    varRef: ref,
+    key: '--staves',
+    value: parts.length,
+  })
 
   return (
     <section
@@ -30,15 +43,36 @@ function Measure({ children, handleResize, index, measure, ...rest }) {
       className={clsx(className)}
       {...rest}
     >
-      {first && (          
-        <Barline separation={true} row={'1 / -1'} column={'m-bracket / m-bracket'} height="100%">
+      {/** Bracket placeholder */}
+      {first && (       
+        <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bracket / m-bracket'} height="100%">
           <rect width={`${metadata.engravingDefaults.staffLineThickness / 4}rem`} height="100%" fill="black" />
         </Barline>
       )}
-      <Barline separation={true} row={'1 / -1'} column={'m-bar'}>
+      <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bar'}>
         <rect width={`${metadata.engravingDefaults.staffLineThickness / 4}rem`} height="100%" fill="black" />
       </Barline>
+      {/** TODO: Place children into appropriate staves */}
+      {/**parts.map((part, partIndex) => (
+        <Staff key={`staff${partIndex}`} number={partIndex + 1} clef={part.measures[index].clefs[0]} duration={measure.duration}>
+            {index === 0 && (
+              <Item size={2} pitch={'g4'} column={'m-text'} padEnd={1}>Violin 1</Item>
+            )}
+            {index !== 0 && measure.first && (
+              <Item size={2} pitch={'g4'} column={'m-text'} padEnd={1}>Vln.1</Item>
+            )}
+
+        </Staff>
+      )) */}
       {children}
+      {final && (
+        <Barline type={"final"} />
+      )}
+      {last && !final && (
+        <Barline column={'me-bar / m-end'}>
+          <rect x={0} y={0} width={1} height={1} />
+        </Barline>
+      )}
     </section>
   )
 }

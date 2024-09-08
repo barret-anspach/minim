@@ -11,7 +11,7 @@ export const useWidth = (target) => {
     if (target.current !== null) {
       setWidth({
         left: target.current.offsetLeft,
-        right: target.current.offsetLeft + target.current.offsetWidth,
+        right: target.current.offsetParent.offsetWidth - Math.round(target.current.offsetWidth) - Math.round(target.current.getBoundingClientRect().x),
       })
     }
   }, [target]);
@@ -19,7 +19,7 @@ export const useWidth = (target) => {
   useResizeObserver(target, (entry) => {
     setWidth({
       left: entry.target.offsetLeft,
-      right: entry.target.offsetLeft + entry.target.offsetWidth,
+      right: entry.target.offsetParent.offsetWidth - Math.round(entry.contentRect.width) - Math.round(entry.target.getBoundingClientRect().x),
     })
     actions.updateWidth({width})
   })

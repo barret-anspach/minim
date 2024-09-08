@@ -2,20 +2,20 @@
 
 import React from 'react';
 
-import Barline from '../components/Barline';
-import Event from '../components/Event';
-import Item from '../components/Item';
-import Measure from '../components/Measure';
-import Staff from '../components/Staff';
-import StaffDisplayItem from '../components/StaffDisplayItem';
-import Systems from '../components/Systems';
-import { withNoSSR } from '../hooks/withNoSSR';
-import { useMeasuresContext } from '../contexts/MeasuresContext';
+import Event from '../Event';
+import Item from '../Item';
+import Measure from '../Measure';
+import Staff from '../Staff';
+import StaffDisplayItem from '../StaffDisplayItem';
+import Systems from '../Systems';
+import { withNoSSR } from '../../hooks/withNoSSR';
+import { useMeasuresContext } from '../../contexts/MeasuresContext';
 
-const metadata = require('../public/fonts/bravura/bravura_metadata.json');
+const metadata = require('../../public/fonts/bravura/bravura_metadata.json');
 
-function Simple() {
-  const { context: { measures } } = useMeasuresContext();  
+function Score({ score }) {
+  const { context: { measures } } = useMeasuresContext();
+
   return (
     <Systems id="systems">
       {measures.map((measure, index) => (
@@ -23,6 +23,8 @@ function Simple() {
           index={index}
           key={`measure_${index}`}
           measure={measure}
+          final={index + 1 === measures.length}
+          parts={new Array(2)}
         >
           <Staff number={1} clef={'treble'} duration={measure.duration}>
             {index === 0 && (
@@ -76,19 +78,10 @@ function Simple() {
             <Event beat={1} pitch={'c5'}></Event>
             <Event beat={256} pitch={'a4'}></Event>
           </Staff>
-
-          {index + 1 === measures.length && (
-            <Barline final={true} />
-          )}
-          {measure.last && (index + 1 !== measures.length) && (
-            <Barline column={'me-bar / m-end'}>
-              <rect x={0} y={0} width={1} height={1} />
-            </Barline>
-          )}
         </Measure>
       ))}
     </Systems>
   )
 }
 
-export default withNoSSR(Simple);
+export default withNoSSR(Score);

@@ -1,11 +1,13 @@
 .measure {
   --duration: 1024;
+  --indent: 3rem;
+  --staves: 1;
   display: grid;
   /* TODO: rows need to be passed in */
-  grid-template-rows: [staff1] auto [staff2] auto;
+  grid-template-rows: repeat(var(--staves), [staff] auto);
   row-gap: 1rem;
   grid-template-columns: 
-    [m-start m-text] auto
+    [m-start m-text] var(--indent)
     [m-bracket] auto
     [m-bar] auto
     [m-cle] auto

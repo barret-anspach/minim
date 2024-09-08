@@ -28,7 +28,3 @@ export default function useVars({
 
   return className;
 }
-
-export function setRefElemFromArrayByIndex({ element, refArray, index }) {
-    return refArray.current[index] = element;
-  }

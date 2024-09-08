@@ -1,1 +1,2 @@
-export { default, Line } from './Staff';
+export { default } from './Staff';
+export { default as StaffLine } from './StaffLine';

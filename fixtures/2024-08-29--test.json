@@ -17,6 +17,14 @@
   },
   "parts": [
     {
+      "clefs": [
+        {
+          "clef": {
+            "sign": "G",
+            "staffPosition": -2
+          }
+        }
+      ],
       "measures": [
         {
           "clefs": [

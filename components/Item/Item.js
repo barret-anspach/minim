@@ -9,12 +9,12 @@ function Item({ children, column, padEnd, pitch, size, text = false, }) {
   useVars({
     varRef: ref,
     key: '--column',
-    value: column,
+    value: column ?? 'e 1',
   });
   useVars({
     varRef: ref,
     key: '--padEnd',
-    value: `${padEnd}rem`,
+    value: padEnd ? `${padEnd}rem` : '0.1rem',
   });
   useVars({
     varRef: ref,
@@ -24,7 +24,7 @@ function Item({ children, column, padEnd, pitch, size, text = false, }) {
   useVars({
     varRef: ref,
     key: '--size',
-    value: `${size}rem`,
+    value: size ? `${size}rem` : '4rem',
   });
 
   return (

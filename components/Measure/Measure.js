@@ -52,26 +52,14 @@ function Measure({ children, final, handleResize, initial, index, measure, parts
       <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bar'}>
         <rect width={`${metadata.engravingDefaults.staffLineThickness / 4}rem`} height="100%" fill="black" />
       </Barline>
-      {/** TODO: Place children into appropriate staves */}
-      {/**parts.map((part, partIndex) => (
-        <Staff key={`staff${partIndex}`} number={partIndex + 1} clef={part.measures[index].clefs[0]} duration={measure.duration}>
-            {index === 0 && (
-              <Item size={2} pitch={'g4'} column={'m-text'} padEnd={1}>Violin 1</Item>
-            )}
-            {index !== 0 && measure.first && (
-              <Item size={2} pitch={'g4'} column={'m-text'} padEnd={1}>Vln.1</Item>
-            )}
-
-        </Staff>
-      )) */}
       {children}
-      {final && (
-        <Barline type={"final"} />
-      )}
       {last && !final && (
         <Barline column={'me-bar / m-end'}>
           <rect x={0} y={0} width={1} height={1} />
         </Barline>
+      )}
+      {final && (
+        <Barline type={"final"} />
       )}
     </section>
   )

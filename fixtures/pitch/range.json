@@ -624,6 +624,9 @@
   },
   "clefs": {
     "treble": {
+      "type": "treble",
+      "sign": "G",
+      "staffPosition": -2,
       "bounds": [
         {
           "node": "lowerBound",
@@ -648,7 +651,7 @@
           }
         }
       ],
-      "transformY": "-2.5rem",
+      "translateY": "-2.5rem",
       "staffLinePitches": [
         {
           "id": "f5",
@@ -693,6 +696,9 @@
       ]
     },
     "alto": {
+      "type": "alto",
+      "sign": "C",
+      "staffPosition": 0,
       "bounds": [
         {
           "node": "lowerBound",
@@ -715,6 +721,9 @@
       ]
     },
     "bass": {
+      "type": "bass",
+      "sign": "F",
+      "staffPosition": 2,
       "bounds": [
         {
           "node": "lowerBound",

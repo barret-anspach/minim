@@ -1,18 +1,9 @@
 import { createContext, useContext, useReducer } from "react";
+import { timeSignatureToDuration } from "../utils/methods";
 
 const initialState = {
-  measures: [
-    {index: 0, duration: 2048, first: false, last: false },
-    {index: 1, duration: 1024, first: false, last: false },
-    {index: 2, duration: 1024, first: false, last: false },
-    {index: 3, duration: 1024, first: false, last: false },
-    {index: 4, duration: 1024, first: false, last: false },
-    {index: 5, duration: 2048, first: false, last: false },
-    {index: 6, duration: 512, first: false, last: false },
-    {index: 7, duration: 4096, first: false, last: false },
-    {index: 8, duration: 1024, first: false, last: false },
-    {index: 9, duration: 768, first: false, last: false }
-  ],
+  initialized: false,
+  measures: [],
   page: {
     left: null,
     right: null,
@@ -39,10 +30,7 @@ function measuresReducer (context, action) {
       };
     }
     case 'setAllMeasures': {
-      return { ...context, measures: action.measures };
-    }
-    case 'setDisplayMeasures': {
-      return { ...context, displayMeasures: action.measures };
+      return { ...context, initialized: true, measures: action.measures };
     }
     default: {
       return context;
@@ -60,28 +48,21 @@ const MeasuresContextProvider = ({ children }) => {
     updateWidth: ({ width }) => {
       dispatch({ type: 'updateWidth', width });
     },
-    setAllMeasures: ({ measures }) => {
+    setAllMeasures: ({ score }) => {
+      const measures = score.global.measures.reduce((acc, measure, index) => {
+        return [...acc, {
+          index,
+          duration: measure.time
+            ? timeSignatureToDuration(measure.time.count, measure.time.unit)
+            : acc[index - 1].duration,
+          first: false,
+          last: false,
+        }];
+      }, []);
       dispatch({ type: 'setAllMeasures', measures });
     },
     updateMeasure: ({ index, measure }) => {
       dispatch({ type: 'updateMeasure', index, measure });
-    },
-    registerMeasureUpdate: () => {
-      dispatch({
-        type: 'setDisplayMeasures',
-        measures: context.measures.reduce((acc, m, mi) => {
-          const _m = {
-            ...m,
-            index: mi,
-            offsetY: m.offsetY,
-            first: !context.measures[mi - 1]
-              || m.offsetY !== context.measures[mi - 1].offsetY,
-            last: !context.measures[mi + 1]
-              || m.offsetY !== context.measures[mi + 1].offsetY,
-          }
-          return [...acc, _m]
-        }, [])
-      })
     },
   }
 

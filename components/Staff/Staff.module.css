@@ -3,15 +3,15 @@
   --pitches: [b4] 0.125rem;
   --start: m-start;
   --end: m-end;
-  --transformY: 0rem;
-  grid-row: staff var(--number) / span 1;
+  --translateY: 0rem;
+  grid-row: staff var(--number);
   display: grid;
   grid-template-columns: subgrid;
   grid-template-rows: var(--pitches);
   align-content: start;
   height: 1rem;
   grid-column: var(--start) / var(--end);
-  transform: translateY(var(--transformY));
+  transform: translateY(var(--translateY));
 }
 .staff .line {
   --pitch: b4;

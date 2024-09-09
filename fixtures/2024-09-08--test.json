@@ -1,0 +1,140 @@
+{
+  "mnx": {},
+  "global": {
+    "measures": [
+      {
+        "key": {
+          "fifths": -2
+        },
+        "time": {
+          "count": 4,
+          "unit": 8
+        }
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "vln1",
+      "name": "Violin I",
+      "shortName": "Vln.I",
+      "staves": 1,
+      "measures": [
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "tuplet",
+                  "inner": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 3
+                  },
+                  "outer": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 2
+                  },
+                  "content": [
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "pitch": {
+                        "octave": 4,
+                        "step": "G"
+                      }
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "pitch": {
+                        "alter": -1,
+                        "octave": 4,
+                        "step": "B"
+                      }
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "pitch": {
+                        "octave": 5,
+                        "step": "D"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vln2",
+      "name": "Violin II",
+      "shortName": "Vln.II",
+      "staves": 1,
+      "measures": [
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter"
+                  },
+                  "pitch": {
+                    "octave": 5,
+                    "step": "C"
+                  }
+                },
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter"
+                  },
+                  "pitch": {
+                    "octave": 4,
+                    "step": "A"
+                  }
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

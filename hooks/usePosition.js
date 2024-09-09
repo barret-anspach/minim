@@ -15,7 +15,7 @@ export const usePosition = (target, index) => {
       right: Math.round(target.current.getBoundingClientRect().right),
     }
     setPosition({
-      first: offset.left === page.left,
+      first: approxEqual(offset.left, page.left),
       last: !measures[index + 1]
         || offset.top !== measures[index + 1].top
         || approxEqual(page.right, offset.right),
@@ -29,7 +29,7 @@ export const usePosition = (target, index) => {
       right: Math.round(entry.target.getBoundingClientRect().right),
     }
     const _position = {
-      first: offset.left === page.left,
+      first: approxEqual(offset.left, page.left),
       last: !measures[index + 1]
         || offset.top !== measures[index + 1].top
         || approxEqual(page.right, offset.right),

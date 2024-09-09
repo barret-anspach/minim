@@ -1,7 +1,7 @@
-import Score from '../components/Score';
+import ExplicitScoreExample from '../components/Score/ExplicitScore.example';
 
 const score = require('../fixtures/2024-08-29--test.json');
 
 export default function Minim() {
-  return <Score score={score} />;
+  return <ExplicitScoreExample score={score} />;
 }

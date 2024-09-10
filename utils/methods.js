@@ -1,55 +1,34 @@
+import { durationMap } from "../constants/durations";
+import { noteheadMap } from "../constants/noteheads";
+import circleOfFifths from "../fixtures/pitch/circleOfFifths";
+
 export function approxEqual(a, b, epsilon = 5) {
   return Math.abs(a - b) <= epsilon;
-}
-
-const durationMap = {
-  key: [
-    "duplexMaxima",
-    "maxima",
-    "longa",
-    "breve",
-    "whole",
-    "half",
-    "quarter",
-    "eighth",
-    "16th",
-    "32nd",
-    "64th",
-    "128th",
-    "256th",
-    "512th",
-    "1024th",
-    "2048th",
-    "4096th"
-  ], value: [
-    32768, // duplexMaxima
-    16384, // maxima
-    8192, // longa
-    4096, // whole
-    2048, // half
-    1024, // quarter
-    512, // eighth
-    256, // 16th
-    128, // 32nd
-    64, // 64th
-    32, // 128th
-    16, // 256th
-    8, // 512th
-    4, // 1024th
-    2, // 2048th
-    1 // 4096th
-  ],
 }
 
 export function timeSignatureToDuration(count, unit) {
   return count * (durationMap.value[durationMap.key.indexOf('whole')] / unit);
 }
 
-export function toDuration(index, events) {
-  return events.slice(0, index).reduce((acc, e) =>
-    acc +
-      (
-        durationMap.value[durationMap.key.indexOf(e.duration.base)] *
-          (1 + (1 - Math.pow(2, e.duration.dots ? e.duration.dots * -1 : 0)))
-      ), 0)
+export function toDuration(event) {
+  return (
+        durationMap.value[durationMap.key.indexOf(event.duration.base)] *
+          (1 + (1 - Math.pow(2, event.duration.dots ? event.duration.dots * -1 : 0)))
+      )
+}
+
+export function toDurationFromArray(index, events) {
+  return events.slice(0, index).reduce((acc, e) => acc + toDuration(e), 0)
+}
+
+export function glyphNameToNotehead(glyphName) {
+  return noteheadMap.value[noteheadMap.key.findIndex(k => k === glyphName)];
+}
+
+export function fifthsToKey(integer) {
+  const fifths = Math.sign(integer) === 0
+    ? circleOfFifths.find(cof => cof.id === 0)
+    : Math.sign(integer) === 1
+      ? circleOfFifths[integer]
+      : circleOfFifths.reverse()[integer];
 }

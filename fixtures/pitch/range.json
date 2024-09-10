@@ -627,6 +627,12 @@
       "type": "treble",
       "sign": "G",
       "staffPosition": -2,
+      "staffPitch": "g4",
+      "glyph": "",
+      "keyAccidentals": {
+        "sharp": ["f5", "c5", "g5", "d5", "a4", "e5", "b4"],
+        "flat": ["b4", "e5", "a4", "d5", "g4", "c5", "f4"]
+      },
       "bounds": [
         {
           "node": "lowerBound",
@@ -699,6 +705,12 @@
       "type": "alto",
       "sign": "C",
       "staffPosition": 0,
+      "staffPitch": "c4",
+      "glyph": "",
+      "keyAccidentals": {
+        "sharp": ["f4", "c4", "g4", "d4", "a3", "e4", "b3"],
+        "flat": ["b3", "e4", "a3", "d4", "g3", "c4", "f4"]
+      },
       "bounds": [
         {
           "node": "lowerBound",
@@ -724,6 +736,12 @@
       "type": "bass",
       "sign": "F",
       "staffPosition": 2,
+      "staffPitch": "f3",
+      "glyph": "",
+      "keyAccidentals": {
+        "sharp": ["f3", "c2", "g3", "d3", "a3", "e3", "b2"],
+        "flat": ["b2", "e3", "a2", "d3", "g3", "c3", "f3"]
+      },
       "bounds": [
         {
           "node": "lowerBound",

@@ -2,8 +2,6 @@ import { useRef } from 'react';
 import clsx from 'clsx';
 
 import Barline from '../Barline';
-import Item from '../Item';
-import Staff from '../Staff';
 
 import { usePosition } from '../../hooks/usePosition';
 import useVars from '../../hooks/useVars';

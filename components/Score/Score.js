@@ -2,18 +2,18 @@
 
 import React from 'react';
 
-import Item from '../Item';
-import Measure from '../Measure';
-import Meter from '../Meter';
-import Staff from '../Staff';
-import Systems from '../Systems';
-import Tuplet from '../Tuplet/Tuplet';
+import Item from './../Item';
+import Measure from './../Measure';
+import Meter from './../Meter';
+import Staff from './../Staff';
+import Systems from './../Systems';
+import Tuplet from './../Tuplet/Tuplet';
 
-import { withNoSSR } from '../../hooks/withNoSSR';
-import { useMeasuresContext } from '../../contexts/MeasuresContext';
-import { toDurationFromArray } from '../../utils/methods';
-import { noteheadMap } from '../../constants/noteheads';
-import SystemIncipit from '../SystemIncipit/SystemIncipit';
+import { withNoSSR } from './../../hooks/withNoSSR';
+import { useMeasuresContext } from './../../contexts/MeasuresContext';
+import { toDurationFromArray } from './../../utils/methods';
+import { noteheadMap } from './../../constants/noteheads';
+import SystemIncipit from './../SystemIncipit/SystemIncipit';
 
 function Score({ score }) {
   const { context: { initialized, measures } } = useMeasuresContext();

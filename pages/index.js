@@ -1,7 +1,15 @@
-import ExplicitScoreExample from '../components/Score/ExplicitScore.example';
+import { useEffect } from 'react';
+import Score from '../components/Score';
+import { useMeasuresContext } from '../contexts/MeasuresContext';
 
-const score = require('../fixtures/2024-08-29--test.json');
+const score = require('../fixtures/2024-09-08--test.json');
 
 export default function Minim() {
-  return <ExplicitScoreExample score={score} />;
+  const { actions } = useMeasuresContext();
+
+  useEffect(() => {
+    actions.setAllMeasures({ score })
+  }, [])
+
+  return <Score score={score} />;
 }

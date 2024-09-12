@@ -1,0 +1,6 @@
+.note .notehead {
+  order: 1;
+}
+.note:has(.stem.down) .notehead {
+  order: 2;
+}

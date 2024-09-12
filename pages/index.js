@@ -9,7 +9,7 @@ export default function Minim() {
 
   useEffect(() => {
     actions.setAllMeasures({ score })
-  }, [])
+  }, [score]);
 
   return <Score score={score} />;
 }

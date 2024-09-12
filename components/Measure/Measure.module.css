@@ -14,10 +14,6 @@
     [m-key] auto
     [m-tim] auto
     [m-con] repeat(var(--duration), [e] auto)
-    [me-cle] auto
-    [me-key] auto
-    [me-bar] auto
-    [me-tim] auto
     [m-end];
   /* TODO: include measure's display characters' total width somehow?
            Aren't these incompatible units?
@@ -28,4 +24,18 @@
   min-width: fit-content;
   /* transition: background 0.5s ease-in-out; */
 }
-
+.measure.last {
+  grid-template-columns: 
+    [m-start m-text] var(--indent)
+    [m-bracket] auto
+    [m-bar] auto
+    [m-cle] auto
+    [m-key] auto
+    [m-tim] auto
+    [m-con] repeat(var(--duration), [e] auto)
+    [me-cle] auto
+    [me-bar] auto
+    [me-key] auto
+    [me-tim] auto
+    [m-end];
+}

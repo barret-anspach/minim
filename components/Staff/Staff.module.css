@@ -12,6 +12,7 @@
   height: 1rem;
   grid-column: var(--start) / var(--end);
   transform: translateY(var(--translateY));
+  color: black;
 }
 .staff .line {
   --pitch: b4;

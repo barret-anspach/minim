@@ -22,6 +22,8 @@ export default function useVars({
       switch (expression.operator) {
         case '&&':
           return expression.condition && expression.style;
+        case 'ternary':
+          return expression.style[expression.condition ? 0 : 1];
       }
     })]);
   }, [...conditions]);

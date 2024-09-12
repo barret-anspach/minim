@@ -32,6 +32,9 @@ function measuresReducer (context, action) {
     case 'setAllMeasures': {
       return { ...context, initialized: true, measures: action.measures };
     }
+    case 'uninitialize': {
+      return { ...context, initialized: false };
+    }
     default: {
       return context;
     }
@@ -64,6 +67,9 @@ const MeasuresContextProvider = ({ children }) => {
     updateMeasure: ({ index, measure }) => {
       dispatch({ type: 'updateMeasure', index, measure });
     },
+    uninitialize: () => {
+      dispatch({ type: 'uninitialize' });
+    }
   }
 
   return (

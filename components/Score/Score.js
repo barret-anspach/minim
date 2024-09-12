@@ -1,10 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Item from './../Item';
 import Measure from './../Measure';
 import Meter from './../Meter';
+import Note from '../Note/Note';
 import Staff from './../Staff';
 import Systems from './../Systems';
 import Tuplet from './../Tuplet/Tuplet';
@@ -14,6 +15,7 @@ import { useMeasuresContext } from './../../contexts/MeasuresContext';
 import { toDurationFromArray } from './../../utils/methods';
 import { noteheadMap } from './../../constants/noteheads';
 import SystemIncipit from './../SystemIncipit/SystemIncipit';
+import Chord from '../Chord/Chord';
 
 function Score({ score }) {
   const { context: { initialized, measures } } = useMeasuresContext();
@@ -62,18 +64,22 @@ function Score({ score }) {
                   <Tuplet 
                     key={`par${partIndex}_mea${index}_sta${staffIndex}_eve${eventIndex}`}
                     id={`par${partIndex}_mea${index}_sta${staffIndex}_eve${eventIndex}`}
+                    clef={part.measures[index].clefs[staffIndex].clef}
                     event={event}
+                    eventIndex={eventIndex}
+                    events={events}
                   />
-                ) : event.notes.map((note, noteIndex) => (
-                  <Item
-                    key={`par${partIndex}_mea${index}_sta${staffIndex}_eve${eventIndex}_not${noteIndex}`}
-                    column={`e ${toDurationFromArray(eventIndex, events) + 1}`}
-                    pitch={`${note.pitch.step.toLowerCase()}${note.pitch.octave}`}
-                    >
-                      {noteheadMap.value[noteheadMap.key.indexOf(event.duration.base)] }
-                  </Item>
+                ) : (
+                  <Chord
+                    key={`par${partIndex}_mea${index}_sta${staffIndex}_eve${eventIndex}`}
+                    id={`par${partIndex}_mea${index}_sta${staffIndex}_eve${eventIndex}`}
+                    clef={part.measures[index].clefs[staffIndex].clef}
+                    event={event}
+                    eventIndex={eventIndex}
+                    events={events}
+                  />
                 ))
-              ))}
+              )}
             </Staff>
           )))}
         </Measure>

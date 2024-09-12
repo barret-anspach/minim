@@ -1,0 +1,16 @@
+.stem {
+  --stem-length: 1rem;
+  grid-row: var(--pitch);
+  grid-column: var(--column);
+  height: var(--stem-length);
+}
+.stem.up {
+  align-self: last baseline;
+  margin-left: -0.0375rem;
+  order: 2;
+}
+.stem.down {
+  align-self: baseline;
+  margin-right: -0.0375rem;
+  order: 1;
+}

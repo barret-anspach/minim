@@ -23,6 +23,7 @@ export default function Tuplet({ clef, event, id }) {
           noteIndex={noteIndex}
         />
       )))}
+      {/** Bracket, ratio, etc */}
     </>
   )
 }

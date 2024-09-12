@@ -12,3 +12,13 @@
   justify-self: start;
   transform: translateX(0.03rem);
 }
+
+.flag.down {
+  align-self: end;
+  justify-self: start;
+  transform: translateX(0.03rem);
+}
+.flag.up {
+  align-self: start;
+  transform: translateX(calc(100% - 0.03rem));
+}

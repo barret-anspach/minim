@@ -14,6 +14,8 @@ export default function Chord({ clef, column, event, eventIndex, events, id }) {
   const _column = column ?? `e ${toDurationFromArray(eventIndex, events) + 1}`;
   return (
     <>
+      {/** Leger Lines */}
+      {/** Articulations */}
       {event.notes.map((note, noteIndex) => (
         <Note
           key={`${id}_not${noteIndex}`}
@@ -26,7 +28,12 @@ export default function Chord({ clef, column, event, eventIndex, events, id }) {
           noteIndex={noteIndex}
         />
       ))}
-      <Stem clef={clef} column={_column} notes={event.notes} />
+      <Stem
+        clef={clef}
+        column={_column}
+        event={event}
+        notes={event.notes}
+      />
     </>
   )
 };

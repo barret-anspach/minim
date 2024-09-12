@@ -16,9 +16,7 @@ export default function Note({
   const pitch = `${note.pitch.step.toLowerCase()}${note.pitch.octave}`;
   return (
     <>
-      {/** Leger Lines */}
       {/** Accidentals */}
-      {/** Articulations */}
       <Item
         className={styles.note}
         key={`${id}_not${noteIndex}`}

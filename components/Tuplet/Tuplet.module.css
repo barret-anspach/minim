@@ -1,0 +1,20 @@
+.tuplet {
+  grid-column: var(--column);
+  grid-row: var(--row);
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-evenly;
+}
+.ratio {
+  flex: 0;
+  font-family: 'Bravura', sans-serif;
+  line-height: 0;
+  height: 0.25rem;
+  background-color: white;
+  text-align: center;
+  padding: 0 0.125rem;
+  transform: translateY(75%);
+}
+.bracket {
+  flex: 1 1 auto;
+}

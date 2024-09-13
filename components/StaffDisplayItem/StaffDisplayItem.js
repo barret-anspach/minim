@@ -11,6 +11,7 @@ function StaffDisplayItem({ children, type, start }) {
     conditionalStyles: [
       { condition: type === 'key', operator: '&&', style: styles.row },
       { condition: type === 'tim', operator: '&&', style: styles.column },
+      { condition: start.startsWith('me-'), operator: '&&', style: styles.end },
     ],
     key: '--main-axis',
     value: '1fr',

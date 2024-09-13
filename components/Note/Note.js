@@ -16,7 +16,7 @@ export default function Note({
   const pitch = `${note.pitch.step.toLowerCase()}${note.pitch.octave}`;
   return (
     <>
-      {/** Accidentals */}
+      {/** TODO: Accidentals */}
       <Item
         className={styles.note}
         key={`${id}_not${noteIndex}`}
@@ -26,6 +26,9 @@ export default function Note({
         <span className={styles.notehead}>
           {noteheadMap.value[noteheadMap.key.indexOf(event.duration.base)]}
         </span>
+        {event.duration.dots && event.duration.dots > 0 && new Array(event.duration.dots).fill(null).map((_, dotIndex) => (
+          <span key={`${id}_not${noteIndex}_dot${dotIndex}`} className={styles.dot}></span>
+        ))}
       </Item>
     </>
   )

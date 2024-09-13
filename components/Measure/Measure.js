@@ -52,7 +52,7 @@ function Measure({ children, final, handleResize, initial, index, measure, parts
       </Barline>
       {children}
       {last && !final && (
-        <Barline column={'me-bar / m-end'}>
+        <Barline column={'me-bar'}>
           <rect x={0} y={0} width={1} height={1} />
         </Barline>
       )}

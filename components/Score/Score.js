@@ -1,19 +1,17 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import Item from './../Item';
+import Key from './../Key';
 import Measure from './../Measure';
 import Meter from './../Meter';
-import Note from '../Note/Note';
 import Staff from './../Staff';
 import Systems from './../Systems';
 import Tuplet from './../Tuplet/Tuplet';
 
 import { withNoSSR } from './../../hooks/withNoSSR';
 import { useMeasuresContext } from './../../contexts/MeasuresContext';
-import { toDurationFromArray } from './../../utils/methods';
-import { noteheadMap } from './../../constants/noteheads';
 import SystemIncipit from './../SystemIncipit/SystemIncipit';
 import Chord from '../Chord/Chord';
 
@@ -47,13 +45,16 @@ function Score({ score }) {
                 <>
                   <SystemIncipit
                     globalMeasure={globalMeasure}
+                    nextGlobalMeasure={score.global.measures[index + 1]}
+                    first={measures[index].first}
+                    last={measures[index].last}
                     index={index}
                     part={part}
                     staffIndex={staffIndex}
                   />
                 </>
               )}
-              {globalMeasure.time && (
+              {!measures[index].first && globalMeasure.time && (
                 <Meter
                   count={globalMeasure.time.count}
                   unit={globalMeasure.time.unit}
@@ -80,6 +81,21 @@ function Score({ score }) {
                   />
                 ))
               )}
+              {
+                index - 1 !== score.global.measures.length &&
+                measures[index].last &&
+                score.global.measures[index + 1] && (
+                  <SystemIncipit
+                    globalMeasure={globalMeasure}
+                    nextGlobalMeasure={score.global.measures[index + 1]}
+                    first={measures[index].first}
+                    last={measures[index].last}
+                    part={part}
+                    index={index}
+                    staffIndex={staffIndex}
+                  />
+                )
+              }
             </Staff>
           )))}
         </Measure>

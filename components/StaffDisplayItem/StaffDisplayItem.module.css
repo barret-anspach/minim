@@ -18,3 +18,8 @@
   grid-auto-flow: column;
   grid-template-columns: var(--main-axis, 1fr);
 }
+
+.staffDisplayItem.end {
+  margin-right: 0;
+  margin-left: 0.1rem;
+}

@@ -22,7 +22,16 @@ export function toDuration(event) {
 }
 
 export function toDurationFromArray(index, events) {
-  return events.slice(0, index).reduce((acc, e) => acc + toDuration(e), 0)
+  return events.slice(0, index).reduce((acc, e) => {
+    switch (e.type) {
+      case "tuplet": {
+        return acc + (toDuration(e.outer) * e.outer.multiple)
+      }
+      case "event": {
+        return acc + toDuration(e)
+      }
+    }
+  }, 0)
 }
 
 export function glyphNameToNotehead(glyphName) {

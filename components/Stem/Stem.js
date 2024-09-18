@@ -17,10 +17,10 @@ const flagMap = {
     '32nd',
     '64th',
   ], value: [
-    {down: '', up: ''},
-    {down: '', up: ''},
-    {down: '', up: ''},
-    {down: '', up: ''},
+    {down: '', up: '', upShort: ''},
+    {down: '', up: '', upShort: ''},
+    {down: '', up: '', upShort: ''},
+    {down: '', up: '', upShort: ''},
   ],
 }
 

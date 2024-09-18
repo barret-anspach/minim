@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import clsx from 'clsx';
 
 import useVars from '../../hooks/useVars';
@@ -8,10 +8,27 @@ import styles from './Barline.module.css';
 import { withNoSSR } from '../../hooks/withNoSSR';
 
 function RegularBarline() {
-  return <rect x={0} y={0} width={1} height={1} />;
+  return (
+    <div className={clsx(styles.line, styles.thinLine)} />
+  )
+  return (
+    <polyline
+      points="0,0 0,1"
+      stroke="currentColor"
+      strokeWidth={`${metadata.engravingDefaults.thinBarlineThickness / 4}rem`}
+      vectorEffect={'non-scaling-stroke'}
+    />
+  );
+  // return <rect x={0} y={0} width={1} height={1} />;
 }
 
 function FinalBarline() {
+  return (
+    <>
+      <div className={clsx(styles.line, styles.thinLine, styles.separation)} />
+      <div className={clsx(styles.line, styles.thickLine)} />
+    </>
+  )
   return (
     <>
       <rect
@@ -54,22 +71,22 @@ function Barline({ children, type = 'regular', column, row = '1 / -1', separatio
     key: '--row',
     value: row,
   })
+  const width = useMemo(() =>
+    type === "final"
+      ? `${(metadata.engravingDefaults.thinBarlineThickness + metadata.engravingDefaults.barlineSeparation + metadata.engravingDefaults.thickBarlineThickness) / 4}rem`
+      : `${metadata.engravingDefaults.thinBarlineThickness / 4}rem`,
+    [type]);
 
   return (
-    <svg
-      ref={ref}
-      viewBox={type === "final" ? `0 0 ${(metadata.engravingDefaults.thinBarlineThickness + metadata.engravingDefaults.barlineSeparation + metadata.engravingDefaults.thickBarlineThickness) / 4} 1`
-        : `0 0 1 1`}
-      width={type === "final" ? `${(metadata.engravingDefaults.thinBarlineThickness + metadata.engravingDefaults.barlineSeparation + metadata.engravingDefaults.thickBarlineThickness) / 4}rem`
-        : `${metadata.engravingDefaults.thinBarlineThickness / 4}rem`}
-      height="100%"
-      preserveAspectRatio='none'
-      overflow="visible"
-      className={clsx(className)}
-    >
-      {children}
-      {type === "final" ? <FinalBarline /> : <RegularBarline />}
-    </svg>
+    <div ref={ref} className={clsx(className)}>
+      {
+        children
+          ? children
+          : type === "final"
+            ? <FinalBarline />
+            : <RegularBarline />
+      }
+    </div>
   );
 }
 

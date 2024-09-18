@@ -1,7 +1,9 @@
 import Item from "../Item";
 
 import { noteheadMap } from "../../constants/noteheads";
-import { toDurationFromArray } from "../../utils/methods";
+import { getPitchString, toDurationFromArray } from "../../utils/methods";
+import { getAccidentalGlyph } from "../../constants/accidentals";
+
 import styles from './Note.module.css';
 
 export default function Note({
@@ -13,7 +15,9 @@ export default function Note({
   noteIndex,
   id,
 }) {
-  const pitch = `${note.pitch.step.toLowerCase()}${note.pitch.octave}`;
+  const pitch = getPitchString(note);
+  // if alteration differs from key, or force-show accidentals is set,
+  const accidental = note.pitch.alter ? getAccidentalGlyph(note.pitch.alter) : null;
   return (
     <>
       {/** TODO: Accidentals */}
@@ -23,6 +27,9 @@ export default function Note({
         column={column ?? `e ${toDurationFromArray(eventIndex, events) + 1}`}
         pitch={pitch}
       >
+        {accidental && (
+          <span className={styles.accidental}>{accidental}</span>
+        )}
         <span className={styles.notehead}>
           {noteheadMap.value[noteheadMap.key.indexOf(event.duration.base)]}
         </span>

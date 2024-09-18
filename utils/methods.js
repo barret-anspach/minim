@@ -40,7 +40,7 @@ export function glyphNameToNotehead(glyphName) {
 
 const pitchClasses = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
 
-// TODO: THere's a lot of back-and-forth between object and string;
+// TODO: There's a lot of back-and-forth between object and string;
 // Refactor so we're just using an object matching the MNX input, with "pitchString" added.
 export function getPitchString(note) {
   return `${note.pitch.step.toLowerCase()}${note.pitch.octave}`

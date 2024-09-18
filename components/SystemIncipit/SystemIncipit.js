@@ -7,6 +7,7 @@ const range = require('./../../fixtures/pitch/range.json');
 export default function SystemIncipit({
   globalMeasure,
   nextGlobalMeasure = undefined,
+  globalMeasures,
   first = false,
   last = false,
   part,
@@ -26,11 +27,20 @@ export default function SystemIncipit({
     : globalMeasure.time
       ? { count: globalMeasure.time.count, unit: globalMeasure.time.unit, start: 'm-tim' }
       : undefined; 
+  // If it's the last measure in a system and there's a key change in the next measure,
+  // or a current key change,
+  // or the first measure in a system,
+  const prevKey = index > 0
+    ? globalMeasures.slice(0, index).findLast(m => m.key !== undefined).key
+    : undefined;
+  const currentKey = globalMeasures.slice(0, index + 1).findLast(m => m.key !== undefined).key;
   const key = last && nextGlobalMeasure && nextGlobalMeasure.key
-    ? { fifths: nextGlobalMeasure.key.fifths, column: 'me-key' }
+    ? { fifths: nextGlobalMeasure.key.fifths, column: 'me-key', prevFifths: prevKey?.fifths || undefined }
     : globalMeasure.key
-      ? { fifths: globalMeasure.key.fifths, column: 'm-key' }
-      : undefined;
+      ? { fifths: globalMeasure.key.fifths, column: 'm-key', prevFifths: prevKey?.fifths || undefined }
+      : first && currentKey
+        ? { fifths: currentKey.fifths, column: 'm-key', prevFifths: prevKey?.fifths || undefined }
+        : undefined;
   return (
     <>
       {clef && (
@@ -39,8 +49,9 @@ export default function SystemIncipit({
       {key && (
         <Key
           clefType={currentClef.type}
-          fifths={key.fifths}
           column={key.column}
+          fifths={key.fifths}
+          prevFifths={key.prevFifths}
         />
       )}
       {meter && (

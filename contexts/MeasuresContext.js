@@ -58,12 +58,14 @@ const MeasuresContextProvider = ({ children }) => {
           duration: measure.time
             ? timeSignatureToDuration(measure.time.count, measure.time.unit)
             : acc[index - 1].duration,
+          key: measure.key ?? acc[index - 1].key,
           first: false,
           last: false,
         }];
       }, []);
       dispatch({ type: 'setAllMeasures', measures });
     },
+    setBeamPosition: () => {},
     updateMeasure: ({ index, measure }) => {
       dispatch({ type: 'updateMeasure', index, measure });
     },

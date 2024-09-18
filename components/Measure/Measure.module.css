@@ -13,7 +13,7 @@
     [m-cle] auto
     [m-key] auto
     [m-tim] auto
-    [m-con] repeat(var(--duration), [e] auto)
+    [m-con] repeat(var(--duration), [e e-acc] auto [e-art] auto [e-ste-dow] 0 [e-not] auto [e-ste-up] 0 [e-dot] auto)
     [m-end];
   /* TODO: include measure's display characters' total width somehow?
            Aren't these incompatible units?
@@ -22,6 +22,7 @@
    */
   flex: var(--duration) var(--duration) content;
   min-width: fit-content;
+  color: black;
   /* transition: background 0.5s ease-in-out; */
 }
 .measure.last {

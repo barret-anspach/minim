@@ -7,7 +7,6 @@ import { usePosition } from '../../hooks/usePosition';
 import useVars from '../../hooks/useVars';
 import { withNoSSR } from '../../hooks/withNoSSR';
 
-const metadata = require('../../public/fonts/bravura/bravura_metadata.json');
 import styles from './Measure.module.css';
 
 function Measure({ children, final, handleResize, initial, index, measure, parts, ...rest }) {
@@ -42,19 +41,14 @@ function Measure({ children, final, handleResize, initial, index, measure, parts
       {...rest}
     >
       {/** Bracket placeholder */}
+      {/** TODO: Interpret layout groups */}
       {first && (       
-        <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bracket / m-bracket'} height="100%">
-          <rect width={`${metadata.engravingDefaults.staffLineThickness / 4}rem`} height="100%" fill="black" />
-        </Barline>
+        <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bracket / m-bracket'} height="100%" />
       )}
-      <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bar'}>
-        <rect width={`${metadata.engravingDefaults.staffLineThickness / 4}rem`} height="100%" fill="black" />
-      </Barline>
+      <Barline type={"regular"} separation={true} row={'1 / -1'} column={'m-bar / m-cle'} />
       {children}
       {last && !final && (
-        <Barline column={'me-bar'}>
-          <rect x={0} y={0} width={1} height={1} />
-        </Barline>
+        <Barline column={'me-bar'} />
       )}
       {final && (
         <Barline type={"final"} />

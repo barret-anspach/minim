@@ -5,20 +5,21 @@
   height: 100%;
 }
 .stem.up {
-  justify-self: end;
-  transform: translateX(-0.03rem);
+  justify-self: start;
+  margin-left: 0.27rem;
+  /* transform: translateX(-0.029rem); */
 }
 .stem.down {
   justify-self: start;
-  transform: translateX(0.03rem);
 }
 
 .flag.down {
   align-self: end;
   justify-self: start;
-  transform: translateX(0.03rem);
 }
 .flag.up {
   align-self: start;
-  transform: translateX(calc(100% - 0.03rem));
+  justify-self: start;
+  margin-left: 0.27rem;
+  /* transform: translateX(calc(100% - 0.06rem)); */
 }

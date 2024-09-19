@@ -1,12 +1,12 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import clsx from "clsx";
 
 import Item from '../Item';
 
 import useVars from '../../hooks/useVars';
-import styles from './Stem.module.css';
 import { toDuration, getStem } from '../../utils/methods';
 
+import styles from './Stem.module.css';
 const metadata = require('./../../public/fonts/bravura/bravura_metadata.json');
 const range = require('./../../fixtures/pitch/range.json');
 
@@ -29,17 +29,18 @@ const flagMap = {
  * If a stem is on or below the Staff's midline, stem should be pointed down.
  * A beamed Stem's direction should be away from the beamed note farthest from the midline.
  */
-export default function Stem({ clef, column, event, notes }) {
+export default function Stem({ clef, column, duration, event, notes }) {
   const stemRef = useRef(null);
   const _clef = 
     Object.values(range.clefs).find((v) => clef.sign === v.sign);
   const stem = getStem(notes, _clef.staffLinePitches[2].id);
-  const duration = toDuration(event);
+  const _duration = toDuration(event);
+  const _stemColumn = useMemo(() => `${stem.direction === 'up' ? 'c-ste-up' : 'c-not'} ${duration}`, [duration, stem.direction])
 
   useVars({
     varRef: stemRef,
     key: '--column',
-    value: column,
+    value: _stemColumn,
   })
   useVars({
     varRef: stemRef,
@@ -62,10 +63,10 @@ export default function Stem({ clef, column, event, notes }) {
       </svg>
       {/** Flag, if not part of a beam group */}
       {/** Flag, if less than quarter */}
-      {duration < 512 && (
+      {_duration < 512 && (
         <Item
           className={clsx(styles.flag, stem.direction === 'up' ? styles.up : styles.down)}
-          column={column}
+          column={_stemColumn}
           pitch={stem.row}
         >
           {flagMap.value[flagMap.key.findIndex(k => k === event.duration.base)][stem.direction]}

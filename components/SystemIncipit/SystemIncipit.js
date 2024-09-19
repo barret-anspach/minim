@@ -2,6 +2,7 @@ import Clef from "./../Clef"
 import Key from "./../Key"
 import Meter from './../Meter';
 
+import { useKey } from "../../hooks/useKey";
 const range = require('./../../fixtures/pitch/range.json');
 
 export default function SystemIncipit({

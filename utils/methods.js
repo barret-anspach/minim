@@ -98,8 +98,12 @@ export function getBoundsFromChord(array) {
 }
 
 export function getDiatonicInterval(a, b) {
-  // ex: a4, e5 => 5
-  // ex: g3, f5 => 14
+  // ex: a4, a4 => 0 (unison)
+  // ex: a4, e5 => 4 (fifth up)
+  // ex: a4, a5 => 7 (octave up)
+  // ex: g3, f5 => 13 (fourteenth up)
+  // ex: a4, g4 => -1 (second down)
+  // ex: a4, d4 => -4 (fifth down)
   if (a === b) return 0;
   const _res = {
     a: getPitchParts(a),
@@ -108,20 +112,14 @@ export function getDiatonicInterval(a, b) {
   if (_res.a.octave === _res.b.octave) {
     return _res.a.stepIndex - _res.b.stepIndex
   } else {
-    if (_res.a.octave < _res.b.octave) {
-      return (6 - _res.a.stepIndex)
-        + (8 * (_res.a.octave - _res.b.octave))
-        + _res.b.stepIndex 
-    } else {
-      return (6 - _res.b.stepIndex)
-        + (8 * (_res.b.octave - _res.a.octave))
-        + _res.a.stepIndex 
-    }
+    return ((_res.a.octave * 7) + _res.a.stepIndex) - ((_res.b.octave * 7) + _res.b.stepIndex);
   }
 }
 
 export function getDiatonicTransposition(pitchName, steps) {
   // ex. c5, -2 => a4
+  // ex. c5, 7 => c6
+  // ex. c4, -3 => g3
   const direction = Math.sign(steps);
   if (direction === 0) return pitchName;
   const a = getPitchParts(pitchName);
@@ -129,10 +127,8 @@ export function getDiatonicTransposition(pitchName, steps) {
     ? pitchClasses.findLastIndex((pc) => pc === a.pitchClass)
     : pitchClasses.findIndex((pc) => pc === a.pitchClass);
   const newPitch = pitchClasses[mod(index + steps, pitchClasses.length)];
-  // const index = mod(a.stepIndex - steps, pitchClasses.length);
-  // const newPitch = direction === -1 ? pitchClassesReversed[index] : pitchClasses[index];
-  const numberOfOctaves = Math.floor(steps / pitchClasses.length);
-  return `${newPitch}${a.octave + numberOfOctaves}`;
+  const newOctave = (direction * Math.floor((direction === 1 ? index + Math.abs(steps) : pitchClasses.length - index - 1 - steps) / pitchClasses.length));
+  return `${newPitch}${a.octave + newOctave}`;
 }
 
 export function getStemDirectionForChord(chord, midline) {
@@ -162,7 +158,37 @@ export function getStem(chord, midline) {
   return {
     direction,
     row: direction === 'up'
-    ? `${getDiatonicTransposition(bounds.upper, 7)}/${bounds.lower}`
+      ? `${getDiatonicTransposition(bounds.upper, 7)}/${bounds.lower}`
       : `${bounds.upper}/${getDiatonicTransposition(bounds.lower, -7)}`
   }
+}
+
+export function getLegerLines(staffBounds, chord) {
+  const chordBounds = getBoundsFromChord(chord);
+  const legerUpperInterval = getDiatonicInterval(chordBounds.upper, staffBounds.upper.id)
+  const legerLowerInterval = getDiatonicInterval(chordBounds.lower, staffBounds.lower.id)
+  // leger count:   diatonic interval past outer boundary % 2, 
+  const legerUpperCount = Math.sign(legerUpperInterval) * Math.floor(Math.abs(legerUpperInterval) / 2);
+  const legerLowerCount = Math.sign(legerLowerInterval) * Math.floor(Math.abs(legerLowerInterval) / 2);
+  // leger pitch:   get pitch at (diatonic interval of [ staffLinePitches[below ? staffLinePitches.length - 1 : 0].id and lowest/highest chord note] % 2 )
+  const legerUpperLines = legerUpperInterval > 0 && legerUpperCount > 0
+    ? new Array(legerUpperCount).fill(null).map((_, index) => ({
+        index,
+        pitch: getDiatonicTransposition(staffBounds.upper.id, 2 * (index + 1)),
+    }))
+    : [];
+  const legerLowerLines = legerLowerInterval < 0 && legerLowerCount < 0
+    ? new Array(Math.abs(legerLowerCount)).fill(null).map((_, index) => ({
+        index,
+        pitch: getDiatonicTransposition(staffBounds.lower.id, -2 * (index + 1)),
+    }))
+    : [];
+  return [
+    ...legerUpperLines,
+    ...legerLowerLines,
+  ];
+}
+
+export function isNoteOnLine(staffLinePitch, note) {
+  return mod(getDiatonicInterval(staffLinePitch, getPitchString(note)), 2) === 0;
 }

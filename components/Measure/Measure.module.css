@@ -1,5 +1,6 @@
 .measure {
   --duration: 1024;
+  --content: repeat(var(--duration), [e c-acc] auto [c-art] auto [c-ste-dow] auto [c-not] auto [c-ste-up] auto);
   --indent: 3rem;
   --staves: 1;
   display: grid;
@@ -13,7 +14,7 @@
     [m-cle] auto
     [m-key] auto
     [m-tim] auto
-    [m-con] repeat(var(--duration), [e e-acc] auto [e-art] auto [e-ste-dow] 0 [e-not] auto [e-ste-up] 0 [e-dot] auto)
+    [m-con] var(--content)
     [m-end];
   /* TODO: include measure's display characters' total width somehow?
            Aren't these incompatible units?
@@ -33,7 +34,7 @@
     [m-cle] auto
     [m-key] auto
     [m-tim] auto
-    [m-con] repeat(var(--duration), [e] auto)
+    [m-con] var(--content)
     [me-cle] auto
     [me-bar] auto
     [me-key] auto

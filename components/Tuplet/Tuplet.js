@@ -36,7 +36,7 @@ const tupletMap = {
   ]
 }
 
-export default function Tuplet({ clef, event, events, eventIndex, id, partMeasure }) {
+export default function Tuplet({ clef, event, events, eventIndex, id, measureIndex, partMeasure }) {
   const bracketRef = useRef(null);
   const tuplet = {
     start: toDurationFromArray(eventIndex, events),
@@ -66,12 +66,10 @@ export default function Tuplet({ clef, event, events, eventIndex, id, partMeasur
           key={`${id}_tup${tupletEventIndex}_not${noteIndex}`}
           id={`${id}_tup${tupletEventIndex}_not${noteIndex}`}
           clef={clef}
-          column={`e ${tuplet.start + Math.floor(toDurationFromArray(tupletEventIndex, tupletEvents) * scalar) + 1}`}
           event={tupletEvent}
           eventIndex={tupletEventIndex}
           events={tupletEvents}
-          note={note}
-          noteIndex={noteIndex}
+          measureIndex={measureIndex}
           partMeasure={partMeasure}
         />
       )))}

@@ -1,14 +1,7 @@
-.note {
+.notehead {
   justify-self: start;
+  width: 0.27rem;
 }
-.note .notehead {
-  order: 1;
-}
-.note:has(.stem.down) .notehead {
-  order: 2;
-}
-
 .dot {
-  order: 3;
-  padding-left: 0.08rem;
+  margin-left: 0.12rem;
 }

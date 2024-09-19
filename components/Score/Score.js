@@ -13,7 +13,6 @@ import Tuplet from './../Tuplet/Tuplet';
 
 import { withNoSSR } from './../../hooks/withNoSSR';
 import { useMeasuresContext } from './../../contexts/MeasuresContext';
-import { toDuration } from '../../utils/methods';
 
 import styles from './Score.module.css';
 
@@ -74,6 +73,7 @@ function Score({ score }) {
                       event={event}
                       eventIndex={eventIndex}
                       events={events}
+                      measureIndex={index}
                       partMeasure={part.measures[index]}
                     />
                   ) : (
@@ -84,6 +84,7 @@ function Score({ score }) {
                       event={event}
                       eventIndex={eventIndex}
                       events={events}
+                      measureIndex={index}
                       partMeasure={part.measures[index]}
                     />
                   ))

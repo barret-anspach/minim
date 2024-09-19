@@ -6,8 +6,6 @@
 }
 .stem.up {
   justify-self: start;
-  margin-left: 0.27rem;
-  /* transform: translateX(-0.029rem); */
 }
 .stem.down {
   justify-self: start;
@@ -16,10 +14,10 @@
 .flag.down {
   align-self: end;
   justify-self: start;
+  width: 0;
 }
 .flag.up {
   align-self: start;
   justify-self: start;
-  margin-left: 0.27rem;
-  /* transform: translateX(calc(100% - 0.06rem)); */
+  width: min-content;
 }

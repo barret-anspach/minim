@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from 'react';
 
 import StaffLine from './StaffLine';
 
+import { usePitches } from '../../hooks/usePitches';
 import useVars from '../../hooks/useVars';
 import { withNoSSR } from '../../hooks/withNoSSR';
 
@@ -19,31 +20,7 @@ function Staff({
   children
 }) {
   const ref = useRef(null);
-  const _clef = Object.values(range.clefs).find((v) => clef.clef.sign === v.sign);
-
-  const style = useMemo(() => {
-    const { upperBound, lowerBound } = _clef
-      ? {
-        upperBound: _clef.bounds.find(b => b.node === 'upperBound'),
-        lowerBound: _clef.bounds.find(b => b.node === 'lowerBound'),
-      } : {
-        upperBound: null,
-        lowerBound: null
-      }
-    const steps = range.gamut.base
-      .slice(
-        range.gamut.base.findIndex(p => p.id === upperBound.base.id),
-        range.gamut.base.findIndex(p => p.id === lowerBound.base.id)
-      );
-    return {
-      pitches: steps.reduce((acc, curr, index) =>
-        index !== steps.length
-          ? `${acc}[${curr.id}] 0.125rem `
-          : `${acc}[${curr.id}]`,
-        ''),
-      translateY: _clef.translateY,
-    };
-  }, [_clef]);
+  const style = usePitches(clef.clef);
 
   useVars({
     varRef: ref,
@@ -73,7 +50,7 @@ function Staff({
 
   return (
     <div className={styles.staff} ref={ref}>
-      {lined && clef && range.clefs[_clef.type] && range.clefs[_clef.type].staffLinePitches.map((line, lineIndex) =>
+      {lined && clef && range.clefs[style.rangeClef.type] && range.clefs[style.rangeClef.type].staffLinePitches.map((line, lineIndex) =>
         <StaffLine
           key={`${id}_lin${lineIndex}`}
           pitch={line.id}

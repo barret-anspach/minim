@@ -1,0 +1,791 @@
+{
+  "version": "0.0.1",
+  "gamut": {
+    "bounds": [
+      {
+        "node": "lowerBound",
+        "id": "c-1",
+        "pitchClass": "c",
+        "octave": -1,
+        "units": {
+          "midi": 0
+        }
+      },
+      {
+        "node": "upperBound",
+        "id": "g9",
+        "pitchClass": "g",
+        "octave": 9,
+        "midi": 127
+      }
+    ],
+    "base": [
+      {
+        "id": "g9",
+        "pitchClass": "g",
+        "octave": 9,
+        "units": {
+          "midi": 127
+        }
+      },
+      {
+        "id": "f9",
+        "pitchClass": "f",
+        "octave": 9,
+        "units": {
+          "midi": 125
+        }
+      },
+      {
+        "id": "e9",
+        "pitchClass": "e",
+        "octave": 9,
+        "units": {
+          "midi": 124
+        }
+      },
+      {
+        "id": "d9",
+        "pitchClass": "d",
+        "octave": 9,
+        "units": {
+          "midi": 122
+        }
+      },
+      {
+        "id": "c9",
+        "pitchClass": "c",
+        "octave": 9,
+        "units": {
+          "midi": 120
+        }
+      },
+      {
+        "id": "b8",
+        "pitchClass": "b",
+        "octave": 8,
+        "units": {
+          "midi": 119
+        }
+      },
+      {
+        "id": "a8",
+        "pitchClass": "a",
+        "octave": 8,
+        "units": {
+          "midi": 117
+        }
+      },
+      {
+        "id": "g8",
+        "pitchClass": "g",
+        "octave": 8,
+        "units": {
+          "midi": 115
+        }
+      },
+      {
+        "id": "f8",
+        "pitchClass": "f",
+        "octave": 8,
+        "units": {
+          "midi": 113
+        }
+      },
+      {
+        "id": "e8",
+        "pitchClass": "e",
+        "octave": 8,
+        "units": {
+          "midi": 112
+        }
+      },
+      {
+        "id": "d8",
+        "pitchClass": "d",
+        "octave": 8,
+        "units": {
+          "midi": 110
+        }
+      },
+      {
+        "id": "c8",
+        "pitchClass": "c",
+        "octave": 8,
+        "units": {
+          "midi": 108
+        }
+      },
+      {
+        "id": "b7",
+        "pitchClass": "b",
+        "octave": 7,
+        "units": {
+          "midi": 107
+        }
+      },
+      {
+        "id": "a7",
+        "pitchClass": "a",
+        "octave": 7,
+        "units": {
+          "midi": 105
+        }
+      },
+      {
+        "id": "g7",
+        "pitchClass": "g",
+        "octave": 7,
+        "units": {
+          "midi": 103
+        }
+      },
+      {
+        "id": "f7",
+        "pitchClass": "f",
+        "octave": 7,
+        "units": {
+          "midi": 101
+        }
+      },
+      {
+        "id": "e7",
+        "pitchClass": "e",
+        "octave": 7,
+        "units": {
+          "midi": 100
+        }
+      },
+      {
+        "id": "d7",
+        "pitchClass": "d",
+        "octave": 7,
+        "units": {
+          "midi": 98
+        }
+      },
+      {
+        "id": "c7",
+        "pitchClass": "c",
+        "octave": 7,
+        "units": {
+          "midi": 96
+        }
+      },
+      {
+        "id": "b6",
+        "pitchClass": "b",
+        "octave": 6,
+        "units": {
+          "midi": 95
+        }
+      },
+      {
+        "id": "a6",
+        "pitchClass": "a",
+        "octave": 6,
+        "units": {
+          "midi": 93
+        }
+      },
+      {
+        "id": "g6",
+        "pitchClass": "g",
+        "octave": 6,
+        "units": {
+          "midi": 91
+        }
+      },
+      {
+        "id": "f6",
+        "pitchClass": "f",
+        "octave": 6,
+        "units": {
+          "midi": 89
+        }
+      },
+      {
+        "id": "e6",
+        "pitchClass": "e",
+        "octave": 6,
+        "units": {
+          "midi": 88
+        }
+      },
+      {
+        "id": "d6",
+        "pitchClass": "d",
+        "octave": 6,
+        "units": {
+          "midi": 86
+        }
+      },
+      {
+        "id": "c6",
+        "pitchClass": "c",
+        "octave": 6,
+        "units": {
+          "midi": 84
+        }
+      },
+      {
+        "id": "b5",
+        "pitchClass": "b",
+        "octave": 5,
+        "units": {
+          "midi": 83
+        }
+      },
+      {
+        "id": "a5",
+        "pitchClass": "a",
+        "octave": 5,
+        "units": {
+          "midi": 81
+        }
+      },
+      {
+        "id": "g5",
+        "pitchClass": "g",
+        "octave": 5,
+        "units": {
+          "midi": 79
+        }
+      },
+      {
+        "id": "f5",
+        "pitchClass": "f",
+        "octave": 5,
+        "units": {
+          "midi": 77
+        }
+      },
+      {
+        "id": "e5",
+        "pitchClass": "e",
+        "octave": 5,
+        "units": {
+          "midi": 76
+        }
+      },
+      {
+        "id": "d5",
+        "pitchClass": "d",
+        "octave": 5,
+        "units": {
+          "midi": 74
+        }
+      },
+      {
+        "id": "c5",
+        "pitchClass": "c",
+        "octave": 5,
+        "units": {
+          "midi": 72
+        }
+      },
+      {
+        "id": "b4",
+        "pitchClass": "b",
+        "octave": 4,
+        "units": {
+          "midi": 71
+        }
+      },
+      {
+        "id": "a4",
+        "pitchClass": "a",
+        "octave": 4,
+        "units": {
+          "midi": 69
+        }
+      },
+      {
+        "id": "g4",
+        "pitchClass": "g",
+        "octave": 4,
+        "units": {
+          "midi": 67
+        }
+      },
+      {
+        "id": "f4",
+        "pitchClass": "f",
+        "octave": 4,
+        "units": {
+          "midi": 65
+        }
+      },
+      {
+        "id": "e4",
+        "pitchClass": "e",
+        "octave": 4,
+        "units": {
+          "midi": 64
+        }
+      },
+      {
+        "id": "d4",
+        "pitchClass": "d",
+        "octave": 4,
+        "units": {
+          "midi": 62
+        }
+      },
+      {
+        "id": "c4",
+        "pitchClass": "c",
+        "octave": 4,
+        "units": {
+          "midi": 60
+        }
+      },
+      {
+        "id": "b3",
+        "pitchClass": "b",
+        "octave": 3,
+        "units": {
+          "midi": 59
+        }
+      },
+      {
+        "id": "a3",
+        "pitchClass": "a",
+        "octave": 3,
+        "units": {
+          "midi": 57
+        }
+      },
+      {
+        "id": "g3",
+        "pitchClass": "g",
+        "octave": 3,
+        "units": {
+          "midi": 55
+        }
+      },
+      {
+        "id": "f3",
+        "pitchClass": "f",
+        "octave": 3,
+        "units": {
+          "midi": 53
+        }
+      },
+      {
+        "id": "e3",
+        "pitchClass": "e",
+        "octave": 3,
+        "units": {
+          "midi": 52
+        }
+      },
+      {
+        "id": "d3",
+        "pitchClass": "d",
+        "octave": 3,
+        "units": {
+          "midi": 50
+        }
+      },
+      {
+        "id": "c3",
+        "pitchClass": "c",
+        "octave": 3,
+        "units": {
+          "midi": 48
+        }
+      },
+      {
+        "id": "b2",
+        "pitchClass": "b",
+        "octave": 2,
+        "units": {
+          "midi": 47
+        }
+      },
+      {
+        "id": "a2",
+        "pitchClass": "a",
+        "octave": 2,
+        "units": {
+          "midi": 45
+        }
+      },
+      {
+        "id": "g2",
+        "pitchClass": "g",
+        "octave": 2,
+        "units": {
+          "midi": 43
+        }
+      },
+      {
+        "id": "f2",
+        "pitchClass": "f",
+        "octave": 2,
+        "units": {
+          "midi": 41
+        }
+      },
+      {
+        "id": "e2",
+        "pitchClass": "e",
+        "octave": 2,
+        "units": {
+          "midi": 40
+        }
+      },
+      {
+        "id": "d2",
+        "pitchClass": "d",
+        "octave": 2,
+        "units": {
+          "midi": 38
+        }
+      },
+      {
+        "id": "c2",
+        "pitchClass": "c",
+        "octave": 2,
+        "units": {
+          "midi": 36
+        }
+      },
+      {
+        "id": "b1",
+        "pitchClass": "b",
+        "octave": 1,
+        "units": {
+          "midi": 35
+        }
+      },
+      {
+        "id": "a1",
+        "pitchClass": "a",
+        "octave": 1,
+        "units": {
+          "midi": 33
+        }
+      },
+      {
+        "id": "g1",
+        "pitchClass": "g",
+        "octave": 1,
+        "units": {
+          "midi": 31
+        }
+      },
+      {
+        "id": "f1",
+        "pitchClass": "f",
+        "octave": 1,
+        "units": {
+          "midi": 29
+        }
+      },
+      {
+        "id": "e1",
+        "pitchClass": "e",
+        "octave": 1,
+        "units": {
+          "midi": 28
+        }
+      },
+      {
+        "id": "d1",
+        "pitchClass": "d",
+        "octave": 1,
+        "units": {
+          "midi": 26
+        }
+      },
+      {
+        "id": "c1",
+        "pitchClass": "c",
+        "octave": 1,
+        "units": {
+          "midi": 24
+        }
+      },
+      {
+        "id": "b0",
+        "pitchClass": "b",
+        "octave": 0,
+        "units": {
+          "midi": 23
+        }
+      },
+      {
+        "id": "a0",
+        "pitchClass": "a",
+        "octave": 0,
+        "units": {
+          "midi": 21
+        }
+      },
+      {
+        "id": "g0",
+        "pitchClass": "g",
+        "octave": 0,
+        "units": {
+          "midi": 19
+        }
+      },
+      {
+        "id": "f0",
+        "pitchClass": "f",
+        "octave": 0,
+        "units": {
+          "midi": 17
+        }
+      },
+      {
+        "id": "e0",
+        "pitchClass": "e",
+        "octave": 0,
+        "units": {
+          "midi": 16
+        }
+      },
+      {
+        "id": "d0",
+        "pitchClass": "d",
+        "octave": 0,
+        "units": {
+          "midi": 14
+        }
+      },
+      {
+        "id": "c0",
+        "pitchClass": "c",
+        "octave": 0,
+        "units": {
+          "midi": 12
+        }
+      },
+      {
+        "id": "b-1",
+        "pitchClass": "b",
+        "octave": -1,
+        "units": {
+          "midi": 11
+        }
+      },
+      {
+        "id": "a-1",
+        "pitchClass": "a",
+        "octave": -1,
+        "units": {
+          "midi": 9
+        }
+      },
+      {
+        "id": "g-1",
+        "pitchClass": "g",
+        "octave": -1,
+        "units": {
+          "midi": 7
+        }
+      },
+      {
+        "id": "f-1",
+        "pitchClass": "f",
+        "octave": -1,
+        "units": {
+          "midi": 5
+        }
+      },
+      {
+        "id": "e-1",
+        "pitchClass": "e",
+        "octave": -1,
+        "units": {
+          "midi": 4
+        }
+      },
+      {
+        "id": "d-1",
+        "pitchClass": "d",
+        "octave": -1,
+        "units": {
+          "midi": 2
+        }
+      },
+      {
+        "id": "c-1",
+        "pitchClass": "c",
+        "octave": -1,
+        "units": {
+          "midi": 0
+        }
+      }
+    ]
+  },
+  "clefs": {
+    "treble": {
+      "type": "treble",
+      "sign": "G",
+      "staffPosition": -2,
+      "staffPitch": "g4",
+      "glyph": "",
+      "keyAccidentals": {
+        "sharp": ["f5", "c5", "g5", "d5", "a4", "e5", "b4"],
+        "flat": ["b4", "e5", "a4", "d5", "g4", "c5", "f4"]
+      },
+      "bounds": [
+        {
+          "node": "lowerBound",
+          "base": {
+            "id": "g3",
+            "pitchClass": "g",
+            "octave": 3,
+            "units": {
+              "midi": 55
+            }
+          }
+        },
+        {
+          "node": "upperBound",
+          "base": {
+            "id": "e8",
+            "pitchClass": "e",
+            "octave": 8,
+            "units": {
+              "midi": 120
+            }
+          }
+        }
+      ],
+      "translateY": "-2.5rem",
+      "staffLinePitches": [
+        {
+          "id": "f5",
+          "pitchClass": "f",
+          "octave": 5,
+          "units": {
+            "midi": 77
+          }
+        },
+        {
+          "id": "d5",
+          "pitchClass": "d",
+          "octave": 5,
+          "units": {
+            "midi": 74
+          }
+        },
+        {
+          "id": "b4",
+          "pitchClass": "b",
+          "octave": 4,
+          "units": {
+            "midi": 71
+          }
+        },
+        {
+          "id": "g4",
+          "pitchClass": "g",
+          "octave": 4,
+          "units": {
+            "midi": 67
+          }
+        },
+        {
+          "id": "e4",
+          "pitchClass": "e",
+          "octave": 4,
+          "units": {
+            "midi": 64
+          }
+        }
+      ]
+    },
+    "alto": {
+      "type": "alto",
+      "sign": "C",
+      "staffPosition": 0,
+      "staffPitch": "c4",
+      "glyph": "",
+      "keyAccidentals": {
+        "sharp": ["f4", "c4", "g4", "d4", "a3", "e4", "b3"],
+        "flat": ["b3", "e4", "a3", "d4", "g3", "c4", "f4"]
+      },
+      "bounds": [
+        {
+          "node": "lowerBound",
+          "id": "c3",
+          "pitchClass": "g",
+          "octave": 3,
+          "units": {
+            "midi": 55
+          }
+        },
+        {
+          "node": "upperBound",
+          "id": "e8",
+          "pitchClass": "e",
+          "octave": 8,
+          "units": {
+            "midi": 120
+          }
+        }
+      ]
+    },
+    "bass": {
+      "type": "bass",
+      "sign": "F",
+      "staffPosition": 2,
+      "staffPitch": "f3",
+      "glyph": "",
+      "keyAccidentals": {
+        "sharp": ["f3", "c2", "g3", "d3", "a3", "e3", "b2"],
+        "flat": ["b2", "e3", "a2", "d3", "g3", "c3", "f3"]
+      },
+      "bounds": [
+        {
+          "node": "lowerBound",
+          "id": "c3",
+          "pitchClass": "g",
+          "octave": 3,
+          "units": {
+            "midi": 55
+          }
+        },
+        {
+          "node": "upperBound",
+          "id": "e8",
+          "pitchClass": "e",
+          "octave": 8,
+          "units": {
+            "midi": 120
+          }
+        }
+      ]
+    }
+  },
+  "instruments": {
+    "violin": {
+      "bounds": [
+        {
+          "node": "lowerBound",
+          "id": "g3",
+          "pitchClass": "g",
+          "octave": 3,
+          "units": {
+            "midi": 55
+          }
+        },
+        {
+          "node": "upperBound",
+          "id": "e8",
+          "pitchClass": "e",
+          "octave": 8,
+          "units": {
+            "midi": 120
+          }
+        }
+      ]
+    }
+  }
+}

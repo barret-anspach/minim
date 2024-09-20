@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sizes } from '../constants/sizes';
 
 export default function useZoom() {
@@ -9,7 +9,7 @@ export default function useZoom() {
   const [scale, setScale] = useState(36);
   const [strokeWidth, setStrokeWidth] = useState(1);
   const [width, setWidth] = useState(0);
-  const zoomInvariantFontSize = (sizes.STAFF_HEIGHT * (2 / pixelRatio));
+  const zoomInvariantFontSize = sizes.BASE_HEIGHT * (2 / pixelRatio);
 
   const getZoomInvariantValue = useCallback((number) => zoomInvariantFontSize * number, [zoomInvariantFontSize]);
 

@@ -1,0 +1,15 @@
+.accidental {
+  margin-right: 0.04rem;
+}
+.dot {
+  margin-left: 0.08rem;
+  justify-self: start;
+}
+.dot.down {
+  margin-top: 0.125rem;
+}
+.legerLine {
+  justify-self: center;
+  width: calc(100% + 0.2rem);
+  border-bottom: 0.04rem solid currentColor;
+}

@@ -1,0 +1,559 @@
+{
+  "mnx": {},
+  "global": {
+    "measures": [
+      {
+        "key": {
+          "fifths": -2
+        },
+        "time": {
+          "count": 4,
+          "unit": 8
+        }
+      },
+      {},
+      {},
+      {
+        "time": {
+          "count": 3,
+          "unit": 8
+        }
+      }
+    ]
+  },
+  "parts": [
+    {
+      "id": "vln1",
+      "name": "Violin I",
+      "shortName": "Vln.I",
+      "staves": 1,
+      "measures": [
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "tuplet",
+                  "inner": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 3
+                  },
+                  "outer": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 2
+                  },
+                  "content": [
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 4,
+                            "step": "G"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "alter": -1,
+                            "octave": 4,
+                            "step": "B"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 5,
+                            "step": "D"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        },
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "tuplet",
+                  "inner": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 3
+                  },
+                  "outer": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 2
+                  },
+                  "content": [
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 4,
+                            "step": "G"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "alter": -1,
+                            "octave": 4,
+                            "step": "B"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 5,
+                            "step": "D"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        },
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "tuplet",
+                  "inner": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 3
+                  },
+                  "outer": {
+                    "duration": {
+                      "base": "quarter"
+                    },
+                    "multiple": 2
+                  },
+                  "content": [
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 4,
+                            "step": "G"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "alter": -1,
+                            "octave": 4,
+                            "step": "B"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "quarter"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 5,
+                            "step": "D"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        },
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter",
+                    "dots": 1
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 5,
+                        "step": "C"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vln2",
+      "name": "Violin II",
+      "shortName": "Vln.II",
+      "staves": 1,
+      "measures": [
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter"
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 5,
+                        "step": "C"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter"
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 4,
+                        "step": "A"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        },
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter"
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 4,
+                        "step": "D"
+                      }
+                    },
+                    {
+                      "pitch": {
+                        "octave": 4,
+                        "step": "A"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "tuplet",
+                  "inner": {
+                    "duration": {
+                      "base": "eighth"
+                    },
+                    "multiple": 3
+                  },
+                  "outer": {
+                    "duration": {
+                      "base": "eighth"
+                    },
+                    "multiple": 2
+                  },
+                  "content": [
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "eighth"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 5,
+                            "step": "C"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "eighth"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 4,
+                            "step": "F"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "event",
+                      "duration": {
+                        "base": "eighth"
+                      },
+                      "notes": [
+                        {
+                          "pitch": {
+                            "octave": 4,
+                            "step": "G"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        },
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "eighth"
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 5,
+                        "step": "C"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "eighth"
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 4,
+                        "step": "F"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter"
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 4,
+                        "step": "D"
+                      }
+                    },
+                    {
+                      "pitch": {
+                        "octave": 4,
+                        "step": "A"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        },
+        {
+          "clefs": [
+            {
+              "clef": {
+                "sign": "G",
+                "staffPosition": -2
+              },
+              "staff": 1
+            }
+          ],
+          "sequences": [
+            {
+              "content": [
+                {
+                  "type": "event",
+                  "duration": {
+                    "base": "quarter",
+                    "dots": 1
+                  },
+                  "notes": [
+                    {
+                      "pitch": {
+                        "octave": 5,
+                        "step": "C"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "staff": 1,
+              "voice": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

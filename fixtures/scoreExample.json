@@ -64,6 +64,27 @@
       ],
       "attributes": {
         "lineCount": 5
+      },
+      "range": {
+        "start": 0
+      }
+    },
+    {
+      "object": "display",
+      "type": "staff",
+      "id": "staff_1",
+      "belongsTo": [
+        {
+          "instrument": "Vln.1",
+          "player": "Violinist 1",
+          "system": "system_0"
+        }
+      ],
+      "attributes": {
+        "lineCount": 5
+      },
+      "range": {
+        "start": 0
       }
     },
     {
@@ -79,6 +100,9 @@
       ],
       "attributes": {
         "key": "f#m"
+      },
+      "range": {
+        "start": 0
       }
     },
     {
@@ -94,6 +118,9 @@
       ],
       "attributes": {
         "key": "f#m"
+      },
+      "range": {
+        "start": 0
       }
     }
   ],
@@ -101,7 +128,7 @@
     {
       "object": "event",
       "type": "duration",
-      "value": 2048,
+      "value": "",
       "belongsTo": [
         {
           "system": "system_0"

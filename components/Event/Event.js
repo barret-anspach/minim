@@ -1,18 +1,29 @@
-import React from 'react';
-import { useGrid, useZoom } from '../../hooks';
+import {useRef} from 'react';
+import clsx from 'clsx';
 
-export default function Event({ event }) {
-  const { actions: { getTemplateColumn, getTemplateRow } } = useGrid();
-  const { zoomInvariantFontSize } = useZoom();
+import useVars from '../../hooks/useVars';
+import styles from './Event.module.css';
+
+export default function Event({ children, beat, pitch }) {
+  const ref = useRef(null);
+
+  useVars({
+    varRef: ref,
+    key: '--beat',
+    value: `e ${beat}`
+  })
+  useVars({
+    varRef: ref,
+    key: '--pitch',
+    value: pitch
+  })
 
   return (
     <span
-      style={{
-        fontSize: zoomInvariantFontSize, 
-        gridColumn: getTemplateColumn(event), 
-        gridRow: getTemplateRow(event)
-      }}>
-      {event.value}
+      ref={ref}
+      className={clsx(styles.event)}
+    >
+      {children}
     </span>
   )
 }

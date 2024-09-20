@@ -4,7 +4,7 @@ import { useZoom } from './../hooks';
 import { sizes } from '../constants/sizes';
 
 export default function useStaves({ score }) {
-  const { pixelRatio, strokeWidth } = useZoom();
+  const { strokeWidth } = useZoom();
 
   return useMemo(() => {
     const staves = {
@@ -28,13 +28,16 @@ export default function useStaves({ score }) {
           (sizes.SPACE * this.spaceCount) + this.spacing.reduce((a, c) => a + c, 0)
         ).toFixed(1);
       },
+      get strokeWidth() {
+        return strokeWidth;
+      }
     };
 
     const createSVGStaff = function ({ index = 0, staff = { attributes: { lineCount: 0 } } }) {
       // How many staff lines (and spaces) previous to this staff do we need to account for?
       const offset = staves.items.reduce((a, s, i) => {
         if (index - 1 >= 0 && i <= (index - 1)) {
-          return a + ((s.lineCount - 1) * sizes.SPACE) + staves.spacing[index]
+          return a + ((s.attributes.lineCount - 1) * sizes.SPACE) + staves.spacing[index]
         } else {
           return a
         }
@@ -54,5 +57,5 @@ export default function useStaves({ score }) {
       staves,
       createSVGStaff,
     };
-  }, [score.displayData, pixelRatio]);
+  }, [score.displayData, strokeWidth]);
 }

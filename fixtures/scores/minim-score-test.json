@@ -90,7 +90,7 @@
                   "content": [
                     {
                       "id": "flo0_par0_voi1_mea0",
-                      "type": "measure",
+                      "type": "group",
                       "repeatCount": 6,
                       "beams": [
                         {
@@ -116,7 +116,7 @@
                     },
                     {
                       "id": "flo0_par0_mea1",
-                      "type": "measure",
+                      "type": "group",
                       "sequence": [
                         {
                           "id": "flo0_par0_voi1_mea1_eve0",
@@ -197,7 +197,7 @@
                   "content": [
                     {
                       "id": "flo0_par0_voi0_mea0",
-                      "type": "measure",
+                      "type": "group",
                       "repeatCount": 6,
                       "beams": [
                         {
@@ -306,7 +306,7 @@
                     },
                     {
                       "id": "flo0_par0_voi0_mea1",
-                      "type": "measure",
+                      "type": "group",
                       "sequence": [
                         {
                           "id": "flo0_par0_voi0_mea1_eve0",
@@ -443,16 +443,10 @@
                   "fifths": -3
                 },
                 "time": {
-                  "count": 2,
+                  "count": 3,
                   "unit": 4
                 },
-                "repeatCount": 6
-              },
-              {
-                "time": {
-                  "count": 5,
-                  "unit": 8
-                }
+                "repeatCount": 5
               }
             ]
           },
@@ -521,7 +515,7 @@
                   "content": [
                     {
                       "id": "flo1_par0_voi1_mea0",
-                      "type": "measure",
+                      "type": "group",
                       "repeatCount": 6,
                       "beams": [
                         {
@@ -546,7 +540,7 @@
                     },
                     {
                       "id": "flo1_par0_mea1",
-                      "type": "measure",
+                      "type": "group",
                       "sequence": [
                         {
                           "id": "flo1_par0_voi1_mea1_eve0",
@@ -624,7 +618,7 @@
                   "content": [
                     {
                       "id": "flo1_par0_voi0_mea0",
-                      "type": "measure",
+                      "type": "group",
                       "repeatCount": 6,
                       "beams": [
                         {
@@ -730,7 +724,7 @@
                     },
                     {
                       "id": "flo1_par0_voi0_mea1",
-                      "type": "measure",
+                      "type": "group",
                       "sequence": [
                         {
                           "id": "flo1_par0_voi0_mea1_eve0",

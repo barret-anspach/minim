@@ -5,24 +5,26 @@ import React from "react";
 import Systems from "./../Systems";
 
 import { withNoSSR } from "./../../hooks/withNoSSR";
-import { MeasuresContextProvider } from "./../../contexts/MeasuresContext";
+import { useMeasuresContext } from "./../../contexts/MeasuresContext";
 
 import styles from "./Score.module.css";
 import Score from "./Score";
 
 function MinimScore({ composition }) {
+  const {
+    context: { initialized },
+  } = useMeasuresContext();
+
   return (
-    <main className={styles.score}>
-      {composition.scores.map((score) =>
-        score.flows.map((flow) => (
-          <MeasuresContextProvider key={flow.id}>
-            <Systems key={flow.id} id={`${flow.id}_systems`}>
-              <Score key={flow.id} score={flow} />
-            </Systems>
-          </MeasuresContextProvider>
-        )),
-      )}
-    </main>
+    initialized && (
+      <main className={styles.score}>
+        <Systems id="systems">
+          {composition.scores.map((score) =>
+            score.flows.map((flow) => <Score key={flow.id} score={flow} />),
+          )}
+        </Systems>
+      </main>
+    )
   );
 }
 

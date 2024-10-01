@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer } from "react";
 import { timeSignatureToDuration } from "../utils/methods";
 
 const initialState = {
-  flows: [],
+  flows: {},
   initialized: false,
   measures: [],
   page: {
@@ -22,19 +22,10 @@ function measuresReducer(context, action) {
         page: action.width,
       };
     }
-    case "updateMeasure": {
-      const measures = [...context.measures];
-      measures[action.index] = { ...measures[action.index], ...action.measure };
-      return {
-        ...context,
-        measures,
-      };
-    }
-    case "setAllMeasures": {
-      return { ...context, initialized: true, measures: action.measures };
-    }
-    case "uninitialize": {
-      return { ...context, initialized: false };
+    case "setFlow": {
+      const flows = context.flows;
+      flows[flows.id] = action.measures;
+      return { ...context, initialized: true, flows };
     }
     default: {
       return context;
@@ -49,8 +40,10 @@ const MeasuresContextProvider = ({ children }) => {
     updateWidth: ({ width }) => {
       dispatch({ type: "updateWidth", width });
     },
-    setAllMeasures: ({ score }) => {
-      const measures = score.global.measures.reduce((acc, measure, index) => {
+    setFlow: ({ flow }) => {
+      // TODO: refactor to store a flat list of events in flows[], decorated into a standalone shape so we can then assemble measures, taking into account *all* flow events.
+      // The above requires that tempo, clef, key and meter changes are all transformed from the json score into an event.
+      const measures = flow.global.measures.reduce((acc, measure, index) => {
         const count = Array.from(
           { length: measure.repeatCount ?? 1 },
           (_, i) => i,
@@ -71,14 +64,8 @@ const MeasuresContextProvider = ({ children }) => {
               index: _index,
               start,
               duration,
-              clefs: score.parts.map(
-                (part) => part.global.clefs,
-                // Array.from({ length: part.global.staves }, (_, i) => i + 1).map(
-                //   (staff) =>
-                //     part.global.clefs.find((clef) => clef.staff === staff),
-                // ),
-              ),
-              voices: score.parts.map((part) => {
+              clefs: flow.parts.map((part) => part.global.clefs),
+              voices: flow.parts.map((part) => {
                 // part.sequences.length === number of voices in part
                 const voiceEvents = Array.from(
                   { length: part.sequences.length },
@@ -104,14 +91,7 @@ const MeasuresContextProvider = ({ children }) => {
         }
         return [...acc, ...meas];
       }, []);
-      dispatch({ type: "setAllMeasures", measures });
-    },
-    setBeamPosition: () => {},
-    updateMeasure: ({ index, measure }) => {
-      dispatch({ type: "updateMeasure", index, measure });
-    },
-    uninitialize: () => {
-      dispatch({ type: "uninitialize" });
+      dispatch({ type: "setFlow", measures, flowId: flow.id });
     },
   };
 

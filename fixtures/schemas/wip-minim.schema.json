@@ -1,0 +1,116 @@
+{
+  "$defs": {
+    "event": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "const": "event",
+          "type": "string"
+        }
+      },
+      "required": ["type"],
+      "type": "object"
+    },
+    "flow": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "performers": {
+          "items": {
+            "$ref": "#/$defs/performer"
+          },
+          "type": "array"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "id": {
+      "$ref": "https://w3c.github.io/mnx/docs/mnx-schema.json#$defs/id"
+    },
+    "instrument": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "part": {
+      "additionalProperties": false,
+      "properties": {},
+      "required": [],
+      "type": "object"
+    },
+    "performer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "instruments": {
+          "items": {
+            "$ref": "#/$defs/instrument"
+          },
+          "type": "array"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "score": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "flows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/flow"
+          }
+        }
+      },
+      "required": [],
+      "type": "object"
+    }
+  },
+  "$id": "https://minim.anspa.ch/minim.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An encoding of CWMN, built on MNX, to account for modern notation practices",
+  "properties": {
+    "minim": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": ["version"],
+      "type": "object"
+    },
+    "scores": {
+      "items": {
+        "$ref": "#/$refs/score"
+      },
+      "type": "array"
+    }
+  },
+  "required": ["minim"],
+  "title": "Minim MNX document extension",
+  "type": "object"
+}

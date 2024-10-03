@@ -1,19 +1,19 @@
-import clsx from 'clsx';
+import clsx from "clsx";
 
 import Item from "../Item";
 
-import { noteheadMap } from "../../constants/noteheads";
-import { getPitchString } from "../../utils/methods";
+import { getNoteGlyph, getPitchString } from "../../utils/methods";
 
-import styles from './Note.module.css';
+import styles from "./Note.module.css";
 
 export default function Note({
   className,
   column,
   event,
+  id,
   note,
   noteIndex,
-  id,
+  pitchPrefix,
 }) {
   const pitch = getPitchString(note);
   return (
@@ -21,9 +21,9 @@ export default function Note({
       className={clsx(styles.notehead, className)}
       key={`${id}_not${noteIndex}`}
       column={column}
-      pitch={pitch}
+      pitch={`${pitchPrefix}s${note.staff}${pitch}`}
     >
-      {noteheadMap.value[noteheadMap.key.indexOf(event.duration.base)]}
+      {getNoteGlyph(event.duration.base)}
     </Item>
-  )
-};
+  );
+}

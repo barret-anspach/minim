@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import Item from "../Item";
 import StaffLine from "./StaffLine";
@@ -8,6 +8,7 @@ import useVars from "../../hooks/useVars";
 import { withNoSSR } from "../../hooks/withNoSSR";
 
 import styles from "./Staff.module.css";
+import { useMeasuresContext } from "../../contexts/MeasuresContext";
 const range = require("../../fixtures/pitch/range.json");
 
 function Staff({
@@ -15,21 +16,23 @@ function Staff({
   clef,
   id,
   lined = true,
-  lines = { start: "m-bar", end: "m-end" },
+  lines = { start: null, end: null },
   start = "m-start",
   end = "m-end",
-  part,
-  index,
-  measure,
   children,
 }) {
+  const { actions } = useMeasuresContext();
   const ref = useRef(null);
-  const style = usePitches(clef.clef);
+  const style = usePitches(clef.clef, id);
+
+  useEffect(() => {
+    actions.addGridRows({ rows: style.pitches });
+  }, [style.pitches]);
 
   useVars({
     varRef: ref,
-    key: "--number",
-    value: number,
+    key: "--bounds",
+    value: `${id}${style.staffBounds.upper.id} / ${id}${style.staffBounds.lower.id}`,
   });
   useVars({
     varRef: ref,
@@ -46,11 +49,6 @@ function Staff({
     key: "--end",
     value: end,
   });
-  useVars({
-    varRef: ref,
-    key: "--translateY",
-    value: style.translateY,
-  });
 
   return (
     <div className={styles.staff} ref={ref}>
@@ -61,35 +59,13 @@ function Staff({
           (line, lineIndex) => (
             <StaffLine
               key={`${id}_lin${lineIndex}`}
-              pitch={line.id}
+              pitch={`${id}${line.id}`}
               start={lines.start ?? start}
               end={lines.end ?? end}
             />
           ),
         )}
-      {/* Full name for first measure */}
-      {index === 0 && (
-        <Item
-          size={2}
-          pitch={style.rangeClef.midline}
-          column={"m-text"}
-          padEnd={1}
-        >
-          {part.name}
-        </Item>
-      )}
-      {/* Abbreviated name for beginning of each system */}
-      {index !== 0 && measure.first && (
-        <Item
-          label
-          size={2}
-          pitch={style.rangeClef.midline}
-          column={"m-text"}
-          padEnd={1}
-        >
-          {part.shortName}
-        </Item>
-      )}
+
       {children}
     </div>
   );

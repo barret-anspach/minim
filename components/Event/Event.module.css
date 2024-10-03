@@ -1,9 +1,9 @@
 .event {
-  --beat: e 1;
+  --beat: e1;
   --pitch: b4;
   font-family: Bravura, sans-serif;
   height: 0;
   line-height: 0;
   grid-column-start: var(--beat);
-  grid-row: var(--pitch) / var(--pitch);
+  grid-row: var(--pitch);
 }

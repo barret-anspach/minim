@@ -2,68 +2,151 @@ import { durationMap } from "../constants/durations";
 import { noteheadMap } from "../constants/noteheads";
 import { restMap } from "../constants/rests";
 
+/* Constants */
+const PITCH_CLASSES = ["c", "d", "e", "f", "g", "a", "b"];
+
+/* Math */
+/**
+ * @function mod Modulo
+ * @description Extends % operator to properly handle signed values.
+ * @param {number} n number (dividend)
+ * @param {number} m modulo (divisor)
+ * @returns {number} modulus, the remainder or signed remainder of a
+ * division, after one number is divided by another.
+ */
 export function mod(n, m) {
   return ((n % m) + m) % m;
 }
-
+/**
+ * @function approxEqual
+ * @description Compares whether or not two (signed or unsigned) numbers
+ * are within a given range of one another.
+ * @param {number} a number
+ * @param {number} b number
+ * @param {number} [epsilon=5] number (inclusive) denoting range inside
+ * of which the two numbers might be considered equal.
+ * @returns {boolean} equality
+ */
 export function approxEqual(a, b, epsilon = 5) {
   return Math.abs(a - b) <= epsilon;
 }
 
+/* Meter and Duration: Conversion*/
+/**
+ * @method timeSignatureToDuration
+ * @description Provided a time signature, method returns the duration of
+ * a measure assigned that time signature.
+ * @param {number} count time signature's numerator value
+ * @param {number} unit time signature's denominator value
+ * @returns {number} numerical duration value, where base whole note = 4096.
+ */
 export function timeSignatureToDuration(count, unit) {
   return count * (durationMap.value[durationMap.key.indexOf("whole")] / unit);
 }
-
-export function areTimeSignaturesEqual(time1, time2) {
-  return time1.count === time2.count && time1.unit === time2.unit;
-}
-
-export function toDuration(event) {
+/**
+ * @method toNumericalDuration
+ * @description Given an MNX duration object, returns a numerical duration value.
+ * @param {object} duration an MNX duration object
+ * @returns {number} numerical duration value, where base whole note = 4096.
+ */
+export function toNumericalDuration(duration) {
   return (
-    durationMap.value[durationMap.key.indexOf(event.duration.base)] *
-    (1 + (1 - Math.pow(2, event.duration.dots ? event.duration.dots * -1 : 0)))
+    durationMap.value[durationMap.key.indexOf(duration.base)] *
+    (1 + (1 - Math.pow(2, duration.dots ? duration.dots * -1 : 0)))
   );
 }
-
-export function toDurationFromArray(index, events) {
+/**
+ * @method durationBeforeIndex
+ * @description Provided the index of an array value, calculates the numerical
+ * duration of events preceding the array value.
+ * @param {number} index Index of array value
+ * @param {*} events Array of MNX event objects
+ * @returns {number} numerical duration value, where base whole note = 4096.
+ */
+export function durationBeforeIndex(index, events) {
   return events.slice(0, index).reduce((acc, e) => {
     switch (e.type) {
       case "tuplet": {
-        return acc + toDuration(e.outer) * e.outer.multiple;
+        return acc + toNumericalDuration(e.outer.duration) * e.outer.multiple;
       }
       case "event": {
-        return acc + toDuration(e);
+        return acc + toNumericalDuration(e.duration);
       }
     }
   }, 0);
 }
-
-export function glyphNameToNotehead(glyphName) {
-  return noteheadMap.value[noteheadMap.key.findIndex((k) => k === glyphName)];
+/** Meter and Duration: Comparison */
+/**
+ * @method areTimeSignaturesEqual
+ * @description Returns true if both numerator and denominator of provided
+ * time signatures match.
+ * @param {object} time1 an MNX time signature object
+ * @param {object} time2 an MNX time signature object
+ * @returns {boolean} Whether or not the time signatures match.
+ */
+export function areTimeSignaturesEqual(time1, time2) {
+  return time1.count === time2.count && time1.unit === time2.unit;
 }
 
-const pitchClasses = ["c", "d", "e", "f", "g", "a", "b"];
-
+/* Note and pitch: Conversion */
+/**
+ * @method glyphNameToNotehead
+ * @description Converts a base duration into the appropriate glyph for display.
+ * @param {string} durationBase MNX duration object's base duration value.
+ * @returns {string} SMUFL glyph character for notehead.
+ */
+export function getNoteGlyph(durationBase) {
+  return noteheadMap.value[
+    noteheadMap.key.findIndex((k) => k === durationBase)
+  ];
+}
+export function getRestGlyph(durationBase) {
+  return restMap.value[restMap.key.findIndex((k) => k === durationBase)];
+}
 // TODO: There's a lot of back-and-forth between object and string;
-// Refactor so we're just using an object matching the MNX input, with "pitchString" added.
+// Refactor so we're just using an object matching the MNX note object, with "pitchString" added — as its "id".
+/**
+ * @method getPitchString
+ * @description Converts an MNX note object into a pitch string (shorthand pitch-and-octave
+ * string value).
+ * @param {object} note MNX note object
+ * @returns {string} pitch string (shorthand pitch-and-octave value).
+ */
 export function getPitchString(note) {
   return `${note.pitch.step.toLowerCase()}${note.pitch.octave}`;
 }
-
-export function getPitchParts(note) {
-  const pitchClass = note.slice(0, 1);
-  const octave = parseInt(note.slice(-1));
+/**
+ * @method getPitchParts
+ * @description Converts a pitch string into attributes useful for calculations.
+ * @param {string} pitchString a shorthand pitch-and-octave value.
+ * @returns {object} pitch attributes useful for calculations.
+ */
+export function getPitchParts(pitchString) {
+  const pitchClass = pitchString.slice(0, 1);
+  const octave = parseInt(pitchString.slice(-1));
   return {
-    stepIndex: pitchClasses.indexOf(pitchClass),
+    stepIndex: PITCH_CLASSES.indexOf(pitchClass),
     get pitchClass() {
-      return pitchClasses[this.stepIndex];
+      return PITCH_CLASSES[this.stepIndex];
     },
     octave,
   };
 }
 
+/* Note and Pitch: Comparison */
+// TODO:
+// - [ ] Merge getHighestPitch() and getLowestPitch() into a single method;
+// - [ ] Method should accept MNX note objects, not pitch strings
+/**
+ * @method getHighestPitch
+ * @description Compares two pitch strings and returns the highest one, or
+ * param "a" if equal.
+ * @param {string} a pitch string
+ * @param {string} b pitch string
+ * @returns {string} the higher pitch string, or param "a" if equal.
+ */
 export function getHighestPitch(a, b) {
-  if (a === b) return 0;
+  if (a === b) return a;
   const _res = {
     a: getPitchParts(a),
     b: getPitchParts(b),
@@ -78,7 +161,6 @@ export function getHighestPitch(a, b) {
     return b;
   } else return a; // Equal!
 }
-
 export function getLowestPitch(a, b) {
   if (a === b) return 0;
   const _res = {
@@ -95,7 +177,13 @@ export function getLowestPitch(a, b) {
     return a;
   } else return a; // Equal!
 }
+export function isNoteOnLine(staffLinePitch, note) {
+  return (
+    mod(getDiatonicInterval(staffLinePitch, getPitchString(note)), 2) === 0
+  );
+}
 
+/* Notes and pitch: Calculation and Transformation */
 export function getBoundsFromChord(array) {
   if (array.length === 1) {
     const pitchString = getPitchString(array[0]);
@@ -115,7 +203,6 @@ export function getBoundsFromChord(array) {
     { upper: "", lower: "" },
   );
 }
-
 export function getDiatonicInterval(a, b) {
   // ex: a4, a4 => 0 (unison)
   // ex: a4, e5 => 4 (fifth up)
@@ -138,29 +225,29 @@ export function getDiatonicInterval(a, b) {
     );
   }
 }
-
-export function getDiatonicTransposition(pitchName, steps) {
+export function getDiatonicTransposition(pitchString, steps) {
   // ex. c5, -2 => a4
   // ex. c5, 7 => c6
   // ex. c4, -3 => g3
   const direction = Math.sign(steps);
-  if (direction === 0) return pitchName;
-  const a = getPitchParts(pitchName);
+  if (direction === 0) return pitchString;
+  const a = getPitchParts(pitchString);
   const index =
     direction === -1
-      ? pitchClasses.findLastIndex((pc) => pc === a.pitchClass)
-      : pitchClasses.findIndex((pc) => pc === a.pitchClass);
-  const newPitch = pitchClasses[mod(index + steps, pitchClasses.length)];
+      ? PITCH_CLASSES.findLastIndex((pc) => pc === a.pitchClass)
+      : PITCH_CLASSES.findIndex((pc) => pc === a.pitchClass);
+  const newPitch = PITCH_CLASSES[mod(index + steps, PITCH_CLASSES.length)];
   const newOctave =
     direction *
     Math.floor(
       (direction === 1
         ? index + Math.abs(steps)
-        : pitchClasses.length - index - 1 - steps) / pitchClasses.length,
+        : PITCH_CLASSES.length - index - 1 - steps) / PITCH_CLASSES.length,
     );
   return `${newPitch}${a.octave + newOctave}`;
 }
 
+/* Stem: Helper methods */
 export function getStemDirectionForChord(chord, midline) {
   const bounds = getBoundsFromChord(chord);
   if (chord.length === 1) {
@@ -182,36 +269,44 @@ export function getStemDirectionForChord(chord, midline) {
     };
   }
 }
+export function getStem(chord, midline, direction = null) {
+  const { bounds, direction: chordDirection } = getStemDirectionForChord(
+    chord,
+    midline,
+  );
+  const stemDirection = direction ?? chordDirection;
+  const noteStaff =
+    stemDirection === "up" ? chord[0].staff : chord[chord.length - 1].staff;
 
-export function getStem(chord, midline) {
-  const { bounds, direction } = getStemDirectionForChord(chord, midline);
   return {
-    direction,
+    direction: stemDirection,
     row:
-      direction === "up"
-        ? `${getDiatonicTransposition(bounds.upper, 7)}/${bounds.lower}`
-        : `${bounds.upper}/${getDiatonicTransposition(bounds.lower, -7)}`,
+      stemDirection === "up"
+        ? {
+            start: getDiatonicTransposition(bounds.upper, 7),
+            end: bounds.lower,
+          }
+        : {
+            start: bounds.upper,
+            end: getDiatonicTransposition(bounds.lower, -7),
+          },
+    noteStaff,
   };
 }
 
+/* Leger lines: Helper methods */
 export function getLegerLines(staffBounds, chord) {
+  // TODO: If any of a chord's pitches crosses a staff, don't calculate leger lines for that direction.
+  // Requires knowing sequence.staff or voice.staff (as opposed to note.staff)
   const chordBounds = getBoundsFromChord(chord);
+
   const legerUpperInterval = getDiatonicInterval(
     chordBounds.upper,
     staffBounds.upper.id,
   );
-  const legerLowerInterval = getDiatonicInterval(
-    chordBounds.lower,
-    staffBounds.lower.id,
-  );
-  // leger count:   diatonic interval past outer boundary % 2,
   const legerUpperCount =
     Math.sign(legerUpperInterval) *
     Math.floor(Math.abs(legerUpperInterval) / 2);
-  const legerLowerCount =
-    Math.sign(legerLowerInterval) *
-    Math.floor(Math.abs(legerLowerInterval) / 2);
-  // leger pitch:   get pitch at (diatonic interval of [ staffLinePitches[below ? staffLinePitches.length - 1 : 0].id and lowest/highest chord note] % 2 )
   const legerUpperLines =
     legerUpperInterval > 0 && legerUpperCount > 0
       ? Array.from({ length: legerUpperCount }, (_, i) => i).map((index) => ({
@@ -222,6 +317,14 @@ export function getLegerLines(staffBounds, chord) {
           ),
         }))
       : [];
+
+  const legerLowerInterval = getDiatonicInterval(
+    chordBounds.lower,
+    staffBounds.lower.id,
+  );
+  const legerLowerCount =
+    Math.sign(legerLowerInterval) *
+    Math.floor(Math.abs(legerLowerInterval) / 2);
   const legerLowerLines =
     legerLowerInterval < 0 && legerLowerCount < 0
       ? Array.from({ length: Math.abs(legerLowerCount) }, (_, i) => i).map(
@@ -234,15 +337,49 @@ export function getLegerLines(staffBounds, chord) {
           }),
         )
       : [];
+
   return [...legerUpperLines, ...legerLowerLines];
 }
 
-export function isNoteOnLine(staffLinePitch, note) {
-  return (
-    mod(getDiatonicInterval(staffLinePitch, getPitchString(note)), 2) === 0
-  );
-}
-
-export function getRestGlyph(duration) {
-  return restMap.value[restMap.key.findIndex((k) => k === duration.base)];
+export function decorateEvent({
+  event,
+  i,
+  acc,
+  flowId,
+  voice,
+  part,
+  partIndex,
+}) {
+  const _duration = toNumericalDuration(event.duration);
+  acc.push({
+    ...event,
+    id: `${event.id}_rep${i}`,
+    flowId,
+    partId: part.id,
+    partIndex,
+    partVoices: part.sequences.length,
+    voice: voice.voice,
+    clef: part.global.clefs[voice.staff - 1],
+    clefs: part.global.clefs,
+    staff: voice.staff,
+    staves: Array.from({ length: part.global.staves }, (_, i) => i + 1),
+    index: acc[acc.length - 1] ? acc[acc.length - 1]?.index + i + 1 : i,
+    position: {
+      start:
+        acc.length === 0 || acc[acc.length - 1].voice !== voice.voice
+          ? 0
+          : acc[acc.length - 1].position.end,
+      end:
+        acc.length === 0 || acc[acc.length - 1].voice !== voice.voice
+          ? _duration
+          : acc[acc.length - 1].position.end + _duration,
+    },
+    dimensions: {
+      length: _duration,
+    },
+    positionInSystem: {
+      first: false,
+      last: false,
+    },
+  });
 }

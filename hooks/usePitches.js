@@ -1,8 +1,6 @@
-import { useMemo } from "react";
-
 const range = require("../fixtures/pitch/range.json");
 
-export function usePitches(clef) {
+export function usePitches(clef, prefix) {
   if (!clef)
     return {
       pitches: undefined,
@@ -25,8 +23,8 @@ export function usePitches(clef) {
     pitches: steps.reduce(
       (acc, curr, index) =>
         index !== steps.length
-          ? `${acc}[${curr.id}] 0.125rem `
-          : `${acc}[${curr.id}]`,
+          ? `${acc}[${prefix ?? ""}${curr.id}] 0.125rem `
+          : `${acc}[${prefix ?? ""}${curr.id}]`,
       "",
     ),
     rangeClef,

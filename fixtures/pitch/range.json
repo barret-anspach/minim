@@ -638,11 +638,11 @@
         {
           "node": "lowerBound",
           "base": {
-            "id": "g3",
+            "id": "g2",
             "pitchClass": "g",
-            "octave": 3,
+            "octave": 2,
             "units": {
-              "midi": 55
+              "midi": 43
             }
           }
         },
@@ -717,22 +717,22 @@
         {
           "node": "lowerBound",
           "base": {
-            "id": "c3",
-            "pitchClass": "g",
-            "octave": 3,
+            "id": "c2",
+            "pitchClass": "c",
+            "octave": 2,
             "units": {
-              "midi": 55
+              "midi": 36
             }
           }
         },
         {
           "node": "upperBound",
           "base": {
-            "id": "e8",
-            "pitchClass": "e",
-            "octave": 8,
+            "id": "g7",
+            "pitchClass": "g",
+            "octave": 7,
             "units": {
-              "midi": 120
+              "midi": 103
             }
           }
         }
@@ -796,22 +796,22 @@
         {
           "node": "lowerBound",
           "base": {
-            "id": "c2",
+            "id": "c0",
             "pitchClass": "c",
-            "octave": 2,
+            "octave": 0,
             "units": {
-              "midi": 36
+              "midi": 12
             }
           }
         },
         {
           "node": "upperBound",
           "base": {
-            "id": "c5",
+            "id": "c6",
             "pitchClass": "c",
-            "octave": 5,
+            "octave": 6,
             "units": {
-              "midi": 72
+              "midi": 84
             }
           }
         }

@@ -13,7 +13,7 @@ import {
   getPitchString,
   getRestGlyph,
   isNoteOnLine,
-  toDurationFromArray,
+  durationBeforeIndex,
 } from "../../utils/methods";
 import styles from "./Chord.module.css";
 
@@ -24,21 +24,12 @@ import styles from "./Chord.module.css";
 /**
  * Convenience wrapper of note-related elements that are usually rendered together.
  */
-export default function Chord({
-  clef,
-  event,
-  eventIndex,
-  events,
-  id,
-  measureIndex,
-  staffIndex,
-}) {
+export default function Chord({ clef, event, eventIndex, events, id }) {
   const { staffBounds, rangeClef } = usePitches(clef);
-  const { accidentalStep } = useKey({ clefType: rangeClef.type, measureIndex });
+  const { accidentalStep } = useKey({ clefType: rangeClef.type, event });
   const legerLines = event.notes
     ? getLegerLines(staffBounds, event.notes)
     : null;
-  const _duration = toDurationFromArray(eventIndex, events) + 1;
 
   useEffect(() => {
     // Check if member of a beam
@@ -49,8 +40,8 @@ export default function Chord({
     }
   }, [event.id, event.beams]);
 
-  if (event.notes && !event.notes.some((n) => n.staff === staffIndex + 1))
-    return null;
+  // if (event.notes && !event.notes.some((n) => n.staff === staffIndex + 1))
+  //   return null;
 
   // TODO: are pitches on a line or space? --> placement of augmentation dots, accidentals, etc.
   return (
@@ -61,25 +52,29 @@ export default function Chord({
           <Item
             key={`${id}_leg${legerLineIndex}`}
             className={styles.legerLine}
-            column={`c-not ${_duration}`}
-            pitch={legerLine.pitch}
+            column={`e${event.position.start}-not`}
+            pitch={`${event.flowId}s${event.staff}${legerLine.pitch}`}
           />
         ))}
       {event.rest && (
-        <Item key={`${id}_res`} column={`c-not ${_duration}`} pitch={"b4"}>
-          {getRestGlyph(event.duration)}
+        <Item
+          key={`${id}_res`}
+          column={`e${event.position.start}-not`}
+          pitch={`${event.flowId}s${event.staff}b4`}
+        >
+          {getRestGlyph(event.duration.base)}
         </Item>
       )}
       {event.notes &&
         event.notes.map((note, noteIndex) => (
           <Fragment key={`${id}_not${noteIndex}`}>
-            {/** Articulations */}
+            {/** Accidentals */}
             {note.pitch.alter && !accidentalStep.includes(note.pitch.step) && (
               <Item
                 key={`${id}_not${noteIndex}_acc`}
                 className={styles.accidental}
-                column={`c-acc ${_duration}`}
-                pitch={getPitchString(note)}
+                column={`e${event.position.start}-acc`}
+                pitch={`${event.flowId}s${note.staff}${getPitchString(note)}`}
               >
                 <span className={styles.inner}>
                   {getAccidentalGlyph(note.pitch.alter)}
@@ -89,21 +84,30 @@ export default function Chord({
             <Note
               key={`${id}_not${noteIndex}_notehead`}
               id={`${id}_not${noteIndex}_notehead`}
-              column={`c-not ${_duration}`}
+              column={`e${event.position.start}-not`}
               event={event}
               eventIndex={eventIndex}
               events={events}
               note={note}
               noteIndex={noteIndex}
+              pitchPrefix={`${event.flowId}`}
             />
+            {/** Articulations */}
           </Fragment>
         ))}
       {event.notes && (
         <Stem
           clef={clef}
-          duration={_duration}
+          direction={
+            event.partVoices === 1
+              ? null
+              : event.voice % 2 === 1
+                ? "down"
+                : "up"
+          }
           event={event}
           notes={event.notes}
+          pitchPrefix={event.flowId}
         />
       )}
       {event.duration.dots &&
@@ -119,24 +123,24 @@ export default function Chord({
                   isNoteOnLine(rangeClef.staffLinePitches[0].id, note) &&
                     styles.down,
                 )}
-                column={`c-ste-up ${_duration}`}
-                pitch={getPitchString(note)}
+                column={`e${event.position.start}-ste-up `}
+                pitch={`${event.flowId}s${note.staff}${getPitchString(note)}`}
               >
                 
               </Item>
             ),
           ),
         )}
-      {event.rest &&
-        event.duration.dots &&
+      {event.duration.dots &&
         event.duration.dots > 0 &&
+        event.rest &&
         Array.from({ length: event.duration.dots }, (_, i) => i).map(
           (dotIndex) => (
             <Item
               key={`${id}_res_dot${dotIndex}`}
               className={styles.dot}
-              column={`c-ste-up ${_duration}`}
-              pitch={"b4"}
+              column={`e${event.position.start}-ste-up`}
+              pitch={`${event.flowId}s${event.staff}b4`}
             >
               
             </Item>

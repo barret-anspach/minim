@@ -1,3 +1,25 @@
+const WHOLE = 4096;
+
+export const DURATION = {
+  DUPLEX_MAXIMA: WHOLE * 16,
+  MAXIMA: WHOLE * 8,
+  LONGA: WHOLE * 4,
+  BREVE: WHOLE * 2,
+  WHOLE: WHOLE,
+  HALF: WHOLE / 2,
+  QUARTER: WHOLE / 4,
+  EIGHTH: WHOLE / 8,
+  "16TH": WHOLE / 16,
+  "32ND": WHOLE / 32,
+  "64TH": WHOLE / 64,
+  "128TH": WHOLE / 128,
+  "256TH": WHOLE / 256,
+  "512TH": WHOLE / 512,
+  "1024TH": WHOLE / 1024,
+  "2048TH": WHOLE / 2048,
+  "4096TH": WHOLE / 4096,
+};
+
 export const durationMap = {
   key: [
     "duplexMaxima",
@@ -16,23 +38,25 @@ export const durationMap = {
     "512th",
     "1024th",
     "2048th",
-    "4096th"
-  ], value: [
-    32768, // duplexMaxima
-    16384, // maxima
-    8192, // longa
-    4096, // whole
-    2048, // half
-    1024, // quarter
-    512, // eighth
-    256, // 16th
-    128, // 32nd
-    64, // 64th
-    32, // 128th
-    16, // 256th
-    8, // 512th
-    4, // 1024th
-    2, // 2048th
-    1 // 4096th
+    "4096th",
   ],
-}
+  value: [
+    DURATION.DUPLEX_MAXIMA,
+    DURATION.MAXIMA,
+    DURATION.LONGA,
+    DURATION.BREVE,
+    DURATION.WHOLE,
+    DURATION.HALF,
+    DURATION.QUARTER,
+    DURATION.EIGHTH,
+    DURATION["16TH"],
+    DURATION["32ND"],
+    DURATION["64TH"],
+    DURATION["128TH"],
+    DURATION["256TH"],
+    DURATION["512TH"],
+    DURATION["1024TH"],
+    DURATION["2048TH"],
+    DURATION["4096TH"],
+  ],
+};

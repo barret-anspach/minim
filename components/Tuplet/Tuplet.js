@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Chord from "../Chord";
 
 import useVars from "../../hooks/useVars";
-import { toDuration, toDurationFromArray } from "../../utils/methods";
+import { toNumericalDuration, durationBeforeIndex } from "../../utils/methods";
 import styles from "./Tuplet.module.css";
 
 const metadata = require("./../../public/fonts/bravura/bravura_metadata.json");
@@ -24,9 +24,9 @@ export default function Tuplet({
 }) {
   const bracketRef = useRef(null);
   const tuplet = {
-    start: toDurationFromArray(eventIndex, events),
-    outer: toDuration(event.outer) * event.outer.multiple,
-    inner: toDuration(event.inner) * event.inner.multiple,
+    start: durationBeforeIndex(eventIndex, events),
+    outer: toNumericalDuration(event.oute.duration) * event.outer.multiple,
+    inner: toNumericalDuration(event.inner.duration) * event.inner.multiple,
   };
   const scalar = tuplet.outer / tuplet.inner;
   // TODO: Bracket row should be set to either top of Staff or uppermost bounds of TupletEvents (whichever higher), plus default padding

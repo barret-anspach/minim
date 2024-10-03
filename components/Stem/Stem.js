@@ -1,52 +1,58 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef } from "react";
 import clsx from "clsx";
 
-import Item from '../Item';
+import Item from "../Item";
 
-import useVars from '../../hooks/useVars';
-import { toDuration, getStem } from '../../utils/methods';
+import useVars from "../../hooks/useVars";
+import { getStem } from "../../utils/methods";
 
-import styles from './Stem.module.css';
-const metadata = require('./../../public/fonts/bravura/bravura_metadata.json');
-const range = require('./../../fixtures/pitch/range.json');
+import styles from "./Stem.module.css";
+import { DURATION } from "../../constants/durations";
+const metadata = require("./../../public/fonts/bravura/bravura_metadata.json");
+const range = require("./../../fixtures/pitch/range.json");
 
 const flagMap = {
-  key: [
-    'eighth',
-    '16th',
-    '32nd',
-    '64th',
-  ], value: [
-    {down: '', up: '', upShort: ''},
-    {down: '', up: '', upShort: ''},
-    {down: '', up: '', upShort: ''},
-    {down: '', up: '', upShort: ''},
+  key: ["eighth", "16th", "32nd", "64th"],
+  value: [
+    { down: "", up: "", upShort: "" },
+    { down: "", up: "", upShort: "" },
+    { down: "", up: "", upShort: "" },
+    { down: "", up: "", upShort: "" },
   ],
-}
+};
 
-/** 
+/**
  * An unbeamed Stem should roughly span an octave.
  * If a stem is on or below the Staff's midline, stem should be pointed down.
  * A beamed Stem's direction should be away from the beamed note farthest from the midline.
  */
-export default function Stem({ clef, column, duration, event, notes }) {
+export default function Stem({
+  clef,
+  direction = null,
+  event,
+  notes,
+  pitchPrefix = "",
+}) {
   const stemRef = useRef(null);
-  const _clef = 
-    Object.values(range.clefs).find((v) => clef.sign === v.sign);
-  const stem = getStem(notes, _clef.staffLinePitches[2].id);
-  const _duration = toDuration(event);
-  const _stemColumn = useMemo(() => `${stem.direction === 'up' ? 'c-ste-up' : 'c-not'} ${duration}`, [duration, stem.direction])
+  const _clef = Object.values(range.clefs).find((v) => clef.sign === v.sign);
+  const stem = getStem(notes, _clef.staffLinePitches[2].id, direction);
+  const _stemDirection = direction ?? stem.direction;
+  const _stemColumn = useMemo(
+    () =>
+      `e${event.position.start}${_stemDirection === "up" ? "-ste-up" : "-not"}`,
+    [event.position.start, _stemDirection],
+  );
 
   useVars({
     varRef: stemRef,
-    key: '--column',
+    key: "--column",
     value: _stemColumn,
-  })
+  });
   useVars({
     varRef: stemRef,
-    key: '--pitch',
-    value: stem.row,
-  })
+    key: "--pitch",
+    value: `${pitchPrefix}s${stem.noteStaff}${stem.row.start}/${pitchPrefix}s${stem.noteStaff}${stem.row.end}`,
+  });
 
   return (
     <>
@@ -55,23 +61,33 @@ export default function Stem({ clef, column, duration, event, notes }) {
         viewBox={`0 0 1 1`}
         width={`${metadata.engravingDefaults.stemThickness / 4}rem`}
         height="100%"
-        preserveAspectRatio='none'
+        preserveAspectRatio="none"
         overflow="visible"
-        className={clsx([styles.stem, stem.direction === 'up' ? styles.up : styles.down])}
+        className={clsx([
+          styles.stem,
+          _stemDirection === "up" ? styles.up : styles.down,
+        ])}
       >
         <rect x={0} y={0} width={1} height={1} />
       </svg>
-      {/** Flag, if not part of a beam group */}
+      {/** TODO: Flag, if not part of a beam group */}
       {/** Flag, if less than quarter */}
-      {_duration < 512 && (
+      {event.dimensions.length < DURATION.QUARTER && (
         <Item
-          className={clsx(styles.flag, stem.direction === 'up' ? styles.up : styles.down)}
+          className={clsx(
+            styles.flag,
+            _stemDirection === "up" ? styles.up : styles.down,
+          )}
           column={_stemColumn}
-          pitch={stem.row}
+          pitch={`${pitchPrefix}s${stem.noteStaff}${stem.row.start}/${pitchPrefix}s${stem.noteStaff}${stem.row.end}`}
         >
-          {flagMap.value[flagMap.key.findIndex(k => k === event.duration.base)][stem.direction]}
+          {
+            flagMap.value[
+              flagMap.key.findIndex((k) => k === event.duration.base)
+            ][_stemDirection]
+          }
         </Item>
       )}
     </>
-  )
+  );
 }

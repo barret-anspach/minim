@@ -8,19 +8,19 @@ import { withNoSSR } from "./../../hooks/withNoSSR";
 import { useMeasuresContext } from "./../../contexts/MeasuresContext";
 
 import styles from "./Score.module.css";
-import Score from "./Score";
+import Flow from "./../Flow/Flow";
 
 function MinimScore({ composition }) {
   const {
-    context: { initialized },
+    context: { initialized, columns, rows },
   } = useMeasuresContext();
 
   return (
     initialized && (
       <main className={styles.score}>
-        <Systems id="systems">
+        <Systems id="systems" columns={columns} rows={rows}>
           {composition.scores.map((score) =>
-            score.flows.map((flow) => <Score key={flow.id} score={flow} />),
+            score.flows.map((flow) => <Flow key={flow.id} id={flow.id} />),
           )}
         </Systems>
       </main>

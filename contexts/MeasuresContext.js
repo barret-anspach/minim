@@ -27,6 +27,7 @@ function measuresReducer(context, action) {
     case "setFlow": {
       const flows = context.flows;
       flows[action.flowId] = {
+        beams: action.beams,
         events: action.events,
         measures: action.measureEvents,
         parts: action.parts,
@@ -52,8 +53,8 @@ function measuresReducer(context, action) {
             index < starts.length - 1
               ? starts[index + 1][1][0].position.start - parseInt(start) + "fr"
               : (eventsAtStart[0].dimensions.length + "fr" ?? "auto");
-          // Every possible displayEvent type is given its own named column (per *event*)
-          const makeColumn = ({ start, columnWidth, index, starts }) => {
+          // Every possible displayEvent type is given its own named column line (per *event*)
+          const makeColumn = ({ start, columnWidth }) => {
             return `e${start}-start e${start}-text] auto [e${start}-bracket] auto [e${start}-bar] auto [e${start}-cle] auto [e${start}-key] auto [e${start}-tim] auto [e${start}-acc] auto [e${start}-art] auto [e${start}-not] auto [e${start}-ste-up] auto [e${start}-trailing-space] ${columnWidth} [e${start}-me-cle] auto [e${start}-me-bar] auto [e${start}-me-key] auto [e${start}-me-tim] auto [e${start}-end `;
           };
           if (
@@ -150,6 +151,7 @@ const MeasuresContextProvider = ({ children }) => {
                       part,
                       partIndex,
                       voice,
+                      voiceItem,
                     }),
                   )
                 : decorateEvent({
@@ -167,10 +169,13 @@ const MeasuresContextProvider = ({ children }) => {
         return acc;
       }, []);
 
+      const beams = events.filter((e) => e.beams);
+
       dispatch({
         type: "setFlow",
-        measureEvents,
+        beams,
         events,
+        measureEvents,
         parts: flow.parts,
         flowId: flow.id,
       });

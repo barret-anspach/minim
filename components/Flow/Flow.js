@@ -87,8 +87,8 @@ function Flow({ id }) {
         {flows[id].events.map((event, eventIndex, events) =>
           event.type === "tuplet" ? (
             <Tuplet
-              key={`${event.id}_tup`}
-              id={`${event.id}_tup`}
+              key={`${event.renderId}_tup`}
+              id={`${event.renderId}_tup`}
               clef={event.clefs[event.staff - 1].clef}
               event={event}
               eventIndex={eventIndex}
@@ -96,8 +96,8 @@ function Flow({ id }) {
             />
           ) : (
             <Chord
-              key={`${event.id}_cho`}
-              id={`${event.id}_cho`}
+              key={`${event.renderId}_cho`}
+              id={`${event.renderId}_cho`}
               clef={event.clefs[event.staff - 1].clef}
               event={event}
               eventIndex={eventIndex}

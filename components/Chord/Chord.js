@@ -32,23 +32,21 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
     notes: event.notes,
     pitchPrefix: event.flowId,
   });
-
-  useEffect(() => {
-    // Check if member of a beam
-    if (event.beams) {
-      const isBeamed = event.beams.map((beam) =>
-        beam.events.includes(event.id),
-      );
-    }
-  }, [event.id, event.beams]);
-
-  // if (event.notes && !event.notes.some((n) => n.staff === staffIndex + 1))
-  //   return null;
+  // TODO: How best to calculate beam pitch?
+  // Also, how to handle an angled beam vis-a-vis stem lengths?
+  const beam =
+    event.eventGroup !== null && event.eventGroup.beams
+      ? event.eventGroup.beams.reduce((acc, beam) => {
+          return beam.events.includes(event.id)
+            ? { pitch: event.voice % 2 === 0 ? "g7" : "d2", staff: event.staff }
+            : null;
+        }, {})
+      : null;
 
   // TODO: are pitches on a line or space? --> placement of augmentation dots, accidentals, etc.
   return (
     <Fragment key={id}>
-      {/** Leger Lines */}
+      {/* Leger Lines */}
       {legerLines &&
         legerLines.length > 0 &&
         legerLines.map((legerLine, legerLineIndex) => (
@@ -111,6 +109,7 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
           event={event}
           notes={event.notes}
           pitchPrefix={event.flowId}
+          beam={beam ?? null}
         />
       )}
       {event.duration.dots &&

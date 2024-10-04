@@ -27,6 +27,7 @@ const flagMap = {
  * A beamed Stem's direction should be away from the beamed note farthest from the midline.
  */
 export default function Stem({
+  beam = null,
   clef,
   direction = null,
   event,
@@ -35,7 +36,13 @@ export default function Stem({
 }) {
   const stemRef = useRef(null);
   const _clef = Object.values(range.clefs).find((v) => clef.sign === v.sign);
-  const stem = getStem(notes, _clef.staffLinePitches[2].id, direction);
+  const stem = getStem(
+    notes,
+    _clef.staffLinePitches[2].id,
+    direction,
+    beam,
+    pitchPrefix,
+  );
   const _stemDirection = direction ?? stem.direction;
   const _stemColumn = useMemo(
     () =>
@@ -51,7 +58,7 @@ export default function Stem({
   useVars({
     varRef: stemRef,
     key: "--pitch",
-    value: `${pitchPrefix}s${stem.noteStaff}${stem.row.start}/${pitchPrefix}s${stem.noteStaff}${stem.row.end}`,
+    value: `${stem.row.start}/${stem.row.end}`,
   });
 
   return (
@@ -79,7 +86,7 @@ export default function Stem({
             _stemDirection === "up" ? styles.up : styles.down,
           )}
           column={_stemColumn}
-          pitch={`${pitchPrefix}s${stem.noteStaff}${stem.row.start}/${pitchPrefix}s${stem.noteStaff}${stem.row.end}`}
+          pitch={`${stem.row.start}/${stem.row.end}`}
         >
           {
             flagMap.value[

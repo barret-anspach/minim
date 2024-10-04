@@ -270,7 +270,13 @@ export function getStemDirectionForChord(chord, midline) {
     };
   }
 }
-export function getStem(chord, midline, direction = null) {
+export function getStem(
+  chord,
+  midline,
+  direction = null,
+  beam = null,
+  pitchPrefix = null,
+) {
   const { bounds, direction: chordDirection } = getStemDirectionForChord(
     chord,
     midline,
@@ -278,18 +284,22 @@ export function getStem(chord, midline, direction = null) {
   const stemDirection = direction ?? chordDirection;
   const noteStaff =
     stemDirection === "up" ? chord[0].staff : chord[chord.length - 1].staff;
-
+  const terminus = beam
+    ? beam.pitch
+    : stemDirection === "up"
+      ? getDiatonicTransposition(bounds.upper, 7)
+      : getDiatonicTransposition(bounds.lower, -7);
   return {
     direction: stemDirection,
     row:
       stemDirection === "up"
         ? {
-            start: getDiatonicTransposition(bounds.upper, 7),
-            end: bounds.lower,
+            start: `${pitchPrefix ? `${pitchPrefix}s${beam ? beam.staff : noteStaff}` : null}${terminus}`,
+            end: `${pitchPrefix ? `${pitchPrefix}s${noteStaff}` : null}${bounds.lower}`,
           }
         : {
-            start: bounds.upper,
-            end: getDiatonicTransposition(bounds.lower, -7),
+            start: `${pitchPrefix ? `${pitchPrefix}s${noteStaff}` : null}${bounds.upper}`,
+            end: `${pitchPrefix ? `${pitchPrefix}s${beam ? beam.staff : noteStaff}` : null}${terminus}`,
           },
     noteStaff,
   };
@@ -336,52 +346,9 @@ export function getLegerLines({ clef, clefs, notes, pitchPrefix = null }) {
       return [...acc, lines.flat()];
     }
   }, []);
-  // Need to de-duplicate leger lines (i.e. if two notes in chord are below staff);
+  // De-duplicate leger lines (i.e. if two notes in chord are below staff,
+  // only draw one set of leger lines);
   return legerLines.length === 0 ? null : [...new Set(legerLines.flat())];
-
-  // TODO: If any of a chord's pitches crosses a staff, don't calculate leger lines for that direction.
-  // Requires knowing sequence.staff or voice.staff (as opposed to note.staff)
-  const chordBounds = getBoundsFromChord(event.notes);
-
-  const legerUpperInterval = getDiatonicInterval(
-    chordBounds.upper,
-    staffBounds.upper.id,
-  );
-  const legerUpperCount =
-    Math.sign(legerUpperInterval) *
-    Math.floor(Math.abs(legerUpperInterval) / 2);
-  const legerUpperLines =
-    legerUpperInterval > 0 && legerUpperCount > 0
-      ? Array.from({ length: legerUpperCount }, (_, i) => i).map((index) => ({
-          index,
-          pitch: getDiatonicTransposition(
-            staffBounds.upper.id,
-            2 * (index + 1),
-          ),
-        }))
-      : [];
-
-  const legerLowerInterval = getDiatonicInterval(
-    chordBounds.lower,
-    staffBounds.lower.id,
-  );
-  const legerLowerCount =
-    Math.sign(legerLowerInterval) *
-    Math.floor(Math.abs(legerLowerInterval) / 2);
-  const legerLowerLines =
-    legerLowerInterval < 0 && legerLowerCount < 0
-      ? Array.from({ length: Math.abs(legerLowerCount) }, (_, i) => i).map(
-          (index) => ({
-            index,
-            pitch: getDiatonicTransposition(
-              staffBounds.lower.id,
-              -2 * (index + 1),
-            ),
-          }),
-        )
-      : [];
-
-  return [...legerUpperLines, ...legerLowerLines];
 }
 
 export function decorateEvent({
@@ -390,18 +357,20 @@ export function decorateEvent({
   acc,
   flowId,
   voice,
+  voiceItem = null,
   part,
   partIndex,
 }) {
   const _duration = toNumericalDuration(event.duration);
   acc.push({
     ...event,
-    id: `${event.id}_rep${i}`,
+    renderId: `${event.id}_rep${i}`,
     flowId,
     partId: part.id,
     partIndex,
     partVoices: part.sequences.length,
     voice: voice.voice,
+    eventGroup: voiceItem,
     clef: part.global.clefs[voice.staff - 1],
     clefs: part.global.clefs,
     staff: voice.staff,

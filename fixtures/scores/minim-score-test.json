@@ -451,15 +451,6 @@
                   "count": 5,
                   "unit": 8
                 }
-              },
-              {
-                "key": {
-                  "fifths": 2
-                },
-                "time": {
-                  "count": 2,
-                  "unit": 4
-                }
               }
             ]
           },
@@ -844,7 +835,8 @@
                             {
                               "pitch": {
                                 "octave": 3,
-                                "step": "E"
+                                "step": "E",
+                                "alter": -1
                               },
                               "staff": 1
                             }

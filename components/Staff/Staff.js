@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import Item from "../Item";
 import StaffLine from "./StaffLine";
 
-import { usePitches } from "../../hooks/usePitches";
+import { getPitches } from "../../utils/getPitches";
 import useVars from "../../hooks/useVars";
 import { withNoSSR } from "../../hooks/withNoSSR";
 
@@ -23,7 +23,7 @@ function Staff({
 }) {
   const { actions } = useMeasuresContext();
   const ref = useRef(null);
-  const style = usePitches(clef.clef, id);
+  const style = getPitches(clef.clef, id);
 
   useEffect(() => {
     actions.addGridRows({ rows: style.pitches });

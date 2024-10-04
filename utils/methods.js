@@ -1,6 +1,7 @@
 import { durationMap } from "../constants/durations";
 import { noteheadMap } from "../constants/noteheads";
 import { restMap } from "../constants/rests";
+import { getPitches } from "./getPitches";
 
 /* Constants */
 const PITCH_CLASSES = ["c", "d", "e", "f", "g", "a", "b"];
@@ -295,10 +296,52 @@ export function getStem(chord, midline, direction = null) {
 }
 
 /* Leger lines: Helper methods */
-export function getLegerLines(staffBounds, chord) {
+export function getLegerLines({ clef, clefs, notes, pitchPrefix = null }) {
+  if (!notes) return null;
+
+  const legerLines = notes.reduce((acc, note) => {
+    const { staffBounds } = getPitches(clefs[note.staff - 1].clef ?? clef.clef);
+    const pitchString = getPitchString(note);
+    const lowerThanTop = getLowestPitch(pitchString, staffBounds.upper.id);
+    const higherThanBottom = getHighestPitch(pitchString, staffBounds.lower.id);
+    // First, is note outside staff?
+    if (pitchString === lowerThanTop && pitchString === higherThanBottom) {
+      // Nope, no leger lines needed for this note.
+      return acc;
+    }
+    // Second, if outside, is it below or above?
+    else {
+      const position =
+        staffBounds.upper.id === lowerThanTop ? "upper" : "lower";
+      // Third, calculate leger line count and position.
+      const interval = getDiatonicInterval(
+        pitchString,
+        staffBounds[position].id,
+      );
+      const count = Math.sign(interval) * Math.floor(Math.abs(interval) / 2);
+      const condition =
+        position === "upper"
+          ? interval > 0 && count > 0
+          : interval < 0 && count < 0;
+      const prefix = pitchPrefix ? `${pitchPrefix}s${note.staff}` : null;
+      const lines = condition
+        ? Array.from({ length: Math.abs(count) }, (_, i) => i).map((index) => ({
+            index,
+            pitch: `${prefix ?? ""}${getDiatonicTransposition(
+              staffBounds[position].id,
+              (position === "lower" ? -2 : 2) * (index + 1),
+            )}`,
+          }))
+        : [];
+      return [...acc, lines.flat()];
+    }
+  }, []);
+  // Need to de-duplicate leger lines (i.e. if two notes in chord are below staff);
+  return legerLines.length === 0 ? null : [...new Set(legerLines.flat())];
+
   // TODO: If any of a chord's pitches crosses a staff, don't calculate leger lines for that direction.
   // Requires knowing sequence.staff or voice.staff (as opposed to note.staff)
-  const chordBounds = getBoundsFromChord(chord);
+  const chordBounds = getBoundsFromChord(event.notes);
 
   const legerUpperInterval = getDiatonicInterval(
     chordBounds.upper,
@@ -382,4 +425,19 @@ export function decorateEvent({
       last: false,
     },
   });
+}
+
+export function getStavesForFlow(flows, id) {
+  return flows[id].parts.map((part) => ({
+    part,
+    staves: Array.from({ length: part.global.staves }, (_, i) => {
+      const clef = part.global.clefs.find((c) => c.staff === i + 1);
+      const { staffBounds } = getPitches(clef.clef, `${id}s${i + 1}`);
+      return {
+        clef,
+        staffBounds,
+        staffIndex: i,
+      };
+    }),
+  }));
 }

@@ -6,14 +6,13 @@ import Note from "../Note";
 import Stem from "../Stem";
 
 import { useKey } from "../../hooks/useKey";
-import { usePitches } from "../../hooks/usePitches";
+import { getPitches } from "../../utils/getPitches";
 import { getAccidentalGlyph } from "../../constants/accidentals";
 import {
   getLegerLines,
   getPitchString,
   getRestGlyph,
   isNoteOnLine,
-  durationBeforeIndex,
 } from "../../utils/methods";
 import styles from "./Chord.module.css";
 
@@ -25,11 +24,14 @@ import styles from "./Chord.module.css";
  * Convenience wrapper of note-related elements that are usually rendered together.
  */
 export default function Chord({ clef, event, eventIndex, events, id }) {
-  const { staffBounds, rangeClef } = usePitches(clef);
+  const { rangeClef } = getPitches(clef);
   const { accidentalStep } = useKey({ clefType: rangeClef.type, event });
-  const legerLines = event.notes
-    ? getLegerLines(staffBounds, event.notes)
-    : null;
+  const legerLines = getLegerLines({
+    clef: event.clef,
+    clefs: event.clefs,
+    notes: event.notes,
+    pitchPrefix: event.flowId,
+  });
 
   useEffect(() => {
     // Check if member of a beam
@@ -48,12 +50,13 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
     <Fragment key={id}>
       {/** Leger Lines */}
       {legerLines &&
+        legerLines.length > 0 &&
         legerLines.map((legerLine, legerLineIndex) => (
           <Item
             key={`${id}_leg${legerLineIndex}`}
             className={styles.legerLine}
             column={`e${event.position.start}-not`}
-            pitch={`${event.flowId}s${event.staff}${legerLine.pitch}`}
+            pitch={legerLine.pitch}
           />
         ))}
       {event.rest && (

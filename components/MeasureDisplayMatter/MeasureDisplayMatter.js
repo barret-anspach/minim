@@ -3,31 +3,30 @@ import Key from "../Key";
 import Meter from "../Meter";
 
 import { useMeasuresContext } from "../../contexts/MeasuresContext";
-import {
-  areTimeSignaturesEqual,
-  timeSignatureToDuration,
-} from "../../utils/methods";
+import { areTimeSignaturesEqual } from "../../utils/methods";
 const range = require("../../fixtures/pitch/range.json");
 
 export default function MeasureDisplayMatter({
-  globalMeasure,
-  nextGlobalMeasure = undefined,
-  first = false,
-  last = false,
+  flowId,
   part,
-  partIndex,
   index,
+  measure,
   staffIndex,
 }) {
   const {
-    context: { measures },
+    context: { flows },
   } = useMeasuresContext();
+  const { measures } = flows[flowId];
   const measureClef = Object.values(range.clefs).find(
-    (v) => measures[index].clefs[partIndex][staffIndex].clef.sign === v.sign,
+    (v) =>
+      measure.clefs[staffIndex].clef.sign === v.sign &&
+      measure.clefs[staffIndex].staff === staffIndex + 1,
   );
   // Local clef context: Does part have a global clef defined?
-  const currentClef = Object.values(range.clefs).find(
-    (v) => part.global.clefs[staffIndex].clef.sign === v.sign,
+  const defaultClef = Object.values(range.clefs).find(
+    (v) =>
+      part.global.clefs[staffIndex].clef.sign === v.sign &&
+      part.global.clefs[staffIndex].staff === staffIndex + 1,
   );
   // Possibly part.sequences isn't flat enough; should be able to immediately access events from a sequence
   // Find the closest next clef definition (which will be in either part.sequences[].content[type="measure"].sequence[] if "mid-measure"
@@ -36,42 +35,42 @@ export default function MeasureDisplayMatter({
     measures[index + 1] &&
     Object.values(range.clefs).find(
       (v) =>
-        measures[index + 1].clefs[partIndex][staffIndex].clef.sign === v.sign,
+        measures[index + 1].clefs[staffIndex].clef.sign === v.sign &&
+        measures[index + 1].clefs[staffIndex].staff === staffIndex + 1,
     );
 
   const clef =
-    last &&
+    measure.positionInSystem.last &&
     measures[index + 1] &&
     measures[index + 1].clefs &&
-    nextClef.type !== currentClef.type
-      ? { clef: nextClef, column: "me-cle" }
-      : first
-        ? { clef: currentClef, column: "m-cle" }
+    nextClef.type !== defaultClef.type
+      ? { clef: nextClef, column: `e${measure.position.end}-me-cle` }
+      : index === 0 ||
+          measure.positionInSystem.first ||
+          measures[index - 1].clefs[staffIndex].clef.sign !== measureClef.sign
+        ? { clef: defaultClef, column: `e${measure.position.start}-cle` }
         : undefined;
 
   // TODO: should compare meter objects for equality, not computed durations, to tell whether there's a time signature change
   // Show meter when next measure has a time signature change, or if current measure's time signature is different from the previous measure's
   const meter =
-    last &&
-    nextGlobalMeasure &&
-    nextGlobalMeasure.time &&
-    !areTimeSignaturesEqual(nextGlobalMeasure.time, globalMeasure.time)
+    measure.positionInSystem.last &&
+    measures[index + 1] &&
+    measures[index + 1].time &&
+    !areTimeSignaturesEqual(measures[index + 1].time, measure.time)
       ? {
-          count: nextGlobalMeasure.time.count,
-          unit: nextGlobalMeasure.time.unit,
-          start: "me-tim",
+          count: measures[index + 1].time.count,
+          unit: measures[index + 1].time.unit,
+          start: `e${measure.position.end}-me-tim`,
         }
       : index === 0 ||
           (measures[index - 1] &&
             measures[index - 1].time &&
-            !areTimeSignaturesEqual(
-              measures[index - 1].time,
-              globalMeasure.time,
-            ))
+            !areTimeSignaturesEqual(measures[index - 1].time, measure.time))
         ? {
-            count: globalMeasure.time.count,
-            unit: globalMeasure.time.unit,
-            start: "m-tim",
+            count: measure.time.count,
+            unit: measure.time.unit,
+            start: `e${measure.position.start}-tim`,
           }
         : undefined;
   // If it's the last measure in a system and there's a key change in the next measure,
@@ -85,28 +84,35 @@ export default function MeasureDisplayMatter({
     .slice(0, index + 1)
     .findLast((m) => m.key !== undefined).key;
   const key =
-    last &&
-    nextGlobalMeasure &&
-    nextGlobalMeasure.key &&
-    nextGlobalMeasure.key.fifths !== globalMeasure.key.fifths
+    measure.positionInSystem.last &&
+    measures[index + 1] &&
+    measures[index + 1].key &&
+    measures[index + 1].key.fifths !== measure.key.fifths
       ? {
-          fifths: nextGlobalMeasure.key.fifths,
-          column: "me-key",
+          fifths: measures[index + 1].key.fifths,
+          column: `e${measure.position.end}-me-key`,
           prevFifths: prevKey?.fifths || undefined,
         }
-      : first && currentKey
+      : (measure.positionInSystem.first || index === 0) && currentKey
         ? {
             fifths: currentKey.fifths,
-            column: "m-key",
+            column: `e${measure.position.start}-key`,
             prevFifths: prevKey?.fifths || undefined,
           }
         : undefined;
   return (
     <>
-      {clef && <Clef clef={clef.clef} column={clef.column} />}
+      {clef && (
+        <Clef
+          id={`${flowId}s${staffIndex + 1}`}
+          clef={clef.clef}
+          column={clef.column}
+        />
+      )}
       {key && (
         <Key
-          clefType={currentClef.type}
+          id={`${flowId}s${staffIndex + 1}`}
+          clefType={defaultClef.type}
           column={key.column}
           fifths={key.fifths}
           prevFifths={key.prevFifths}
@@ -114,6 +120,7 @@ export default function MeasureDisplayMatter({
       )}
       {meter && (
         <Meter
+          id={`${flowId}s${staffIndex + 1}`}
           clef={measureClef}
           count={meter.count}
           unit={meter.unit}

@@ -1,6 +1,6 @@
 const range = require("../fixtures/pitch/range.json");
 
-export function usePitches(clef, prefix) {
+export function getPitches(clef, prefix) {
   if (!clef)
     return {
       pitches: undefined,

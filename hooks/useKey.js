@@ -13,13 +13,11 @@ export function useKey({ clefType, event }) {
   // or a current key change,
   // or the first measure in a system,
   const { measures } = flows[event.flowId];
-  const measureIndex = measures.findIndex(
-    (m) => m.position.end >= event.position.end,
+  const measureIndex = measures.findIndex((m) =>
+    m.position.end >= event.position.end ? true : measures.length - 1,
   );
 
   const value = useMemo(() => {
-    const prevFifths =
-      measureIndex > 0 ? measures[measureIndex - 1].key.fifths : undefined;
     const fifths = measures[measureIndex].key.fifths;
 
     const unsignedInteger = Math.abs(fifths);

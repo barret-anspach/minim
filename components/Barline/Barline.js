@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import clsx from "clsx";
 
 import useVars from "../../hooks/useVars";
@@ -9,15 +9,6 @@ import { withNoSSR } from "../../hooks/withNoSSR";
 
 function RegularBarline() {
   return <div className={clsx(styles.line, styles.thinLine)} />;
-  // return (
-  //   <polyline
-  //     points="0,0 0,1"
-  //     stroke="currentColor"
-  //     strokeWidth={`${metadata.engravingDefaults.thinBarlineThickness / 4}rem`}
-  //     vectorEffect={'non-scaling-stroke'}
-  //   />
-  // );
-  // return <rect x={0} y={0} width={1} height={1} />;
 }
 
 function FinalBarline() {
@@ -27,26 +18,6 @@ function FinalBarline() {
       <div className={clsx(styles.line, styles.thickLine)} />
     </>
   );
-  // return (
-  //   <>
-  //     <rect
-  //       x={0}
-  //       y={0}
-  //       width={metadata.engravingDefaults.thinBarlineThickness / 4}
-  //       height={1}
-  //     />
-  //     <rect
-  //       x={
-  //         (metadata.engravingDefaults.thinBarlineThickness +
-  //           metadata.engravingDefaults.barlineSeparation) /
-  //         4
-  //       }
-  //       y={0}
-  //       width={metadata.engravingDefaults.thickBarlineThickness / 4}
-  //       height={1}
-  //     />
-  //   </>
-  // );
 }
 
 function Barline({
@@ -76,13 +47,6 @@ function Barline({
     key: "--row",
     value: row,
   });
-  const width = useMemo(
-    () =>
-      type === "final"
-        ? `${(metadata.engravingDefaults.thinBarlineThickness + metadata.engravingDefaults.barlineSeparation + metadata.engravingDefaults.thickBarlineThickness) / 4}rem`
-        : `${metadata.engravingDefaults.thinBarlineThickness / 4}rem`,
-    [type],
-  );
 
   return (
     <div ref={ref} className={clsx(className)}>

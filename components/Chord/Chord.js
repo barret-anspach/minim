@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import clsx from "clsx";
 
 import Item from "../Item";
@@ -6,6 +6,7 @@ import Note from "../Note";
 import Stem from "../Stem";
 
 import { useKey } from "../../hooks/useKey";
+import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import { getPitches } from "../../utils/getPitches";
 import { getAccidentalGlyph } from "../../constants/accidentals";
 import {
@@ -14,6 +15,7 @@ import {
   getRestGlyph,
   isNoteOnLine,
 } from "../../utils/methods";
+
 import styles from "./Chord.module.css";
 
 // TODO: Should handle
@@ -24,6 +26,9 @@ import styles from "./Chord.module.css";
  * Convenience wrapper of note-related elements that are usually rendered together.
  */
 export default function Chord({ clef, event, eventIndex, events, id }) {
+  const {
+    context: { flows },
+  } = useMeasuresContext();
   const { rangeClef } = getPitches(clef);
   const { accidentalStep } = useKey({ clefType: rangeClef.type, event });
   const legerLines = getLegerLines({
@@ -32,16 +37,9 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
     notes: event.notes,
     pitchPrefix: event.flowId,
   });
-  // TODO: How best to calculate beam pitch?
-  // Also, how to handle an angled beam vis-a-vis stem lengths?
-  const beam =
-    event.eventGroup !== null && event.eventGroup.beams
-      ? event.eventGroup.beams.reduce((acc, beam) => {
-          return beam.events.includes(event.id)
-            ? { pitch: event.voice % 2 === 0 ? "g7" : "d2", staff: event.staff }
-            : null;
-        }, {})
-      : null;
+  const beamEvent = flows[event.flowId].beamEvents.find(
+    (beamEvent) => beamEvent.renderId === event.renderId,
+  );
 
   // TODO: are pitches on a line or space? --> placement of augmentation dots, accidentals, etc.
   return (
@@ -99,17 +97,11 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
       {event.notes && (
         <Stem
           clef={clef}
-          direction={
-            event.partVoices === 1
-              ? null
-              : event.voice % 2 === 1
-                ? "down"
-                : "up"
-          }
+          direction={beamEvent?.beam.direction ?? null}
           event={event}
           notes={event.notes}
           pitchPrefix={event.flowId}
-          beam={beam ?? null}
+          beam={beamEvent?.beam ?? null}
         />
       )}
       {event.duration.dots &&

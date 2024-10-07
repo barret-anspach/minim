@@ -43,7 +43,7 @@ export default function Stem({
     beam,
     pitchPrefix,
   );
-  const _stemDirection = direction ?? stem.direction;
+  const _stemDirection = beam?.direction ?? direction ?? stem.direction;
   const _stemColumn = useMemo(
     () =>
       `e${event.position.start}${_stemDirection === "up" ? "-ste-up" : "-not"}`,
@@ -79,7 +79,7 @@ export default function Stem({
       </svg>
       {/** TODO: Flag, if not part of a beam group */}
       {/** Flag, if less than quarter */}
-      {event.dimensions.length < DURATION.QUARTER && (
+      {!beam && event.dimensions.length < DURATION.QUARTER && (
         <Item
           className={clsx(
             styles.flag,

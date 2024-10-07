@@ -3,6 +3,7 @@
 import React, { Fragment } from "react";
 
 import Barline from "./../Barline/Barline";
+import { BeamGroup } from "../BeamGroup/BeamGroup";
 import Chord from "../Chord/Chord";
 import Staff from "./../Staff";
 import MeasureDisplayMatter from "../MeasureDisplayMatter/MeasureDisplayMatter";
@@ -11,6 +12,9 @@ import Tuplet from "./../Tuplet/Tuplet";
 import { withNoSSR } from "./../../hooks/withNoSSR";
 import { useMeasuresContext } from "./../../contexts/MeasuresContext";
 import { getStavesForFlow } from "../../utils/methods";
+import Item from "../Item";
+
+import styles from "./Flow.module.css";
 
 function Flow({ id }) {
   const {
@@ -34,9 +38,10 @@ function Flow({ id }) {
                     staffIndex={staffIndex}
                   />
                   {/** TODO: Bracket placeholder */}
-                  {/** TODO: Interpret layout groups */}
                   {staffIndex === 0 && (
                     <>
+                      {/* TODO: Handle barlines through multiple parts */}
+                      {/** TODO: Interpret layout groups */}
                       {(measureIndex === 0 ||
                         measure.positionInSystem.first) && (
                         <Barline
@@ -71,7 +76,6 @@ function Flow({ id }) {
                   )}
                 </Fragment>
               ))}
-              {/* TODO: Use start/end positions of events in the Part the staff's being drawn for! */}
               <Staff
                 id={`${id}s${staffIndex + 1}`}
                 key={`${id}s${staffIndex + 1}`}
@@ -105,12 +109,14 @@ function Flow({ id }) {
             />
           ),
         )}
-        {/* {flows[id].parts.map((part) =>
-          Array.from({ length: part.global.staves }, (_, i) => i).map(
-            (_, staffIndex) =>
-              
-          ),
-        )} */}
+        {/* Beams */}
+        {flows[id].beamGroups.map((beamGroup, beamIndex) => (
+          <BeamGroup
+            key={`beamGroup_${beamIndex}`}
+            beamGroup={beamGroup}
+            prefix={id}
+          />
+        ))}
       </Fragment>
     )
   );

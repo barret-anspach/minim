@@ -1,5 +1,10 @@
 import { createContext, useContext, useReducer } from "react";
-import { decorateEvent, timeSignatureToDuration } from "../utils/methods";
+import {
+  decorateEvent,
+  getBeamGroupStem,
+  timeSignatureToDuration,
+} from "../utils/methods";
+import { getPitches } from "../utils/getPitches";
 
 const initialState = {
   columns: "",
@@ -27,7 +32,8 @@ function measuresReducer(context, action) {
     case "setFlow": {
       const flows = context.flows;
       flows[action.flowId] = {
-        beams: action.beams,
+        beamEvents: action.beamEvents,
+        beamGroups: action.beamGroups,
         events: action.events,
         measures: action.measureEvents,
         parts: action.parts,
@@ -169,11 +175,56 @@ const MeasuresContextProvider = ({ children }) => {
         return acc;
       }, []);
 
-      const beams = events.filter((e) => e.beams);
+      const eventGroupsWithBeams = events.filter((e) => e.eventGroup?.beams);
+      const beamGroups =
+        eventGroupsWithBeams.length === 0
+          ? null
+          : eventGroupsWithBeams
+              .reduce(
+                (acc, event) => {
+                  const b = event.eventGroup.beams.flatMap(
+                    (beam) => beam.events,
+                  );
+                  const bJSON = JSON.stringify(b);
+                  if (!acc.seen.has(bJSON)) {
+                    const count = Array.from(
+                      { length: event.eventGroup.repeatCount ?? 1 },
+                      (_, i) => i,
+                    );
+                    for (const i of count) {
+                      acc.result.push(b.map((e) => `${e}_rep${i}`));
+                    }
+                    acc.seen.add(bJSON);
+                  }
+                  return acc;
+                },
+                { result: [], seen: new Set() },
+              )
+              .result.reduce(
+                (acc, beamGroup) => [
+                  ...acc,
+                  beamGroup.map((beamGroupId) =>
+                    eventGroupsWithBeams.find(
+                      (beamedEvent) => beamedEvent.renderId === beamGroupId,
+                    ),
+                  ),
+                ],
+                [],
+              );
+      const beamEvents = beamGroups.flatMap((beamGroup) =>
+        beamGroup.flatMap((event) => ({
+          renderId: event.renderId,
+          beam: {
+            ...getBeamGroupStem(beamGroup, event.flowId),
+            staff: event.staff,
+          },
+        })),
+      );
 
       dispatch({
         type: "setFlow",
-        beams,
+        beamEvents,
+        beamGroups,
         events,
         measureEvents,
         parts: flow.parts,

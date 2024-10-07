@@ -282,6 +282,7 @@ export function getStem(
     midline,
   );
   const stemDirection = direction ?? chordDirection;
+  // *** presumes pitches in chord pitches are ordered from top to bottom
   const noteStaff =
     stemDirection === "up" ? chord[0].staff : chord[chord.length - 1].staff;
   const terminus = beam
@@ -301,6 +302,70 @@ export function getStem(
             start: `${pitchPrefix ? `${pitchPrefix}s${noteStaff}` : null}${bounds.upper}`,
             end: `${pitchPrefix ? `${pitchPrefix}s${beam ? beam.staff : noteStaff}` : null}${terminus}`,
           },
+    noteStaff,
+  };
+}
+export function getBeamGroupStem(beamGroup, pitchPrefix = null) {
+  // TODO: Lots of cleanup to do here. And a lot more complexity to add, unfortunately.
+  // Pitch:
+  // Get bounds for all pitches under beam
+  const beamGroupNotes = beamGroup
+    .filter((e) => e.notes)
+    .flatMap((e) => e.notes);
+  /*  Direction:
+      If multiple voices,
+          voice 1: "up"
+          voice 2: "down"
+   */
+  const beamGroupStaves = beamGroupNotes.reduce(
+    (acc, note) => acc.add(note.staff),
+    new Set(),
+  );
+  const beamGroupNoteStaves = beamGroupNotes.map((note) => note.staff, []);
+  const staffWithMostNotes = Array.from(new Set(beamGroupNoteStaves)).reduce(
+    (prev, curr) =>
+      beamGroupNoteStaves.filter((el) => el === curr).length >
+      beamGroupNoteStaves.filter((el) => el === prev).length
+        ? curr
+        : prev,
+  );
+  const directionForMultipleVoices =
+    beamGroup[0].partVoices === 1
+      ? direction
+      : beamGroup[0].voice % beamGroup[0].partVoices === 1
+        ? "up"
+        : "down";
+  const directionForMultipleStaves =
+    beamGroupStaves.size > 1
+      ? beamGroup[0].staff % beamGroupStaves.size === 0
+        ? "down"
+        : "up"
+      : directionForMultipleVoices;
+  const stemDirection = directionForMultipleStaves;
+  const noteStaff =
+    stemDirection === "up"
+      ? beamGroup[0].staff
+      : beamGroup[beamGroup.length - 1].staff;
+  const {
+    rangeClef: { midline },
+  } = getPitches(
+    stemDirection === "up"
+      ? beamGroup[0].clef.clef
+      : beamGroup.at(-1).clef.clef,
+  );
+  // compare acc's bounds against chord's bounds, and push lower down and upper up
+  const { bounds, direction } = getStemDirectionForChord(
+    beamGroupNotes,
+    midline,
+  );
+  const terminus =
+    stemDirection === "up"
+      ? getDiatonicTransposition(bounds.upper, 7)
+      : getDiatonicTransposition(bounds.lower, -7);
+  return {
+    direction: stemDirection,
+    pitch: terminus,
+    row: `${pitchPrefix ? `${pitchPrefix}s${noteStaff}` : null}${terminus}`,
     noteStaff,
   };
 }
@@ -369,20 +434,26 @@ export function decorateEvent({
     partId: part.id,
     partIndex,
     partVoices: part.sequences.length,
+    // TODO: rename to 'voiceNumber'
     voice: voice.voice,
     eventGroup: voiceItem,
     clef: part.global.clefs[voice.staff - 1],
     clefs: part.global.clefs,
+    // TODO: rename to 'staffNumber'
     staff: voice.staff,
     staves: Array.from({ length: part.global.staves }, (_, i) => i + 1),
     index: acc[acc.length - 1] ? acc[acc.length - 1]?.index + i + 1 : i,
     position: {
       start:
-        acc.length === 0 || acc[acc.length - 1].voice !== voice.voice
+        acc.length === 0 ||
+        acc[acc.length - 1].voice !== voice.voice ||
+        acc[acc.length - 1].staff !== voice.staff
           ? 0
           : acc[acc.length - 1].position.end,
       end:
-        acc.length === 0 || acc[acc.length - 1].voice !== voice.voice
+        acc.length === 0 ||
+        acc[acc.length - 1].voice !== voice.voice ||
+        acc[acc.length - 1].staff !== voice.staff
           ? _duration
           : acc[acc.length - 1].position.end + _duration,
     },

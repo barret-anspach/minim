@@ -1,1 +1,1 @@
-export { default } from './StaffDisplayItem';
+export { default } from "./StaffDisplayItem";

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import Head from "next/head";
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 const frameStyle = css`
   outline: 1px solid black;
@@ -11,7 +11,7 @@ const frameStyle = css`
 const Wrapper = styled.main`
   ${frameStyle}
   display: grid;
-  grid-template-areas: 'content' 'editor' 'input';
+  grid-template-areas: "content" "editor" "input";
   grid-template-rows: 1fr auto auto;
   grid-template-columns: 1fr;
   width: 100%;
@@ -51,49 +51,56 @@ const EditorInputOption = styled.li`
 const Output = styled.pre``;
 
 export default function EditorPage() {
-  const [textInput, setTextInput] = useState('');
+  const [textInput, setTextInput] = useState("");
   const [inputOptions, setInputOptions] = useState([]);
-  const [background, setBackground] = useState('white');
-  const [color, setColor] = useState('blue');
+  const [background, setBackground] = useState("white");
+  const [color, setColor] = useState("blue");
   const editorTextInputRef = useRef();
   const inputOptionsRef = useRef();
 
   const clefOptions = [
-    <button key='treble' onClick={() => handleInputChoice('treble')}>treble</button>,
-    <button key='alto' onClick={() => handleInputChoice('alto')}>alto</button>,
-    <button key='bass' onClick={() => handleInputChoice('bass')}>bass</button>,
+    <button key="treble" onClick={() => handleInputChoice("treble")}>
+      treble
+    </button>,
+    <button key="alto" onClick={() => handleInputChoice("alto")}>
+      alto
+    </button>,
+    <button key="bass" onClick={() => handleInputChoice("bass")}>
+      bass
+    </button>,
   ];
 
   useEffect(() => {
-    inputOptions.length > 0 && inputOptionsRef.current.firstElementChild.focus();
+    inputOptions.length > 0 &&
+      inputOptionsRef.current.firstElementChild.focus();
   }, [inputOptions]);
 
   const handleInputChoice = (value) => {
     setTextInput(textInput + value);
     editorTextInputRef.current.focus();
     setInputOptions([]);
-  }
+  };
 
   const handleInputChange = (event) => {
     switch (event.nativeEvent.data) {
-      case 'b':
-        setBackground('blue');
-        setColor('white');
+      case "b":
+        setBackground("blue");
+        setColor("white");
         break;
-      case 'c':
+      case "c":
         setInputOptions(clefOptions);
         break;
-      case 'w':
-        setBackground('white');
-        setColor('blue');
+      case "w":
+        setBackground("white");
+        setColor("blue");
         break;
-      case 'escape':
+      case "escape":
         setInputOptions([]);
         break;
       default:
         setTextInput(event.target.value);
     }
-  }
+  };
   const [output, setOutput] = useState();
 
   useEffect(() => {
@@ -103,7 +110,11 @@ export default function EditorPage() {
   return (
     <Wrapper>
       <Head />
-      <EditorArea ref={editorTextInputRef} value={textInput} onChange={handleInputChange} />
+      <EditorArea
+        ref={editorTextInputRef}
+        value={textInput}
+        onChange={handleInputChange}
+      />
       <Content style={{ background, color }}>
         <Output>{output}</Output>
       </Content>
@@ -117,5 +128,5 @@ export default function EditorPage() {
         )}
       </Input>
     </Wrapper>
-  )
+  );
 }

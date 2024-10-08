@@ -1,1 +1,1 @@
-export { default } from './Tuplet';
+export { default } from "./Tuplet";

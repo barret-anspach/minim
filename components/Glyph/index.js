@@ -1,1 +1,1 @@
-export { default } from './Glyph';
+export { default } from "./Glyph";

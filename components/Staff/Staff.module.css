@@ -8,7 +8,7 @@
   grid-column: var(--start) / var(--end);
   display: contents;
   height: 1rem;
-  color: black;
+  color: currentColor;
 }
 .staff .line {
   --pitch: b4;

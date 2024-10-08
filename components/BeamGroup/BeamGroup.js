@@ -1,5 +1,8 @@
-import { getBeamGroupStem } from "../../utils/methods";
+import clsx from "clsx";
+
 import Item from "../Item";
+
+import { getBeamGroupStem } from "../../utils/methods";
 import styles from "./BeamGroup.module.css";
 
 export function BeamGroup({ beamGroup, prefix }) {
@@ -8,7 +11,15 @@ export function BeamGroup({ beamGroup, prefix }) {
     direction === "up"
       ? `e${beamGroup[0].position.start}-ste-up / e${beamGroup.at(-1).position.start}-ste-up`
       : `e${beamGroup[0].position.start}-not / e${beamGroup.at(-1).position.start}-not`;
-  return <Item className={styles.beam} column={column} pitch={row} />;
+  return (
+    <Item
+      className={clsx(styles.beam, {
+        [`${styles.below}`]: direction === "down",
+      })}
+      column={column}
+      pitch={row}
+    />
+  );
 }
 
 // return (

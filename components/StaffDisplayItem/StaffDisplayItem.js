@@ -11,8 +11,16 @@ function StaffDisplayItem({ children, type, start }) {
   const className = useVars({
     defaultStyles: [styles.staffDisplayItem],
     conditionalStyles: [
-      { condition: type === "key", operator: "&&", style: styles.row },
-      { condition: type === "tim", operator: "&&", style: styles.column },
+      {
+        condition: ["key", "brace"].includes(type),
+        operator: "&&",
+        style: styles.row,
+      },
+      {
+        condition: ["tim", "bracket"].includes(type),
+        operator: "&&",
+        style: styles.column,
+      },
       { condition: start.includes("me-"), operator: "&&", style: styles.end },
     ],
     key: "--main-axis",

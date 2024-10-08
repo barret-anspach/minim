@@ -15,6 +15,7 @@ import { getStavesForFlow } from "../../utils/methods";
 import Item from "../Item";
 
 import styles from "./Flow.module.css";
+import Bracket from "../Bracket/Bracket";
 
 function Flow({ id }) {
   const {
@@ -28,6 +29,16 @@ function Flow({ id }) {
         {allStaves.map(({ part, staves }) =>
           staves.map(({ clef, staffIndex, staffBounds }) => (
             <Fragment key={`${id}_sta${staffIndex}`}>
+              {staffIndex === 0 && (
+                <Item
+                  className={styles.partLabel}
+                  text={true}
+                  column={`e0-text`}
+                  pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
+                >
+                  {part.name}
+                </Item>
+              )}
               {flows[id].measures.map((measure, measureIndex, measures) => (
                 <Fragment key={`${id}_mea${measureIndex}`}>
                   <MeasureDisplayMatter
@@ -37,21 +48,20 @@ function Flow({ id }) {
                     part={part}
                     staffIndex={staffIndex}
                   />
-                  {/** TODO: Bracket placeholder */}
                   {staffIndex === 0 && (
                     <>
-                      {/* TODO: Handle barlines through multiple parts */}
+                      {/** Bracket or Brace */}
                       {/** TODO: Interpret layout groups */}
                       {(measureIndex === 0 ||
                         measure.positionInSystem.first) && (
-                        <Barline
-                          type={"regular"}
-                          separation={true}
+                        <Bracket
+                          type={"brace"}
+                          size={"regular"}
                           row={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
                           column={`e${measure.position.start}-bracket / e${measure.position.start}-bracket`}
-                          height="100%"
                         />
                       )}
+                      {/* TODO: Handle barlines through multiple parts */}
                       <Barline
                         type={"regular"}
                         separation={true}
@@ -61,6 +71,7 @@ function Flow({ id }) {
                       {measure.positionInSystem.last &&
                         measureIndex !== measures.length - 1 && (
                           <Barline
+                            type={"regular"}
                             row={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
                             column={`e${measure.position.end}-me-bar`}
                           />

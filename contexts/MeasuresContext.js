@@ -4,14 +4,13 @@ import {
   getBeamGroupStem,
   timeSignatureToDuration,
 } from "../utils/methods";
-import { getPitches } from "../utils/getPitches";
 
 const initialState = {
   columns: "",
   rows: "",
   flows: {},
   initialized: false,
-  measures: [],
+  periods: [],
   page: {
     left: null,
     right: null,
@@ -23,11 +22,8 @@ MeasuresContext.displayName = "MeasuresContext";
 
 function measuresReducer(context, action) {
   switch (action.type) {
-    case "updateWidth": {
-      return {
-        ...context,
-        page: action.width,
-      };
+    case "addGridRows": {
+      return { ...context, rows: context.rows.concat(action.rows) };
     }
     case "setFlow": {
       const flows = context.flows;
@@ -61,7 +57,7 @@ function measuresReducer(context, action) {
               : (eventsAtStart[0].dimensions.length + "fr" ?? "auto");
           // Every possible displayEvent type is given its own named column line (per *event*)
           const makeColumn = ({ start, columnWidth }) => {
-            return `e${start}-start e${start}-text] auto [e${start}-bracket] auto [e${start}-bar] auto [e${start}-cle] auto [e${start}-key] auto [e${start}-tim] auto [e${start}-acc] auto [e${start}-art] auto [e${start}-not] auto [e${start}-ste-up] auto [e${start}-trailing-space] ${columnWidth} [e${start}-me-cle] auto [e${start}-me-bar] auto [e${start}-me-key] auto [e${start}-me-tim] auto [e${start}-end `;
+            return `e${start}-start e${start}-text] auto [e${start}-bracket] auto [e${start}-bar] auto [e${start}-cle] auto [e${start}-key] auto [e${start}-tim] auto [e${start}-acc] auto [e${start}-art] auto [e${start}-not] auto [e${start}-ste-up] auto [e${start}-trailing-space] minmax(0.1rem, ${columnWidth}) [e${start}-me-cle] auto [e${start}-me-bar] auto [e${start}-me-key] auto [e${start}-me-tim] auto [e${start}-end `;
           };
           if (
             uniqEventsByFlow[eventsAtStart[0].flowId].at(-1).position.end ===
@@ -76,8 +72,31 @@ function measuresReducer(context, action) {
         .concat("]");
       return { ...context, columns };
     }
-    case "addGridRows": {
-      return { ...context, rows: context.rows.concat(action.rows) };
+    case "setPeriods": {
+      const flowEvents = Object.values(context.flows).map((flow) =>
+        flow.events.flatMap((event) => event.position.start),
+      );
+      // I. for all flows, are there intersections of
+      // event.position.start?
+      // (TODO: and event.position.end?)
+      const periods = flowEvents.reduce((a, b) =>
+        a.filter((c) => b.includes(c)),
+      );
+      // II. TODO: if one flow is longer than the other,
+      // or only one flow,
+      // add periods @remaining flow's measure starts.
+      // III. TODO: Finally, group all flow events into
+      // "Periods" so we can again reflow systems.
+      return {
+        ...context,
+        periods: [...new Set(periods)].sort((a, b) => a - b),
+      };
+    }
+    case "updateWidth": {
+      return {
+        ...context,
+        page: action.width,
+      };
     }
     default: {
       return context;
@@ -110,7 +129,7 @@ const MeasuresContextProvider = ({ children }) => {
           delete m.repeatCount;
           acc.push({
             ...m,
-            type: "displayEvent",
+            type: "measureEvent",
             key: m.key ?? acc[mi - 1].key,
             clefs: Array.from(
               { length: flow.parts.length },
@@ -235,6 +254,9 @@ const MeasuresContextProvider = ({ children }) => {
         measureEvents,
         events,
       });
+    },
+    setPeriods: () => {
+      dispatch({ type: "setPeriods" });
     },
   };
 

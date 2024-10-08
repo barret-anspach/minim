@@ -2,14 +2,15 @@
   margin-right: 0.04rem;
 }
 .dot {
-  margin-left: 0.08rem;
+  margin-left: 0.12rem;
   justify-self: start;
 }
-.dot.down {
-  margin-top: 0.125rem;
+.dot.up {
+  transform: translateY(-0.12rem);
 }
 .legerLine {
   justify-self: center;
   width: calc(100% + 0.2rem);
   border-bottom: 0.04rem solid currentColor;
+  transform: translateY(-50%);
 }

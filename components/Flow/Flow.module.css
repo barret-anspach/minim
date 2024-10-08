@@ -1,0 +1,8 @@
+.partLabel {
+  display: block;
+  word-break: keep-all;
+  align-self: center;
+  font-family: 'inter', sans-serif;
+  justify-self: end;
+  margin-right: 0.25rem;
+}

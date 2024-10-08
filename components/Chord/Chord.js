@@ -55,7 +55,8 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
             pitch={legerLine.pitch}
           />
         ))}
-      {event.rest && (
+      {/* TODO: Calculate rest position */}
+      {event.rest && event.display !== "none" && (
         <Item
           key={`${id}_res`}
           column={`e${event.position.start}-not`}
@@ -115,7 +116,7 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
                 className={clsx(
                   styles.dot,
                   isNoteOnLine(rangeClef.staffLinePitches[0].id, note) &&
-                    styles.down,
+                    styles.up,
                 )}
                 column={`e${event.position.start}-ste-up `}
                 pitch={`${event.flowId}s${note.staff}${getPitchString(note)}`}
@@ -128,6 +129,7 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
       {event.duration.dots &&
         event.duration.dots > 0 &&
         event.rest &&
+        event.display !== "none" &&
         Array.from({ length: event.duration.dots }, (_, i) => i).map(
           (dotIndex) => (
             <Item

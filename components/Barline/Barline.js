@@ -7,8 +7,14 @@ import metadata from "./../../public/fonts/bravura/bravura_metadata.json";
 import styles from "./Barline.module.css";
 import { withNoSSR } from "../../hooks/withNoSSR";
 
-function RegularBarline() {
-  return <div className={clsx(styles.line, styles.thinLine)} />;
+function RegularBarline({ type }) {
+  return (
+    <div
+      className={clsx(styles.line, styles.thinLine, styles.margin, {
+        [`${styles.period}`]: type === "period",
+      })}
+    />
+  );
 }
 
 function FinalBarline() {
@@ -22,13 +28,14 @@ function FinalBarline() {
 
 function Barline({
   children,
+  className = null,
   column,
   row = "1 / -1",
   separation,
   type = "regular",
 }) {
   const ref = useRef(null);
-  const className = useVars({
+  const _className = useVars({
     varRef: ref,
     defaultStyles: [styles.barline],
     conditionalStyles: [
@@ -49,13 +56,13 @@ function Barline({
   });
 
   return (
-    <div ref={ref} className={clsx(className)}>
+    <div ref={ref} className={clsx(_className, className)}>
       {children ? (
         children
       ) : type === "final" ? (
         <FinalBarline />
       ) : (
-        <RegularBarline />
+        <RegularBarline type={type} />
       )}
     </div>
   );

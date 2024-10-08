@@ -18,8 +18,16 @@
   width: 0;
   height: 100%;
 }
+.barline.separation .line.margin,
+.barline .line.separation.margin {
+  margin-right: calc(var(--separation) * 2);
+}
 .barline .line.thinLine {
   border-right: 0.04rem solid currentColor;
+}
+.barline .line.thinLine.period {
+  border-right: 0.12rem dotted orangered;
+  transform: translateX(0.04rem);
 }
 .barline .line.thickLine {
   border-right: 0.125rem solid currentColor;

@@ -75,7 +75,7 @@ export default function Stem({
           _stemDirection === "up" ? styles.up : styles.down,
         ])}
       >
-        <rect x={0} y={0} width={1} height={1} />
+        <rect x={0} y={0} width={1} height={1} fill="currentColor" />
       </svg>
       {/** TODO: Flag, if not part of a beam group */}
       {/** Flag, if less than quarter */}

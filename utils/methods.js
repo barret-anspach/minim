@@ -481,3 +481,84 @@ export function getStavesForFlow(flows, id) {
     }),
   }));
 }
+export function makeColumn({ start, columnWidth }) {
+  const columnArray = getColumnArray({ start, columnWidth });
+  return columnArray.reduce(
+    (str, column, index) =>
+      `${str}${index > 0 ? "[" : ""}${column.lines.join(" ")}${index !== columnArray.length - 1 ? `] ${column.value} ` : " "}`,
+    "",
+  );
+}
+// Every possible event placement type is given its own named column line (per *event*)
+export function getColumnArray({ start, columnWidth }) {
+  const columnArray = [
+    {
+      lines: ["start", "text"],
+      value: "auto",
+    },
+    {
+      lines: ["bracket"],
+      value: "auto",
+    },
+    {
+      lines: ["bar"],
+      value: "auto",
+    },
+    {
+      lines: ["cle"],
+      value: "auto",
+    },
+    {
+      lines: ["key"],
+      value: "auto",
+    },
+    {
+      lines: ["tim"],
+      value: "auto",
+    },
+    {
+      lines: ["acc"],
+      value: "auto",
+    },
+    {
+      lines: ["art"],
+      value: "auto",
+    },
+    {
+      lines: ["not"],
+      value: "auto",
+    },
+    {
+      lines: ["ste-up"],
+      value: "auto",
+    },
+    {
+      lines: ["trailing-space"],
+      value: `minmax(0.1rem, ${columnWidth})`,
+    },
+    {
+      lines: ["me-cle"],
+      value: "auto",
+    },
+    {
+      lines: ["me-bar"],
+      value: "auto",
+    },
+    {
+      lines: ["me-key"],
+      value: "auto",
+    },
+    {
+      lines: ["me-tim"],
+      value: "auto",
+    },
+    {
+      lines: ["end"],
+      value: false,
+    },
+  ];
+  return columnArray.map((column) => ({
+    ...column,
+    lines: column.lines.map((line) => `e${start}-${line}`),
+  }));
+}

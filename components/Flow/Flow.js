@@ -32,7 +32,6 @@ function Flow({ id }) {
               {staffIndex === 0 && (
                 <Item
                   className={styles.partLabel}
-                  text={true}
                   column={`e0-text`}
                   pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
                 >

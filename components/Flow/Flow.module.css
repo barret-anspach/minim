@@ -2,7 +2,10 @@
   display: block;
   word-break: keep-all;
   align-self: center;
-  font-family: 'inter', sans-serif;
   justify-self: end;
+  width: max-content;
   margin-right: 0.25rem;
+  font-family: 'inter', sans-serif;
+  font-size: 0.625rem;
+  text-align: right;
 }

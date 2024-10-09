@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer } from "react";
 import {
   decorateEvent,
   getBeamGroupStem,
+  makeColumn,
   timeSignatureToDuration,
 } from "../utils/methods";
 
@@ -42,7 +43,7 @@ function measuresReducer(context, action) {
         (e) => e.position.start,
       );
       // Store last event for every flow here, to reference in columns constructor.
-      const uniqEventsByFlow = Object.groupBy(
+      const eventsByFlow = Object.groupBy(
         Object.values(context.flows).flatMap((flow) => flow.events),
         (e) => e.flowId,
       );
@@ -50,46 +51,95 @@ function measuresReducer(context, action) {
       // TODO: reduce should return an object with named grid lines and track widths,
       // that we can THEN use to insert last columns and properly format
       const columns = Object.entries(uniqueStarts)
-        .reduce((acc, [start, eventsAtStart], index, starts) => {
+        .reduce((acc, [start, startEvents], index, starts) => {
           const columnWidth =
             index < starts.length - 1
               ? starts[index + 1][1][0].position.start - parseInt(start) + "fr"
-              : (eventsAtStart[0].dimensions.length + "fr" ?? "auto");
-          // Every possible displayEvent type is given its own named column line (per *event*)
-          const makeColumn = ({ start, columnWidth }) => {
-            return `e${start}-start e${start}-text] auto [e${start}-bracket] auto [e${start}-bar] auto [e${start}-cle] auto [e${start}-key] auto [e${start}-tim] auto [e${start}-acc] auto [e${start}-art] auto [e${start}-not] auto [e${start}-ste-up] auto [e${start}-trailing-space] minmax(0.1rem, ${columnWidth}) [e${start}-me-cle] auto [e${start}-me-bar] auto [e${start}-me-key] auto [e${start}-me-tim] auto [e${start}-end `;
-          };
+              : (startEvents[0].dimensions.length + "fr" ?? "auto");
           if (
-            uniqEventsByFlow[eventsAtStart[0].flowId].at(-1).position.end ===
-            eventsAtStart[0].position.end
+            eventsByFlow[startEvents[0].flowId].at(-1).position.end ===
+            startEvents[0].position.end
           ) {
             // Add start- and end-positions for the last event in a flow
-            return `${acc}${makeColumn({ start, columnWidth, index, starts })}${makeColumn({ start: eventsAtStart[0].position.end, columnWidth: "auto", index, starts })}`;
+            return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: startEvents[0].position.end, columnWidth: "auto" })}`;
           } else {
-            return `${acc}${makeColumn({ start, columnWidth, index, starts })}`;
+            return `${acc}${makeColumn({ start, columnWidth })}`;
           }
         }, "[")
         .concat("]");
       return { ...context, columns };
     }
     case "setPeriods": {
-      const flowEvents = Object.values(context.flows).map((flow) =>
+      // Ia. For all flows, are there intersections of measure.position.start?
+      const flowMeasureStarts = Object.values(context.flows).map((flow) =>
+        flow.measures.flatMap((measure) => measure.position.start),
+      );
+      const measureIntersections = [
+        ...new Set(
+          flowMeasureStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
+        ),
+      ].sort((a, b) => a - b);
+
+      // Ib. For all flows, are there intersections of event.position.start?
+      const flowEventStarts = Object.values(context.flows).map((flow) =>
         flow.events.flatMap((event) => event.position.start),
       );
-      // I. for all flows, are there intersections of
-      // event.position.start?
-      // (TODO: and event.position.end?)
-      const periods = flowEvents.reduce((a, b) =>
-        a.filter((c) => b.includes(c)),
-      );
-      // II. TODO: if one flow is longer than the other,
-      // or only one flow,
-      // add periods @remaining flow's measure starts.
-      // III. TODO: Finally, group all flow events into
-      // "Periods" so we can again reflow systems.
+      const periods = [
+        ...new Set(
+          flowEventStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
+        ),
+      ].sort((a, b) => a - b);
+
+      // II. TODO: Group all flow events into "Periods"
+      // so we can reflow multi-staff systems.
+      // ————————————
+      // So the below nests Events in Periods.
+      // Perhaps we create an object where { k (eventStart): v (periodStart) }
+      // so that we can decorate events with a `period` assignment?
+      // ————————————
+      // TODO:
+      // If two flows are "in alignment" (e.g. don't diverge in meter) for their entirety,
+      // how will we identify alignment and indicate render preference for the score's
+      // measures concept instead of period?
+      const eventStartsByPeriod = [...new Set(flowEventStarts.flat())]
+        .sort((a, b) => a - b)
+        .reduce(
+          (acc, eventStart) => {
+            if (
+              // Negated conditions below describe when we retain current period.
+              !(
+                periods[acc.index] <= eventStart &&
+                periods[acc.index + 1] !== undefined &&
+                periods[acc.index + 1] > eventStart
+              ) &&
+              acc.index !== periods.length - 1
+            ) {
+              // New period; increment index.
+              acc.index++;
+            }
+            // If it's the first event in a period, initialize with values.
+            if (periods[acc.index] === eventStart) {
+              acc.result[periods[acc.index]] = {
+                events: [eventStart],
+                // If measureIntersections has a value equal to eventStart (and equal to period[acc.index]):
+                // measure: { flow0: flow0MeasureIndex, flow1: flow1MeasureIndex, etc.},
+                period: acc.index,
+              };
+            } else if (periods[acc.index] < eventStart) {
+              // Otherwise, add new eventStart to events[]
+              acc.result[periods[acc.index]] = {
+                ...acc.result[periods[acc.index]],
+                events: [...acc.result[periods[acc.index]].events, eventStart],
+              };
+            }
+            // }
+            return acc;
+          },
+          { result: {}, index: 0 },
+        );
       return {
         ...context,
-        periods: [...new Set(periods)].sort((a, b) => a - b),
+        periods,
       };
     }
     case "updateWidth": {

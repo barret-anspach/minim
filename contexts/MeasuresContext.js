@@ -5,6 +5,7 @@ import {
   decorateEvent,
   getBeamGroupStem,
   getLayoutForFlowAtPoint,
+  getLayoutEventsForPeriod,
   getStavesForFlow,
   timeSignatureToDuration,
 } from "../utils/methods";
@@ -190,6 +191,11 @@ function measuresReducer(context, action) {
                 flows: eventsAtStart,
                 index: acc.index,
                 key: periods[acc.index],
+                layoutEvents: getLayoutEventsForPeriod({
+                  flows: context.flows,
+                  periodStart: periods[acc.index],
+                  periodEnd: _endValue,
+                }),
                 position: {
                   start: periods[acc.index],
                   end: _endValue,
@@ -224,12 +230,16 @@ function measuresReducer(context, action) {
                 ...acc.result[periods[acc.index]],
                 dimensions: { length: _duration },
                 flows,
-                layoutEvents: Object.values(context.flows).flatMap((flow) =>
-                  flow.layoutEvents.filter(
-                    (event) =>
-                      event.at >= periods[acc.index] && event.at <= _endValue,
-                  ),
-                ),
+                layoutEvents: [
+                  ...new Set([
+                    ...acc.result[periods[acc.index]].layoutEvents,
+                    ...getLayoutEventsForPeriod({
+                      flows: context.flows,
+                      periodStart: periods[acc.index],
+                      periodEnd: _endValue,
+                    }),
+                  ]),
+                ],
                 position: {
                   ...acc.result[periods[acc.index]].position,
                   end: _endValue,
@@ -327,12 +337,16 @@ const MeasuresContextProvider = ({ children }) => {
             {
               type: "layoutEvent",
               at: start,
+              eventType: "measureStart",
+              measureBounds: { start, end },
               flowId: flow.id,
               layoutGroups: layout,
             },
             {
               type: "layoutEvent",
               at: end,
+              eventType: "measureEnd",
+              measureBounds: { start, end },
               flowId: flow.id,
               layoutGroups: getLayoutForFlowAtPoint({
                 flow,

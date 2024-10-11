@@ -604,6 +604,7 @@ export function getLayoutForFlowAtPoint({
   point,
   measure,
   measureIndex,
+  measurePosition,
 }) {
   function group(content) {
     return content.flatMap(
@@ -661,12 +662,10 @@ export function getLayoutForFlowAtPoint({
     const isLastMeasure = measureIndex === flow.global.measures.length - 1;
     return {
       ...group,
+      at: point,
       barline: {
-        type: isLastMeasure ? "final" : "regular",
-        position: at === "end" || isLastMeasure ? "end" : "start",
-        at: point,
-        column:
-          at === "end" || isLastMeasure ? `e${point}-me-bar` : `e${point}-bar`,
+        type: at === "end" && isLastMeasure ? "final" : "regular",
+        column: at === "end" ? `e${point}-me-bar` : `e${point}-bar`,
         row: `${row[0]}/${row.at(-1)}`,
         separation: !(at === "end" || isLastMeasure),
       },
@@ -675,9 +674,38 @@ export function getLayoutForFlowAtPoint({
         column: `e${point}-bracket`,
         row: `${row[0]}/${row.at(-1)}`,
       },
-      at: point,
+      position: at,
       row,
     };
   });
   return result;
+}
+
+export function getLayoutEventsForPeriod({ flows, periodStart, periodEnd }) {
+  return Object.values(flows).flatMap((flow) =>
+    flow.layoutEvents.filter((event) => {
+      if (event.at >= periodStart && event.at <= periodEnd) {
+        if (
+          event.measureBounds.start >= periodStart &&
+          event.measureBounds.end <= periodEnd
+        ) {
+          // period contains an entire measure; return events of eventType "measureStart" and "measureEnd"
+          return event;
+        } else if (
+          event.measureBounds.start >= periodStart &&
+          event.measureBounds.start < periodEnd &&
+          event.measureBounds.end > periodEnd
+        ) {
+          // period contains the beginning of a measure; return events of eventType "measureStart"
+          return event.eventType === "measureStart";
+        } else if (
+          event.measureBounds.end > periodStart &&
+          event.measureBounds.end <= periodEnd &&
+          event.measureBounds.start < periodStart
+        ) {
+          return event.eventType === "measureEnd";
+        }
+      }
+    }),
+  );
 }

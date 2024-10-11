@@ -1,14 +1,15 @@
 import { createContext, useContext, useReducer } from "react";
 import {
+  areClefsEqual,
+  areTimeSignaturesEqual,
   decorateEvent,
   getBeamGroupStem,
-  makeColumn,
+  getLayoutForFlowAtPoint,
+  getStavesForFlow,
   timeSignatureToDuration,
 } from "../utils/methods";
 
 const initialState = {
-  columns: "",
-  rows: "",
   flows: {},
   initialized: false,
   periods: [],
@@ -23,90 +24,129 @@ MeasuresContext.displayName = "MeasuresContext";
 
 function measuresReducer(context, action) {
   switch (action.type) {
-    case "addGridRows": {
-      return { ...context, rows: context.rows.concat(action.rows) };
-    }
     case "setFlow": {
       const flows = context.flows;
       flows[action.flowId] = {
+        id: action.flowId,
         beamEvents: action.beamEvents,
         beamGroups: action.beamGroups,
         events: action.events,
+        layouts: action.layouts,
+        layoutEvents: action.layoutEvents,
         measures: action.measureEvents,
         parts: action.parts,
+        staves: action.staves,
       };
       return { ...context, initialized: true, flows };
     }
-    case "setGridColumns": {
-      const uniqueStarts = Object.groupBy(
-        Object.values(context.flows).flatMap((flow) => flow.events),
-        (e) => e.position.start,
-      );
-      // Store last event for every flow here, to reference in columns constructor.
-      const eventsByFlow = Object.groupBy(
-        Object.values(context.flows).flatMap((flow) => flow.events),
-        (e) => e.flowId,
-      );
-
-      // TODO: reduce should return an object with named grid lines and track widths,
-      // that we can THEN use to insert last columns and properly format
-      const columns = Object.entries(uniqueStarts)
-        .reduce((acc, [start, startEvents], index, starts) => {
-          const columnWidth =
-            index < starts.length - 1
-              ? starts[index + 1][1][0].position.start - parseInt(start) + "fr"
-              : (startEvents[0].dimensions.length + "fr" ?? "auto");
-          if (
-            eventsByFlow[startEvents[0].flowId].at(-1).position.end ===
-            startEvents[0].position.end
-          ) {
-            // Add start- and end-positions for the last event in a flow
-            return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: startEvents[0].position.end, columnWidth: "auto" })}`;
-          } else {
-            return `${acc}${makeColumn({ start, columnWidth })}`;
-          }
-        }, "[")
-        .concat("]");
-      return { ...context, columns };
+    case "updatePeriod": {
+      return {
+        ...context,
+        periods: {
+          ...context.periods,
+          [action.key]: {
+            ...context.periods[action.key],
+            ...action.period,
+          },
+        },
+      };
     }
     case "setPeriods": {
       // Ia. For all flows, are there intersections of measure.position.start?
       const flowMeasureStarts = Object.values(context.flows).map((flow) =>
         flow.measures.flatMap((measure) => measure.position.start),
       );
-      const measureIntersections = [
-        ...new Set(
-          flowMeasureStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
-        ),
-      ].sort((a, b) => a - b);
 
       // Ib. For all flows, are there intersections of event.position.start?
       const flowEventStarts = Object.values(context.flows).map((flow) =>
         flow.events.flatMap((event) => event.position.start),
       );
-      const periods = [
-        ...new Set(
-          flowEventStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
-        ),
+      let periods = [
+        ...new Set([
+          ...flowEventStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
+          ...flowMeasureStarts.flat(),
+        ]),
       ].sort((a, b) => a - b);
+
+      // TODO: Should be able to accommodate switching between periods and measures,
+      // solely depending on when the score's flows are or are not "in alignment."
+      const flowMeasuresAfterPeriods = flowMeasureStarts.map((measureStarts) =>
+        measureStarts.filter((start) => periods.at(-1) < start),
+      );
+      periods = periods.concat(
+        flowMeasuresAfterPeriods.some((flow) => flow.length > 0)
+          ? [...new Set(flowMeasuresAfterPeriods.flat().sort((a, b) => a - b))]
+          : [],
+      );
+
+      // Get meter and key changes into a shape that's event-like
+      // TODO: Using measure.position.start won't allow for proper display of
+      // measure - end display events like cautionary clefs and final bars.
+      /**
+       * As we're going through events, and setting period events by a shared start timestamp,
+       * We need to a) reserve a copy of displayItems ("measures") whose end exceeds the period's
+       * end, and b) place reserved the displayItem copy into the appropriate period.
+       */
+      const flowDisplayStarts = Object.entries(context.flows).reduce(
+        (acc, [flowId, flow]) => ({
+          ...acc,
+          [flowId]: flow.measures.flatMap((measure, mi, mm) => {
+            return [
+              {
+                type: "displayEvent",
+                layoutGroups: measure.layout,
+                clefs: measure.clefs.map((clef) => ({
+                  ...clef,
+                  column: `e${measure.position.start}-cle`,
+                  columnCautionary: `e${measure.position.end}-me-cle`,
+                  display:
+                    mi === 0 || !areClefsEqual(mm[mi - 1].clefs, measure.clefs),
+                })),
+                time:
+                  mi === 0 ||
+                  !areTimeSignaturesEqual(mm[mi - 1].time, measure.time)
+                    ? {
+                        ...measure.time,
+                        column: `e${measure.position.start}-tim`,
+                        columnCautionary: `e${measure.position.end}-me-tim`,
+                      }
+                    : null,
+                key:
+                  mi === 0 || mm[mi - 1].key.fifths !== measure.key.fifths
+                    ? {
+                        ...measure.key,
+                        column: `e${measure.position.start}-key`,
+                        columnCautionary: `e${measure.position.end}-me-key`,
+                        prevFifths:
+                          mi > 0
+                            ? mm
+                                .slice(0, mi)
+                                .findLast((m) => m.key !== undefined).key
+                            : undefined,
+                      }
+                    : null,
+                at: measure.position.start,
+              },
+            ];
+          }),
+        }),
+        {},
+      );
 
       // II. TODO: Group all flow events into "Periods"
       // so we can reflow multi-staff systems.
-      // ————————————
-      // So the below nests Events in Periods.
-      // Perhaps we create an object where { k (eventStart): v (periodStart) }
-      // so that we can decorate events with a `period` assignment?
       // ————————————
       // TODO:
       // If two flows are "in alignment" (e.g. don't diverge in meter) for their entirety,
       // how will we identify alignment and indicate render preference for the score's
       // measures concept instead of period?
-      const eventStartsByPeriod = [...new Set(flowEventStarts.flat())]
+      const periodEvents = [...new Set(flowEventStarts.flat())]
         .sort((a, b) => a - b)
         .reduce(
           (acc, eventStart) => {
             if (
-              // Negated conditions below describe when we retain current period.
+              // Negated conditions below describe when we retain current period
+              // and continue adding events to it.
               !(
                 periods[acc.index] <= eventStart &&
                 periods[acc.index + 1] !== undefined &&
@@ -117,29 +157,94 @@ function measuresReducer(context, action) {
               // New period; increment index.
               acc.index++;
             }
-            // If it's the first event in a period, initialize with values.
+            const eventsAtStart = Object.entries(context.flows).reduce(
+              (acc, [flowId, flow]) => ({
+                ...acc,
+                [flowId]: [
+                  ...flow.events.filter(
+                    (event) => event.position.start === eventStart,
+                  ),
+                  ...flowDisplayStarts[flowId]
+                    .flat()
+                    .filter((displayEvent) => displayEvent.at === eventStart),
+                ],
+              }),
+              {},
+            );
+
+            const _endValue =
+              acc.index + 1 !== periods.length
+                ? periods[acc.index + 1]
+                : Object.values(eventsAtStart)
+                    .flat()
+                    .filter((e) => e.type === "event")
+                    .sort((a, b) => a.position.end - b.position.end)
+                    .at(-1).position.end;
+
+            const _duration = _endValue - periods[acc.index];
+
+            // If it's the first event in a period, initialize period with values.
             if (periods[acc.index] === eventStart) {
               acc.result[periods[acc.index]] = {
-                events: [eventStart],
-                // If measureIntersections has a value equal to eventStart (and equal to period[acc.index]):
-                // measure: { flow0: flow0MeasureIndex, flow1: flow1MeasureIndex, etc.},
-                period: acc.index,
+                dimensions: { length: _duration },
+                flows: eventsAtStart,
+                index: acc.index,
+                key: periods[acc.index],
+                position: {
+                  start: periods[acc.index],
+                  end: _endValue,
+                },
+                positionInSystem: {
+                  first: false,
+                  last: false,
+                  offset: {
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                  },
+                },
+                staves: Object.entries(context.flows).reduce(
+                  (acc, [flowId, flow]) => ({ ...acc, [flowId]: flow.staves }),
+                  {},
+                ),
               };
             } else if (periods[acc.index] < eventStart) {
+              // Not the first event in period; Add to flows.
+              const flows = Object.entries(
+                acc.result[periods[acc.index]].flows,
+              ).reduce(
+                (acc, [flowId, flow]) => ({
+                  ...acc,
+                  [flowId]: [...flow, ...eventsAtStart[flowId]],
+                }),
+                {},
+              );
               // Otherwise, add new eventStart to events[]
               acc.result[periods[acc.index]] = {
                 ...acc.result[periods[acc.index]],
-                events: [...acc.result[periods[acc.index]].events, eventStart],
+                dimensions: { length: _duration },
+                flows,
+                layoutEvents: Object.values(context.flows).flatMap((flow) =>
+                  flow.layoutEvents.filter(
+                    (event) =>
+                      event.at >= periods[acc.index] && event.at <= _endValue,
+                  ),
+                ),
+                position: {
+                  ...acc.result[periods[acc.index]].position,
+                  end: _endValue,
+                },
               };
             }
-            // }
+
             return acc;
           },
           { result: {}, index: 0 },
-        );
+        ).result;
+
       return {
         ...context,
-        periods,
+        periods: periodEvents,
       };
     }
     case "updateWidth": {
@@ -158,51 +263,88 @@ const MeasuresContextProvider = ({ children }) => {
   const [context, dispatch] = useReducer(measuresReducer, initialState);
 
   const actions = {
-    addGridRows: ({ rows }) => {
-      dispatch({ type: "addGridRows", rows });
-    },
     updateWidth: ({ width }) => {
       dispatch({ type: "updateWidth", width });
     },
     setFlow: ({ flow }) => {
-      // TODO: Transform tempo, clef, key and meter changes from the json score into an object of type "event."
-      // To add: TEMPO
-      // TODO: parts and even staves within a flow might have different keys set globally.
+      const layoutEvents = [];
+      // TODO: To add: TEMPO
+      // TODO: parts and even staves within a flow might have different globally-set **key signatures**.
       const measureEvents = flow.global.measures.reduce((acc, m, mi, mm) => {
         const duration = m.time
           ? timeSignatureToDuration(m.time.count, m.time.unit)
           : acc[acc.length - 1].dimensions.length;
+        const clefs = Array.from(
+          { length: flow.parts.length },
+          (_, i) => i,
+        ).flatMap((partIndex) =>
+          flow.parts[partIndex].global.clefs.map((clef) => ({
+            ...clef,
+            partIndex,
+          })),
+        );
+
         const count = Array.from({ length: m.repeatCount ?? 1 }, (_, i) => i);
         let start = mi === 0 ? 0 : acc[acc.length - 1].position.end;
+
         for (const i of count) {
           start = i === 0 ? start : start + duration;
+          const end = start + duration;
+          const layout = getLayoutForFlowAtPoint({
+            flow,
+            clefs,
+            at: "start",
+            point: start,
+            measure: m,
+            measureIndex: mi,
+            measures: mm,
+          });
           delete m.repeatCount;
-          acc.push({
+
+          const measure = {
             ...m,
             type: "measureEvent",
             key: m.key ?? acc[mi - 1].key,
-            clefs: Array.from(
-              { length: flow.parts.length },
-              (_, i) => i,
-            ).flatMap((partIndex) =>
-              flow.parts[partIndex].global.clefs.map((clef) => ({
-                ...clef,
-                partIndex,
-              })),
-            ),
+            clefs,
             time: m.time ?? acc[mi - 1].time,
+            layout,
             dimensions: {
               length: duration,
             },
             position: {
               start,
-              end: start + duration,
+              end,
             },
             positionInSystem: {
               first: false,
               last: false,
             },
-          });
+          };
+
+          acc.push(measure);
+
+          layoutEvents.push(
+            {
+              type: "layoutEvent",
+              at: start,
+              flowId: flow.id,
+              layoutGroups: layout,
+            },
+            {
+              type: "layoutEvent",
+              at: end,
+              flowId: flow.id,
+              layoutGroups: getLayoutForFlowAtPoint({
+                flow,
+                clefs,
+                at: "end",
+                point: end,
+                measure: m,
+                measureIndex: mi,
+                measures: mm,
+              }),
+            },
+          );
         }
         return acc;
       }, []);
@@ -295,18 +437,19 @@ const MeasuresContextProvider = ({ children }) => {
         beamEvents,
         beamGroups,
         events,
-        measureEvents,
-        parts: flow.parts,
         flowId: flow.id,
-      });
-      dispatch({
-        type: "setGridColumns",
         measureEvents,
-        events,
+        layouts: flow.layouts,
+        layoutEvents: layoutEvents,
+        parts: flow.parts,
+        staves: getStavesForFlow(flow),
       });
     },
     setPeriods: () => {
       dispatch({ type: "setPeriods" });
+    },
+    updatePeriod: ({ key, period }) => {
+      dispatch({ type: "updatePeriod", key, period });
     },
   };
 

@@ -94,13 +94,7 @@ function Brace({ size }) {
   }
 }
 
-export default function Bracket({
-  type,
-  size = "regular",
-  column,
-  row,
-  prefix,
-}) {
+export default function Bracket({ type, size = "regular", column, row }) {
   const bracketRef = useRef(null);
   useVars({
     varRef: bracketRef,

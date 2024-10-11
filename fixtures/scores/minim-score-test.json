@@ -15,7 +15,8 @@
                   "count": 12,
                   "unit": 16
                 },
-                "repeatCount": 6
+                "repeatCount": 6,
+                "layout": "score0_flow0_layout"
               },
               {
                 "time": {
@@ -64,7 +65,6 @@
                       ]
                     }
                   ],
-                  "labelref": "name",
                   "symbol": "brace"
                 }
               ]
@@ -819,7 +819,8 @@
                   "count": 2,
                   "unit": 4
                 },
-                "repeatCount": 6
+                "repeatCount": 6,
+                "layout": "score0_flow1_layout"
               },
               {
                 "time": {
@@ -868,7 +869,6 @@
                       ]
                     }
                   ],
-                  "labelref": "name",
                   "symbol": "brace"
                 }
               ]

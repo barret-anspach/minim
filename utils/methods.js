@@ -460,27 +460,53 @@ export function decorateEvent({
     dimensions: {
       length: _duration,
     },
-    positionInSystem: {
-      first: false,
-      last: false,
-    },
   });
 }
 
-export function getStavesForFlow(flows, id) {
-  return flows[id].parts.map((part) => ({
+export function getStavesForFlow(flow) {
+  return flow.parts.map((part) => ({
     part,
     staves: Array.from({ length: part.global.staves }, (_, i) => {
       const clef = part.global.clefs.find((c) => c.staff === i + 1);
-      const { staffBounds } = getPitches(clef.clef, `${id}s${i + 1}`);
+      const { pitches, rangeClef, staffBounds } = getPitches(
+        clef.clef,
+        `${flow.id}s${i + 1}`,
+      );
       return {
         clef,
+        pitches,
+        rangeClef,
         staffBounds,
         staffIndex: i,
       };
     }),
   }));
 }
+export function getColumnsForPeriod({ period }) {
+  const uniqueStarts = Object.groupBy(
+    Object.values(period.flows).flat(),
+    (e) => (e.type === "event" ? e.position.start : e.at),
+  );
+
+  // TODO: reduce should return an object with named grid lines and track widths,
+  // that we can THEN use to insert last columns and properly format
+  const columns = Object.entries(uniqueStarts)
+    .reduce((acc, [start, startEvents], index, starts) => {
+      const columnWidth =
+        index < starts.length - 1
+          ? starts[index + 1][1][0].position.start - parseInt(start) + "fr"
+          : (period.position.end - parseInt(start) + "fr" ?? "auto");
+      if (index === starts.length - 1) {
+        // Add start- and end-positions for the last event in a flow
+        return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: period.position.end, columnWidth: "auto" })}`;
+      } else {
+        return `${acc}${makeColumn({ start, columnWidth })}`;
+      }
+    }, "[")
+    .concat("]");
+  return columns;
+}
+
 export function makeColumn({ start, columnWidth }) {
   const columnArray = getColumnArray({ start, columnWidth });
   return columnArray.reduce(
@@ -561,4 +587,97 @@ export function getColumnArray({ start, columnWidth }) {
     ...column,
     lines: column.lines.map((line) => `e${start}-${line}`),
   }));
+}
+
+export function areClefsEqual(clefsA, clefsB) {
+  return clefsA.every(
+    (clef, clefIndex) =>
+      clef.clef.sign === clefsB[clefIndex].clef.sign &&
+      clef.clef.staffPosition === clefsB[clefIndex].clef.staffPosition,
+  );
+}
+
+export function getLayoutForFlowAtPoint({
+  at,
+  flow,
+  clefs,
+  point,
+  measure,
+  measureIndex,
+}) {
+  function group(content) {
+    return content.flatMap(
+      (item) =>
+        item.type === "group"
+          ? {
+              type: item.type,
+              content: group(item.content),
+              symbol: item.symbol,
+            }
+          : item, // type="staff"
+    );
+  }
+  const layout = flow.layouts.find(
+    (layout) =>
+      layout.id ===
+      (measure.layout ?? flow.global.measures.find((m) => m.layout).layout),
+  );
+  const groups = group(layout.content);
+
+  function getRowString(member, memberIndex, members) {
+    const { staffBounds } = getPitches(clefs[member.staff - 1].clef);
+    const rowString =
+      members.length === 1
+        ? [
+            `${flow.id}s${member.staff}${staffBounds.upper.id}`,
+            `${flow.id}s${member.staff}${staffBounds.lower.id}`,
+          ]
+        : `${flow.id}s${member.staff}${staffBounds[memberIndex === 0 ? "upper" : "lower"].id}`;
+    return rowString;
+  }
+
+  function getGroupRow(group) {
+    if (group.type === "group") {
+      return group.content.flatMap((member) => {
+        if (member.type === "group") {
+          return getGroupRow(member);
+        } else {
+          return member.sources.flatMap(
+            (memberSource, memberSourceIndex, memberSources) =>
+              getRowString(memberSource, memberSourceIndex, memberSources),
+          );
+        }
+      });
+    } else {
+      // type="staff"
+      return group.sources.flatMap((member, memberIndex, members) =>
+        getRowString(member, memberIndex, members),
+      );
+    }
+  }
+
+  const result = groups.map((group) => {
+    const row = getGroupRow(group);
+    const isLastMeasure = measureIndex === flow.global.measures.length - 1;
+    return {
+      ...group,
+      barline: {
+        type: isLastMeasure ? "final" : "regular",
+        position: at === "end" || isLastMeasure ? "end" : "start",
+        at: point,
+        column:
+          at === "end" || isLastMeasure ? `e${point}-me-bar` : `e${point}-bar`,
+        row: `${row[0]}/${row.at(-1)}`,
+        separation: !(at === "end" || isLastMeasure),
+      },
+      bracket: {
+        type: group.symbol,
+        column: `e${point}-bracket`,
+        row: `${row[0]}/${row.at(-1)}`,
+      },
+      at: point,
+      row,
+    };
+  });
+  return result;
 }

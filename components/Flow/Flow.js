@@ -11,25 +11,23 @@ import Tuplet from "./../Tuplet/Tuplet";
 
 import { withNoSSR } from "./../../hooks/withNoSSR";
 import { useMeasuresContext } from "./../../contexts/MeasuresContext";
-import { getStavesForFlow } from "../../utils/methods";
 import Item from "../Item";
 
 import styles from "./Flow.module.css";
 import Bracket from "../Bracket/Bracket";
 
-function Flow({ id }) {
+function Flow({ period, periodFlow, id }) {
   const {
     context: { initialized, flows },
   } = useMeasuresContext();
-  const allStaves = getStavesForFlow(flows, id);
 
   return (
     initialized && (
       <Fragment key={id}>
-        {allStaves.map(({ part, staves }) =>
-          staves.map(({ clef, staffIndex, staffBounds }) => (
-            <Fragment key={`${id}_sta${staffIndex}`}>
-              {staffIndex === 0 && (
+        {period.staves[id].map(({ part, staves }) =>
+          staves.map(({ pitches, rangeClef, staffIndex, staffBounds }) => (
+            <Fragment key={`${id}s${staffIndex + 1}_items`}>
+              {period.index === 0 && staffIndex === 0 && (
                 <Item
                   className={styles.partLabel}
                   column={`e0-text`}
@@ -38,94 +36,66 @@ function Flow({ id }) {
                   {part.name}
                 </Item>
               )}
-              {flows[id].measures.map((measure, measureIndex, measures) => (
-                <Fragment key={`${id}_mea${measureIndex}`}>
-                  <MeasureDisplayMatter
-                    flowId={id}
-                    index={measureIndex}
-                    measure={measure}
-                    part={part}
-                    staffIndex={staffIndex}
-                  />
-                  {staffIndex === 0 && (
-                    <>
-                      {/** Bracket or Brace */}
-                      {/** TODO: Interpret layout groups */}
-                      {(measureIndex === 0 ||
-                        measure.positionInSystem.first) && (
-                        <Bracket
-                          type={"brace"}
-                          size={"regular"}
-                          row={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
-                          column={`e${measure.position.start}-bracket / e${measure.position.start}-bracket`}
-                        />
-                      )}
-                      {/* TODO: Handle barlines through multiple parts */}
-                      <Barline
-                        type={"regular"}
-                        separation={true}
-                        row={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
-                        column={`e${measure.position.start}-bar / e${measure.position.start}-cle`}
-                      />
-                      {measure.positionInSystem.last &&
-                        measureIndex !== measures.length - 1 && (
-                          <Barline
-                            type={"regular"}
-                            row={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
-                            column={`e${measure.position.end}-me-bar`}
-                          />
-                        )}
-                      {measureIndex === measures.length - 1 && (
-                        <Barline
-                          type={"final"}
-                          row={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
-                          column={`e${measure.position.end}-me-bar`}
-                        />
-                      )}
-                    </>
-                  )}
-                </Fragment>
-              ))}
+              {period.positionInSystem.first &&
+                period.index !== 0 &&
+                staffIndex === 0 && (
+                  <Item
+                    className={styles.partLabel}
+                    column={`e${period.key}-text`}
+                    pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
+                  >
+                    {part.shortName}
+                  </Item>
+                )}
               <Staff
                 id={`${id}s${staffIndex + 1}`}
                 key={`${id}s${staffIndex + 1}`}
-                number={`${id}s${staffIndex + 1}`}
-                clef={clef}
-                part={part}
-                start={`e${flows[id].events[0].position.start}-bar`}
-                end={`e${flows[id].events.at(-1).position.end}-end`}
+                pitches={pitches}
+                rangeClef={rangeClef}
+                staffBounds={staffBounds}
+                start={`e${period.position.start}-bar`}
+                end={`e${period.position.end}-end`}
               />
             </Fragment>
           )),
         )}
-        {flows[id].events.map((event, eventIndex, events) =>
-          event.type === "tuplet" ? (
-            <Tuplet
-              key={`${event.renderId}_tup`}
-              id={`${event.renderId}_tup`}
-              clef={event.clefs[event.staff - 1].clef}
-              event={event}
-              eventIndex={eventIndex}
-              events={events}
-            />
-          ) : (
-            <Chord
-              key={`${event.renderId}_cho`}
-              id={`${event.renderId}_cho`}
-              clef={event.clefs[event.staff - 1].clef}
-              event={event}
-              eventIndex={eventIndex}
-              events={events}
-            />
-          ),
-        )}
-        {/* Beams */}
-        {flows[id].beamGroups.map((beamGroup, beamIndex) => (
-          <BeamGroup
-            key={`beamGroup_${beamIndex}`}
-            beamGroup={beamGroup}
-            prefix={id}
-          />
+        {periodFlow.map((event, eventIndex, events) => (
+          <Fragment key={`${id}e${eventIndex}_items`}>
+            {event.type === "displayEvent" &&
+              period.staves[id].map(({ staves }) =>
+                staves.map(({ clef, rangeClef, staffBounds, staffIndex }) => (
+                  <MeasureDisplayMatter
+                    key={`${id}e${eventIndex}s${staffIndex}_dis`}
+                    clef={clef.clef}
+                    event={event}
+                    flowId={id}
+                    rangeClef={rangeClef}
+                    staffBounds={staffBounds}
+                    staffIndex={staffIndex}
+                  />
+                )),
+              )}
+            {event.type === "tuplet" && (
+              <Tuplet
+                key={`${event.renderId}_tup`}
+                id={`${event.renderId}_tup`}
+                clef={event.clefs[event.staff - 1].clef}
+                event={event}
+                eventIndex={eventIndex}
+                events={events}
+              />
+            )}
+            {event.type === "event" && (
+              <Chord
+                key={`${event.renderId}_cho`}
+                id={`${event.renderId}_cho`}
+                clef={event.clefs[event.staff - 1].clef}
+                event={event}
+                eventIndex={eventIndex}
+                events={events}
+              />
+            )}
+          </Fragment>
         ))}
       </Fragment>
     )

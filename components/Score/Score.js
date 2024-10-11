@@ -10,27 +10,39 @@ import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import styles from "./Score.module.css";
 import Flow from "../Flow/Flow";
 import Barline from "../Barline/Barline";
+import Measure from "../Measure/Measure";
 
 function Score({ composition }) {
   const {
-    context: { initialized, columns, rows, periods },
+    context: { initialized, periods },
   } = useMeasuresContext();
 
   return (
     initialized && (
       <main className={styles.score}>
-        <Systems id="systems" columns={columns} rows={rows}>
-          {composition.scores.map((score) =>
-            score.flows.map((flow) => <Flow key={flow.id} id={flow.id} />),
-          )}
-          {periods.map((period) => (
-            <Barline
-              key={`period_${period}`}
-              type={"period"}
-              column={`e${period}-bar`}
-              separation={true}
-            />
+        <Systems id="systems">
+          {Object.values(periods).map((period, periodIndex, periods) => (
+            <Measure
+              key={`measure_${period.position.start}`}
+              index={period.index}
+              measure={period}
+              measureIndex={periodIndex}
+              measures={periods}
+            >
+              {Object.entries(period.flows).map(([flowId, flow]) => (
+                <Flow
+                  key={`per${period.index}_${flowId}`}
+                  id={flowId}
+                  period={period}
+                  periods={periods}
+                  periodFlow={flow}
+                />
+              ))}
+            </Measure>
           ))}
+          {/* {composition.scores.map((score) =>
+            score.flows.map((flow) => <Flow key={flow.id} id={flow.id} />),
+          )} */}
         </Systems>
       </main>
     )

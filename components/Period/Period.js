@@ -1,29 +1,30 @@
-import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useLayoutEffect, useRef } from "react";
 import clsx from "clsx";
 
 import Barline from "../Barline/Barline";
+import { BeamGroup } from "../BeamGroup/BeamGroup";
 import Bracket from "../Bracket/Bracket";
+import Clef from "../Clef";
 import Item from "../Item";
+import Key from "../Key";
+import Meter from "../Meter";
 import Staff from "../Staff";
 
+import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import useVars from "../../hooks/useVars";
+import { getColumnsForPeriod } from "../../utils/methods";
 import { withNoSSR } from "../../hooks/withNoSSR";
 
 import styles from "./Period.module.css";
-import { getColumnsForPeriod } from "../../utils/methods";
-import { useMeasuresContext } from "../../contexts/MeasuresContext";
-import { BeamGroup } from "../BeamGroup/BeamGroup";
-import MeasureDisplayMatter from "../MeasureDisplayMatter/MeasureDisplayMatter";
 
-function Period({
+const Period = ({
   children,
+  handlePosition,
   index,
   period,
-  handlePosition,
-  first,
-  last,
-  ...rest
-}) {
+  systemStart,
+  systemEnd,
+}) => {
   const {
     context: { flows },
   } = useMeasuresContext();
@@ -59,15 +60,15 @@ function Period({
         }
       }
       if (isNotFirst) {
-        element.setAttribute("data-first", false);
+        // element.setAttribute("data-first", false);
         handlePosition({ index, first: false });
       } else {
-        element.setAttribute("data-first", true);
+        // element.setAttribute("data-first", true);
         handlePosition({ index, first: true });
       }
     }
 
-    setTimeout(() => getPositionInSystem(ref.current), 0);
+    setTimeout(getPositionInSystem(ref.current), 0);
     window.addEventListener("resize", () => getPositionInSystem(ref.current));
 
     return () => {
@@ -82,12 +83,12 @@ function Period({
     defaultStyles: [styles.period],
     conditionalStyles: [
       {
-        condition: first,
+        condition: systemStart,
         operator: "&&",
         style: styles.first,
       },
       {
-        condition: last,
+        condition: systemEnd,
         operator: "&&",
         style: styles.last,
       },
@@ -112,18 +113,18 @@ function Period({
   });
 
   return (
-    <section ref={ref} className={clsx(className)} {...rest}>
+    <section ref={ref} className={clsx(className)}>
       {Object.entries(flows).map(([flowId, flow]) =>
         flow.layoutGroups.map((group, groupIndex) => (
           <Fragment key={`${flowId}p${index}g${groupIndex}_system-start`}>
-            {(index === 0 || first) && (
+            {(index === 0 || systemStart) && (
               <Bracket
                 type={group.symbol}
                 column={`e${period.position.start}-bracket`}
                 row={`${group.row[0]}/${group.row.at(-1)}`}
               />
             )}
-            {(index === 0 || first) && (
+            {(index === 0 || systemStart) && (
               <Barline
                 type={"regular"}
                 column={`e${period.position.start}-bar`}
@@ -160,10 +161,10 @@ function Period({
                     {part.name}
                   </Item>
                 )}
-                {first && period.index !== 0 && staffIndex === 0 && (
+                {systemStart && period.index !== 0 && staffIndex === 0 && (
                   <Item
                     className={styles.partLabel}
-                    column={`e${period.key}-text`}
+                    column={`e${period.position.start}-text`}
                     pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
                   >
                     {part.shortName}
@@ -178,20 +179,49 @@ function Period({
                   start={`e${period.position.start}-bar`}
                   end={`e${period.position.end}-end`}
                 />
+                {clef && systemStart && (
+                  <Clef
+                    id={`${id}s${staffIndex + 1}`}
+                    clef={clef.clef}
+                    column={`e${period.position.start}-cle`}
+                  />
+                )}
+                {period.key[id] && systemStart && (
+                  <Key
+                    id={`${id}s${staffIndex + 1}`}
+                    clefType={rangeClef.type}
+                    column={`e${period.position.start}-key`}
+                    fifths={period.key[id].fifths}
+                  />
+                )}
                 {period.displayEvents.map(
                   (event, eventIndex) =>
-                    event.flowId === id &&
-                    ((event.eventType === "measureEnd" && last) ||
-                      event.eventType === "measureStart") && (
-                      <MeasureDisplayMatter
-                        key={`${event.flowId}e${eventIndex}s${staffIndex}_dis`}
-                        clef={clef.clef}
-                        event={event}
-                        flowId={event.flowId}
-                        rangeClef={rangeClef}
-                        staffBounds={staffBounds}
-                        staffIndex={staffIndex}
-                      />
+                    event.flowId === id && (
+                      <Fragment
+                        key={`${id}s${staffIndex + 1}eve${eventIndex}_dis`}
+                      >
+                        {event.key && (
+                          <Key
+                            id={`${id}s${staffIndex + 1}`}
+                            clefType={rangeClef.type}
+                            column={event.key.column}
+                            fifths={event.key.fifths}
+                            prevFifths={event.key.prevFifths}
+                          />
+                        )}
+                        {event.time &&
+                          (event.eventType === "measureStart" ||
+                            (event.eventType === "measureEnd" &&
+                              systemEnd)) && (
+                            <Meter
+                              id={`${id}s${staffIndex + 1}`}
+                              clef={clef.clef}
+                              count={event.time.count}
+                              unit={event.time.unit}
+                              start={event.time.column}
+                            />
+                          )}
+                      </Fragment>
                     ),
                 )}
               </Fragment>
@@ -203,19 +233,23 @@ function Period({
         period.layoutEvents.map((layout, leIndex) =>
           layout.layoutGroups.map((group, groupIndex) => (
             <Fragment key={`${index}le${leIndex}_grp${groupIndex}`}>
-              <Barline
-                key={`${index}_grp${groupIndex}_bar`}
-                type={group.barline.type}
-                column={group.barline.column}
-                row={group.barline.row}
-                separation={group.barline.separation}
-              />
+              {((group.position === "end" && systemEnd) ||
+                group.barline.type === "final" ||
+                group.position === "start") && (
+                <Barline
+                  key={`${index}_grp${groupIndex}_bar`}
+                  type={group.barline.type}
+                  column={group.barline.column}
+                  row={group.barline.row}
+                  separation={group.barline.separation}
+                />
+              )}
             </Fragment>
           )),
         )}
       {children}
     </section>
   );
-}
+};
 
 export default withNoSSR(Period);

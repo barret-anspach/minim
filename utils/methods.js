@@ -745,51 +745,6 @@ export function getDisplayEventsForPeriod({ flows, periodStart, periodEnd }) {
       }
     }),
   );
-  Object.entries(flows).reduce(
-    (acc, [flowId, flow]) => ({
-      ...acc,
-      [flowId]: flow.measures.flatMap((measure, mi, mm) => {
-        return [
-          {
-            type: "displayEvent",
-            clefs: measure.clefs.map((clef) => ({
-              ...clef,
-              column: `e${measure.position.start}-cle`,
-              columnCautionary: `e${measure.position.end}-me-cle`,
-              display:
-                mi === 0 || !areClefsEqual(mm[mi - 1].clefs, measure.clefs),
-            })),
-            time:
-              mi === 0 ||
-              !areTimeSignaturesEqual(mm[mi - 1].time, measure.time) ||
-              (mi !== mm.length - 1 &&
-                !areTimeSignaturesEqual(mm[mi + 1].time, measure.time))
-                ? {
-                    ...measure.time,
-                    column: `e${measure.position.start}-tim`,
-                    columnCautionary: `e${measure.position.end}-me-tim`,
-                  }
-                : null,
-            key:
-              mi === 0 || mm[mi - 1].key.fifths !== measure.key.fifths
-                ? {
-                    ...measure.key,
-                    column: `e${measure.position.start}-key`,
-                    columnCautionary: `e${measure.position.end}-me-key`,
-                    prevFifths:
-                      mi > 0
-                        ? mm.slice(0, mi).findLast((m) => m.key !== undefined)
-                            .key
-                        : undefined,
-                  }
-                : null,
-            at: measure.position.start,
-          },
-        ];
-      }),
-    }),
-    {},
-  );
 }
 
 export function getBeamGroupsForPeriod({ flows, start, end }) {

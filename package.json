@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-hook/resize-observer": "^2.0.2",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import Systems from "../Systems";
 
@@ -31,14 +31,14 @@ function Score() {
     initialized && (
       <main className={styles.score}>
         <Systems id="systems">
-          {Object.values(periods).map((period, periods) => (
+          {Object.values(periods).map((period, _, periods) => (
             <Period
               key={`per${period.position.start}`}
+              handlePosition={handlePosition}
               index={period.index}
               period={period}
-              handlePosition={handlePosition}
-              first={periodPositions[period.index]}
-              last={
+              systemStart={periodPositions[period.index]}
+              systemEnd={
                 periodPositions[period.index + 1] ??
                 period.index === periods.length - 1
               }

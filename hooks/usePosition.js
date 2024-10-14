@@ -1,55 +1,39 @@
 import { useLayoutEffect, useState } from "react";
 import useResizeObserver from "@react-hook/resize-observer";
 
-import { useMeasuresContext } from "../contexts/MeasuresContext";
-import { approxEqual } from "../utils/methods";
-
-export const usePosition = (target, index, key) => {
-  const {
-    context: { periods, page },
-    actions,
-  } = useMeasuresContext();
-  const [position, setPosition] = useState({ first: false, last: false });
-  const nextPeriod = Object.values(periods).at(index + 1);
+export const usePosition = (target, index) => {
+  const [positions, setPositions] = useState([]);
 
   useLayoutEffect(() => {
-    const offset = {
-      top: target.current.offsetTop,
-      left: target.current.offsetLeft,
-      right: Math.round(target.current.getBoundingClientRect().right),
-    };
-    setPosition({
-      first: approxEqual(offset.left, page.left),
-      last:
-        !nextPeriod ||
-        offset.top !== nextPeriod.positionInSystem.offset.top ||
-        approxEqual(page.right, offset.right),
-    });
-  }, [nextPeriod, page.left, page.right, target]);
+    if (target) {
+      const parent = target.parentElement;
+      if (!parent || getComputedStyle(parent).display !== "flex") {
+        return false;
+      }
+      const firstChildOffsetLeft = target.offsetLeft;
+      let isNotFirst = false;
+      for (let i = 0; i < parent.children.length; i++) {
+        const child = parent.children[i];
+        if (child.offsetLeft < firstChildOffsetLeft) {
+          isNotFirst = true;
+          break;
+        }
+      }
+      setPositions((prev) => {
+        const newArr = [...prev];
+        newArr[index] = isNotFirst;
+        return newArr;
+      });
+    }
+  }, [index, target]);
 
   useResizeObserver(target, (entry) => {
-    const offset = {
-      top: entry.target.offsetTop,
-      left: entry.target.offsetLeft,
-      right: Math.round(entry.target.getBoundingClientRect().right),
-    };
-    const positionInSystem = {
-      first: approxEqual(offset.left, page.left),
-      last:
-        !nextPeriod ||
-        offset.top !== nextPeriod.positionInSystem.offset.top ||
-        approxEqual(page.right, offset.right),
-      offset,
-    };
-    actions.updatePeriod({
-      key,
-      period: {
-        ...Object.values(periods)[index],
-        positionInSystem: positionInSystem,
-      },
+    setPositions((prev) => {
+      const newArr = [...prev];
+      newArr[index] = entry.target.offsetLeft < target.offsetLeft;
+      return newArr;
     });
-    setPosition(positionInSystem);
   });
 
-  return position;
+  return { systemStart: positions[index], systemEnd: positions[index + 1] };
 };

@@ -86,8 +86,6 @@ function measuresReducer(context, action) {
           : [],
       );
 
-      // TODO: Using measure.position.start won't allow for proper display of
-      // measure-end display events like cautionary clefs and final bars.
       const flowDisplayStarts = Object.entries(context.flows).reduce(
         (acc, [flowId, flow]) => ({
           ...acc,
@@ -95,28 +93,26 @@ function measuresReducer(context, action) {
             return [
               {
                 type: "displayEvent",
-                clefs: measure.clefs.map((clef) => ({
-                  ...clef,
-                  column: `e${measure.position.start}-cle`,
-                  display:
-                    mi === 0 ||
-                    (mi > 0 && !areClefsEqual(mm[mi - 1].clefs, measure.clefs)),
-                })),
+                clefs:
+                  mi > 0 && !areClefsEqual(mm[mi - 1].clefs, measure.clefs)
+                    ? measure.clefs.map((clef) => ({
+                        ...clef,
+                        column: `e${measure.position.start}-cle`,
+                      }))
+                    : null,
                 time:
                   mi === 0 ||
                   !areTimeSignaturesEqual(mm[mi - 1].time, measure.time)
                     ? {
                         ...measure.time,
                         column: `e${measure.position.start}-tim`,
-                        columnCautionary: `e${measure.position.end}-me-tim`,
                       }
                     : null,
                 key:
-                  mi === 0 || mm[mi - 1].key.fifths !== measure.key.fifths
+                  mi > 0 && mm[mi - 1].key.fifths !== measure.key.fifths
                     ? {
                         ...measure.key,
                         column: `e${measure.position.start}-key`,
-                        columnCautionary: `e${measure.position.end}-me-key`,
                         prevFifths:
                           mi > 0
                             ? mm
@@ -135,13 +131,14 @@ function measuresReducer(context, action) {
               },
               {
                 type: "displayEvent",
-                clefs: measure.clefs.map((clef) => ({
-                  ...clef,
-                  column: `e${measure.position.end}-me-cle`,
-                  display:
-                    mi < mm.length - 1 &&
-                    !areClefsEqual(mm[mi + 1].clefs, measure.clefs),
-                })),
+                clefs:
+                  mi < mm.length - 1 &&
+                  !areClefsEqual(mm[mi + 1].clefs, measure.clefs)
+                    ? measure.clefs.map((clef) => ({
+                        ...clef,
+                        column: `e${measure.position.end}-me-cle`,
+                      }))
+                    : null,
                 time:
                   mi < mm.length - 1 &&
                   !areTimeSignaturesEqual(mm[mi + 1].time, measure.time)
@@ -173,9 +170,6 @@ function measuresReducer(context, action) {
         {},
       );
 
-      // II. TODO: Group all flow events into "Periods"
-      // so we can reflow multi-staff systems.
-      // ————————————
       // TODO:
       // If two flows are "in alignment" (e.g. don't diverge in meter) for their entirety,
       // how will we identify alignment and indicate render preference for the score's
@@ -229,7 +223,6 @@ function measuresReducer(context, action) {
                 dimensions: { length: _duration },
                 flows: eventsAtStart,
                 index: acc.index,
-                key: periods[acc.index],
                 beamGroups: getBeamGroupsForPeriod({
                   flows: context.flows,
                   start: periods[acc.index],
@@ -240,6 +233,15 @@ function measuresReducer(context, action) {
                   periodStart: periods[acc.index],
                   periodEnd: _endValue,
                 }),
+                key: Object.entries(context.flows).reduce(
+                  (keyAcc, [flowId, flow]) => ({
+                    ...keyAcc,
+                    [flowId]: flow.measures.find(
+                      (m) => m.position.end >= periods[acc.index],
+                    )?.key,
+                  }),
+                  {},
+                ),
                 layoutEvents: getLayoutEventsForPeriod({
                   flows: context.flows,
                   periodStart: periods[acc.index],

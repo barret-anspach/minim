@@ -321,14 +321,14 @@ export function getBeamGroupStem(beamGroup, pitchPrefix = null) {
     (acc, note) => acc.add(note.staff),
     new Set(),
   );
-  const beamGroupNoteStaves = beamGroupNotes.map((note) => note.staff, []);
-  const staffWithMostNotes = Array.from(new Set(beamGroupNoteStaves)).reduce(
-    (prev, curr) =>
-      beamGroupNoteStaves.filter((el) => el === curr).length >
-      beamGroupNoteStaves.filter((el) => el === prev).length
-        ? curr
-        : prev,
-  );
+  // const beamGroupNoteStaves = beamGroupNotes.map((note) => note.staff, []);
+  // const staffWithMostNotes = Array.from(new Set(beamGroupNoteStaves)).reduce(
+  //   (prev, curr) =>
+  //     beamGroupNoteStaves.filter((el) => el === curr).length >
+  //     beamGroupNoteStaves.filter((el) => el === prev).length
+  //       ? curr
+  //       : prev,
+  // );
   const directionForMultipleVoices =
     beamGroup[0].partVoices === 1
       ? direction
@@ -597,15 +597,7 @@ export function areClefsEqual(clefsA, clefsB) {
   );
 }
 
-export function getLayoutForFlowAtPoint({
-  at,
-  flow,
-  clefs,
-  point,
-  measure,
-  measureIndex,
-  measurePosition,
-}) {
+export function getFlowLayoutAtPoint({ at, flow, clefs, point, layoutId }) {
   function group(content) {
     return content.flatMap(
       (item) =>
@@ -618,10 +610,11 @@ export function getLayoutForFlowAtPoint({
           : item, // type="staff"
     );
   }
+
   const layout = flow.layouts.find(
     (layout) =>
       layout.id ===
-      (measure.layout ?? flow.global.measures.find((m) => m.layout).layout),
+      (layoutId ?? flow.global.measures.find((m) => m.layout).layout),
   );
   const groups = group(layout.content);
 
@@ -657,28 +650,41 @@ export function getLayoutForFlowAtPoint({
     }
   }
 
-  const result = groups.map((group) => {
-    const row = getGroupRow(group);
+  return groups.map((group) => ({
+    ...group,
+    at: point,
+    position: at,
+    row: getGroupRow(group),
+  }));
+}
+
+export function getFlowLayoutBarlinesAtPoint({
+  at,
+  flow,
+  clefs,
+  point,
+  measure,
+  measureIndex,
+}) {
+  const groups = getFlowLayoutAtPoint({
+    at,
+    flow,
+    clefs,
+    point,
+    layoutId: measure.layout,
+  });
+  return groups.map((group) => {
     const isLastMeasure = measureIndex === flow.global.measures.length - 1;
     return {
       ...group,
-      at: point,
       barline: {
         type: at === "end" && isLastMeasure ? "final" : "regular",
         column: at === "end" ? `e${point}-me-bar` : `e${point}-bar`,
-        row: `${row[0]}/${row.at(-1)}`,
-        separation: !(at === "end" || isLastMeasure),
+        row: `${group.row[0]}/${group.row.at(-1)}`,
+        separation: !(at === "end" || (at === "end" && isLastMeasure)),
       },
-      bracket: {
-        type: group.symbol,
-        column: `e${point}-bracket`,
-        row: `${row[0]}/${row.at(-1)}`,
-      },
-      position: at,
-      row,
     };
   });
-  return result;
 }
 
 export function getLayoutEventsForPeriod({ flows, periodStart, periodEnd }) {
@@ -707,5 +713,132 @@ export function getLayoutEventsForPeriod({ flows, periodStart, periodEnd }) {
         }
       }
     }),
+  );
+}
+
+// TODO: Get flow's state of display events at a specific point.
+// Used to render system-start and cautionary clefs/meters/key signatures.
+export function getDisplayEventsForPeriod({ flows, periodStart, periodEnd }) {
+  return Object.values(flows).flatMap((displayEvents) =>
+    displayEvents.filter((event) => {
+      if (event.at >= periodStart && event.at <= periodEnd) {
+        if (
+          event.measureBounds.start >= periodStart &&
+          event.measureBounds.end <= periodEnd
+        ) {
+          // period contains an entire measure; return events of eventType "measureStart" and "measureEnd"
+          return event;
+        } else if (
+          event.measureBounds.start >= periodStart &&
+          event.measureBounds.start < periodEnd &&
+          event.measureBounds.end > periodEnd
+        ) {
+          // period contains the beginning of a measure; return events of eventType "measureStart"
+          return event.eventType === "measureStart";
+        } else if (
+          event.measureBounds.end > periodStart &&
+          event.measureBounds.end <= periodEnd &&
+          event.measureBounds.start < periodStart
+        ) {
+          return event.eventType === "measureEnd";
+        }
+      }
+    }),
+  );
+  Object.entries(flows).reduce(
+    (acc, [flowId, flow]) => ({
+      ...acc,
+      [flowId]: flow.measures.flatMap((measure, mi, mm) => {
+        return [
+          {
+            type: "displayEvent",
+            clefs: measure.clefs.map((clef) => ({
+              ...clef,
+              column: `e${measure.position.start}-cle`,
+              columnCautionary: `e${measure.position.end}-me-cle`,
+              display:
+                mi === 0 || !areClefsEqual(mm[mi - 1].clefs, measure.clefs),
+            })),
+            time:
+              mi === 0 ||
+              !areTimeSignaturesEqual(mm[mi - 1].time, measure.time) ||
+              (mi !== mm.length - 1 &&
+                !areTimeSignaturesEqual(mm[mi + 1].time, measure.time))
+                ? {
+                    ...measure.time,
+                    column: `e${measure.position.start}-tim`,
+                    columnCautionary: `e${measure.position.end}-me-tim`,
+                  }
+                : null,
+            key:
+              mi === 0 || mm[mi - 1].key.fifths !== measure.key.fifths
+                ? {
+                    ...measure.key,
+                    column: `e${measure.position.start}-key`,
+                    columnCautionary: `e${measure.position.end}-me-key`,
+                    prevFifths:
+                      mi > 0
+                        ? mm.slice(0, mi).findLast((m) => m.key !== undefined)
+                            .key
+                        : undefined,
+                  }
+                : null,
+            at: measure.position.start,
+          },
+        ];
+      }),
+    }),
+    {},
+  );
+}
+
+export function getBeamGroupsForPeriod({ flows, start, end }) {
+  // TODO: Logic not quite right. Some artifacts and incomplete/missing beams.
+  return Object.entries(flows).reduce(
+    (acc, [flowId, flow]) => ({
+      ...acc,
+      [flowId]: flow.beamGroups
+        .filter(
+          (beamGroup) =>
+            (beamGroup[0].position.start >= start &&
+              beamGroup[0].position.start < end &&
+              beamGroup.at(-1).position.start >= end) ||
+            (beamGroup.at(-1).position.start >= start &&
+              beamGroup.at(-1).position.start < end) ||
+            (beamGroup[0].position.start < start &&
+              beamGroup.at(-1).position.start >= end),
+        )
+        .map((beamGroup) =>
+          beamGroup.map((beamEvent) => ({
+            ...beamEvent,
+            beam:
+              beamGroup[0].position.start < start &&
+              beamGroup.at(-1).position.start >= end
+                ? {
+                    clip: "both",
+                    start: `e${start}-bar`,
+                    end: `e${end}-end`,
+                  }
+                : beamGroup[0].position.start < start
+                  ? {
+                      clip: "start",
+                      start: `e${start}-bar`,
+                      end: beamGroup.at(-1).position.start,
+                    }
+                  : beamGroup.at(-1).position.start >= end
+                    ? {
+                        clip: "end",
+                        start: beamEvent.position.start,
+                        end: `e${end}-end`,
+                      }
+                    : {
+                        clip: "none",
+                        start: beamGroup[0].position.start,
+                        end: beamGroup.at(-1).position.start,
+                      },
+          })),
+        ),
+    }),
+    {},
   );
 }

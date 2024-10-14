@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Systems from "../Systems";
 
@@ -9,25 +9,39 @@ import { useMeasuresContext } from "../../contexts/MeasuresContext";
 
 import styles from "./Score.module.css";
 import Flow from "../Flow/Flow";
-import Barline from "../Barline/Barline";
-import Measure from "../Measure/Measure";
+import Period from "../Period/Period";
 
-function Score({ composition }) {
+function Score() {
   const {
     context: { initialized, periods },
   } = useMeasuresContext();
+  const [periodPositions, setPeriodPositions] = useState(
+    Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+  );
+
+  const handlePosition = useCallback(({ index, first }) => {
+    setPeriodPositions((prev) => {
+      const newPositions = [...prev];
+      newPositions[index] = first;
+      return newPositions;
+    });
+  }, []);
 
   return (
     initialized && (
       <main className={styles.score}>
         <Systems id="systems">
-          {Object.values(periods).map((period, periodIndex, periods) => (
-            <Measure
-              key={`measure_${period.position.start}`}
+          {Object.values(periods).map((period, periods) => (
+            <Period
+              key={`per${period.position.start}`}
               index={period.index}
-              measure={period}
-              measureIndex={periodIndex}
-              measures={periods}
+              period={period}
+              handlePosition={handlePosition}
+              first={periodPositions[period.index]}
+              last={
+                periodPositions[period.index + 1] ??
+                period.index === periods.length - 1
+              }
             >
               {Object.entries(period.flows).map(([flowId, flow]) => (
                 <Flow
@@ -38,11 +52,8 @@ function Score({ composition }) {
                   periodFlow={flow}
                 />
               ))}
-            </Measure>
+            </Period>
           ))}
-          {/* {composition.scores.map((score) =>
-            score.flows.map((flow) => <Flow key={flow.id} id={flow.id} />),
-          )} */}
         </Systems>
       </main>
     )

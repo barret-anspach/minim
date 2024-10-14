@@ -3,8 +3,11 @@ import {
   areClefsEqual,
   areTimeSignaturesEqual,
   decorateEvent,
+  getBeamGroupsForPeriod,
   getBeamGroupStem,
-  getLayoutForFlowAtPoint,
+  getDisplayEventsForPeriod,
+  getFlowLayoutAtPoint,
+  getFlowLayoutBarlinesAtPoint,
   getLayoutEventsForPeriod,
   getStavesForFlow,
   timeSignatureToDuration,
@@ -34,6 +37,7 @@ function measuresReducer(context, action) {
         events: action.events,
         layouts: action.layouts,
         layoutEvents: action.layoutEvents,
+        layoutGroups: action.layoutGroups,
         measures: action.measureEvents,
         parts: action.parts,
         staves: action.staves,
@@ -71,6 +75,8 @@ function measuresReducer(context, action) {
 
       // TODO: Should be able to accommodate switching between periods and measures,
       // solely depending on when the score's flows are or are not "in alignment."
+      // ANSWER: Don't set periods to intersections of event.position.start,
+      // Use `flowMeasureStarts` instead.
       const flowMeasuresAfterPeriods = flowMeasureStarts.map((measureStarts) =>
         measureStarts.filter((start) => periods.at(-1) < start),
       );
@@ -80,14 +86,8 @@ function measuresReducer(context, action) {
           : [],
       );
 
-      // Get meter and key changes into a shape that's event-like
       // TODO: Using measure.position.start won't allow for proper display of
-      // measure - end display events like cautionary clefs and final bars.
-      /**
-       * As we're going through events, and setting period events by a shared start timestamp,
-       * We need to a) reserve a copy of displayItems ("measures") whose end exceeds the period's
-       * end, and b) place reserved the displayItem copy into the appropriate period.
-       */
+      // measure-end display events like cautionary clefs and final bars.
       const flowDisplayStarts = Object.entries(context.flows).reduce(
         (acc, [flowId, flow]) => ({
           ...acc,
@@ -95,13 +95,12 @@ function measuresReducer(context, action) {
             return [
               {
                 type: "displayEvent",
-                layoutGroups: measure.layout,
                 clefs: measure.clefs.map((clef) => ({
                   ...clef,
                   column: `e${measure.position.start}-cle`,
-                  columnCautionary: `e${measure.position.end}-me-cle`,
                   display:
-                    mi === 0 || !areClefsEqual(mm[mi - 1].clefs, measure.clefs),
+                    mi === 0 ||
+                    (mi > 0 && !areClefsEqual(mm[mi - 1].clefs, measure.clefs)),
                 })),
                 time:
                   mi === 0 ||
@@ -127,6 +126,46 @@ function measuresReducer(context, action) {
                       }
                     : null,
                 at: measure.position.start,
+                eventType: "measureStart",
+                flowId,
+                measureBounds: {
+                  start: measure.position.start,
+                  end: measure.position.end,
+                },
+              },
+              {
+                type: "displayEvent",
+                clefs: measure.clefs.map((clef) => ({
+                  ...clef,
+                  column: `e${measure.position.end}-me-cle`,
+                  display:
+                    mi < mm.length - 1 &&
+                    !areClefsEqual(mm[mi + 1].clefs, measure.clefs),
+                })),
+                time:
+                  mi < mm.length - 1 &&
+                  !areTimeSignaturesEqual(mm[mi + 1].time, measure.time)
+                    ? {
+                        ...mm[mi + 1].time,
+                        column: `e${measure.position.end}-me-tim`,
+                      }
+                    : null,
+                key:
+                  mi < mm.length - 1 &&
+                  mm[mi + 1].key.fifths !== measure.key.fifths
+                    ? {
+                        ...mm[mi + 1].key,
+                        column: `e${measure.position.end}-me-key`,
+                        prevFifths: measure.key,
+                      }
+                    : null,
+                at: measure.position.end,
+                eventType: "measureEnd",
+                flowId,
+                measureBounds: {
+                  start: measure.position.start,
+                  end: measure.position.end,
+                },
               },
             ];
           }),
@@ -191,6 +230,16 @@ function measuresReducer(context, action) {
                 flows: eventsAtStart,
                 index: acc.index,
                 key: periods[acc.index],
+                beamGroups: getBeamGroupsForPeriod({
+                  flows: context.flows,
+                  start: periods[acc.index],
+                  end: _endValue,
+                }),
+                displayEvents: getDisplayEventsForPeriod({
+                  flows: flowDisplayStarts,
+                  periodStart: periods[acc.index],
+                  periodEnd: _endValue,
+                }),
                 layoutEvents: getLayoutEventsForPeriod({
                   flows: context.flows,
                   periodStart: periods[acc.index],
@@ -199,15 +248,6 @@ function measuresReducer(context, action) {
                 position: {
                   start: periods[acc.index],
                   end: _endValue,
-                },
-                positionInSystem: {
-                  first: false,
-                  last: false,
-                  offset: {
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                  },
                 },
                 staves: Object.entries(context.flows).reduce(
                   (acc, [flowId, flow]) => ({ ...acc, [flowId]: flow.staves }),
@@ -230,6 +270,21 @@ function measuresReducer(context, action) {
                 ...acc.result[periods[acc.index]],
                 dimensions: { length: _duration },
                 flows,
+                beamGroups: getBeamGroupsForPeriod({
+                  flows: context.flows,
+                  start: periods[acc.index],
+                  end: _endValue,
+                }),
+                displayEvents: [
+                  ...new Set([
+                    ...acc.result[periods[acc.index]].displayEvents,
+                    ...getDisplayEventsForPeriod({
+                      flows: flowDisplayStarts,
+                      periodStart: periods[acc.index],
+                      periodEnd: _endValue,
+                    }),
+                  ]),
+                ],
                 layoutEvents: [
                   ...new Set([
                     ...acc.result[periods[acc.index]].layoutEvents,
@@ -278,6 +333,7 @@ const MeasuresContextProvider = ({ children }) => {
     },
     setFlow: ({ flow }) => {
       const layoutEvents = [];
+
       // TODO: To add: TEMPO
       // TODO: parts and even staves within a flow might have different globally-set **key signatures**.
       const measureEvents = flow.global.measures.reduce((acc, m, mi, mm) => {
@@ -300,7 +356,7 @@ const MeasuresContextProvider = ({ children }) => {
         for (const i of count) {
           start = i === 0 ? start : start + duration;
           const end = start + duration;
-          const layout = getLayoutForFlowAtPoint({
+          const layout = getFlowLayoutBarlinesAtPoint({
             flow,
             clefs,
             at: "start",
@@ -311,7 +367,7 @@ const MeasuresContextProvider = ({ children }) => {
           });
           delete m.repeatCount;
 
-          const measure = {
+          acc.push({
             ...m,
             type: "measureEvent",
             key: m.key ?? acc[mi - 1].key,
@@ -329,9 +385,7 @@ const MeasuresContextProvider = ({ children }) => {
               first: false,
               last: false,
             },
-          };
-
-          acc.push(measure);
+          });
 
           layoutEvents.push(
             {
@@ -348,7 +402,7 @@ const MeasuresContextProvider = ({ children }) => {
               eventType: "measureEnd",
               measureBounds: { start, end },
               flowId: flow.id,
-              layoutGroups: getLayoutForFlowAtPoint({
+              layoutGroups: getFlowLayoutBarlinesAtPoint({
                 flow,
                 clefs,
                 at: "end",
@@ -436,6 +490,7 @@ const MeasuresContextProvider = ({ children }) => {
                 ],
                 [],
               );
+
       const beamEvents = beamGroups.flatMap((beamGroup) =>
         beamGroup.flatMap((event) => ({
           renderId: event.renderId,
@@ -444,6 +499,20 @@ const MeasuresContextProvider = ({ children }) => {
             staff: event.staff,
           },
         })),
+      );
+
+      const staves = getStavesForFlow(flow);
+
+      const layoutGroups = flow.layouts.flatMap((layout) =>
+        getFlowLayoutAtPoint({
+          at: "start",
+          flow,
+          clefs: staves.flatMap((group) =>
+            group.staves.flatMap((staff) => staff.clef),
+          ),
+          point: 0,
+          layoutId: layout.id,
+        }),
       );
 
       dispatch({
@@ -455,8 +524,9 @@ const MeasuresContextProvider = ({ children }) => {
         measureEvents,
         layouts: flow.layouts,
         layoutEvents: layoutEvents,
+        layoutGroups,
         parts: flow.parts,
-        staves: getStavesForFlow(flow),
+        staves,
       });
     },
     setPeriods: () => {

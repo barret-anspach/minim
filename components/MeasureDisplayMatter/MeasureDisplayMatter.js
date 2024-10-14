@@ -1,6 +1,3 @@
-import { Fragment } from "react";
-import Barline from "../Barline/Barline";
-import Bracket from "../Bracket/Bracket";
 import Clef from "../Clef";
 import Key from "../Key";
 import Meter from "../Meter";

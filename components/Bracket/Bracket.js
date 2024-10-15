@@ -1,6 +1,5 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 
-import useVars from "../../hooks/useVars";
 import styles from "./Bracket.module.css";
 
 function Brace({ size }) {
@@ -95,22 +94,18 @@ function Brace({ size }) {
 }
 
 export default function Bracket({ type, size = "regular", column, row }) {
-  const bracketRef = useRef(null);
-  useVars({
-    varRef: bracketRef,
-    key: "--column",
-    value: column,
-  });
-  useVars({
-    varRef: bracketRef,
-    key: "--row",
-    value: row,
-  });
+  const style = useMemo(
+    () => ({
+      "--column": column,
+      "--row": row,
+    }),
+    [column, row],
+  );
 
   switch (type) {
     case "brace": {
       return (
-        <div className={styles.brace} ref={bracketRef}>
+        <div className={styles.brace} style={style}>
           <Brace size={size} />
         </div>
       );
@@ -118,7 +113,7 @@ export default function Bracket({ type, size = "regular", column, row }) {
     case "bracket":
     default: {
       return (
-        <div className={styles.bracket} ref={bracketRef}>
+        <div className={styles.bracket} style={style}>
           <span className={styles.bracketTop}></span>
           <div className={styles.bracketBar} />
           <span className={styles.bracketBottom}></span>

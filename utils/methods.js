@@ -270,6 +270,7 @@ export function getStemDirectionForChord(chord, midline) {
     };
   }
 }
+
 export function getStem(
   chord,
   midline,
@@ -480,25 +481,26 @@ export function getStavesForFlow(flow) {
         staffIndex: i,
       };
     }),
+    // TODO: overlap staves[i].pitches to approximate desired staff spacing,
+    // expressed as `partPitches`
   }));
 }
-export function getColumnsForPeriod({ period }) {
-  const uniqueStarts = Object.groupBy(
-    Object.values(period.flows).flat(),
-    (e) => (e.type === "event" ? e.position.start : e.at),
+export function getColumnsForPeriod({ flows, end }) {
+  const uniqueStarts = Object.groupBy(Object.values(flows).flat(), (e) =>
+    e.type === "event" ? e.position.start : e.at,
   );
 
   // TODO: reduce should return an object with named grid lines and track widths,
   // that we can THEN use to insert last columns and properly format
   const columns = Object.entries(uniqueStarts)
-    .reduce((acc, [start, startEvents], index, starts) => {
+    .reduce((acc, [start, _], index, starts) => {
       const columnWidth =
         index < starts.length - 1
           ? starts[index + 1][1][0].position.start - parseInt(start) + "fr"
-          : (period.position.end - parseInt(start) + "fr" ?? "auto");
+          : (end - parseInt(start) + "fr" ?? "auto");
       if (index === starts.length - 1) {
         // Add start- and end-positions for the last event in a flow
-        return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: period.position.end, columnWidth: "auto" })}`;
+        return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: end, columnWidth: "auto" })}`;
       } else {
         return `${acc}${makeColumn({ start, columnWidth })}`;
       }

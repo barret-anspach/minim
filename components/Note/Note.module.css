@@ -5,3 +5,6 @@
 .dot {
   margin-left: 0.12rem;
 }
+.up {
+  transform: translateY(-0.12rem);
+}

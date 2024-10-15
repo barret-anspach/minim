@@ -1,7 +1,6 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 
-import useVars from "../../hooks/useVars";
 import styles from "./Item.module.css";
 
 function Item({
@@ -14,37 +13,24 @@ function Item({
   size,
   text = false,
 }) {
-  const ref = useRef(null);
-  useVars({
-    varRef: ref,
-    key: "--column",
-    value: column ?? "e 1",
-  });
-  useVars({
-    varRef: ref,
-    key: "--padEnd",
-    value: padEnd ? `${padEnd}rem` : "0.1rem",
-  });
-  useVars({
-    varRef: ref,
-    key: "--pitch",
-    value: pitch,
-  });
-  useVars({
-    varRef: ref,
-    key: "--size",
-    value: size ? `${size}rem` : "4rem",
-  });
-
+  const style = useMemo(
+    () => ({
+      "--column": column ?? "e0",
+      "--padEnd": padEnd ? `${padEnd}rem` : "0.1rem",
+      "--pitch": pitch,
+      "--size": size ? `${size}rem` : "4rem",
+    }),
+    [column, padEnd, pitch, size],
+  );
   return (
     <span
-      ref={ref}
       className={clsx([
         styles.item,
         label && styles.label,
         text && styles.text,
         className,
       ])}
+      style={style}
     >
       {children}
     </span>

@@ -1,4 +1,9 @@
 {
+  "data": {
+    "name": "Two pianos",
+    "composer": "Barret Anspach",
+    "copyright": "Copyright © 2024. All rights reserved."
+  },
   "scores": [
     {
       "id": "score0",

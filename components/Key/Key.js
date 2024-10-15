@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import Item from "../Item";
 import StaffDisplayItem from "../StaffDisplayItem";
 
@@ -13,36 +15,40 @@ export default function Key({
   id,
   prevFifths,
 }) {
-  const unsignedInteger = Math.abs(fifths);
-  const sign = Math.sign(fifths);
-  const accidentals =
-    sign === 0 || (prevFifths !== fifths && fifths === 0)
-      ? range.clefs[clefType].keyAccidentals[
-          Math.sign(prevFifths) === 1 ? "sharp" : "flat"
-        ]
-          .slice(0, Math.abs(prevFifths))
-          .map((pitch) => ({
-            pitch: `${id ?? ""}${pitch}`,
-            glyph:
-              accidentalMap.value[
-                accidentalMap.key.indexOf("accidentalNatural")
-              ],
-          }))
-      : range.clefs[clefType].keyAccidentals[sign === 1 ? "sharp" : "flat"]
-          .slice(0, unsignedInteger)
-          .map((pitch) => ({
-            pitch: `${id ?? ""}${pitch}`,
-            glyph:
-              accidentalMap.value[
-                accidentalMap.key.indexOf(
-                  sign === 0
-                    ? "accidentalNatural"
-                    : sign === 1
-                      ? "accidentalSharp"
-                      : "accidentalFlat",
-                )
-              ],
-          }));
+  const unsignedInteger = useMemo(() => Math.abs(fifths), [fifths]);
+  const sign = useMemo(() => Math.sign(fifths), [fifths]);
+  const accidentals = useMemo(
+    () =>
+      sign === 0 || (prevFifths !== fifths && fifths === 0)
+        ? range.clefs[clefType].keyAccidentals[
+            Math.sign(prevFifths) === 1 ? "sharp" : "flat"
+          ]
+            .slice(0, Math.abs(prevFifths))
+            .map((pitch) => ({
+              pitch: `${id ?? ""}${pitch}`,
+              glyph:
+                accidentalMap.value[
+                  accidentalMap.key.indexOf("accidentalNatural")
+                ],
+            }))
+        : range.clefs[clefType].keyAccidentals[sign === 1 ? "sharp" : "flat"]
+            .slice(0, unsignedInteger)
+            .map((pitch) => ({
+              pitch: `${id ?? ""}${pitch}`,
+              glyph:
+                accidentalMap.value[
+                  accidentalMap.key.indexOf(
+                    sign === 0
+                      ? "accidentalNatural"
+                      : sign === 1
+                        ? "accidentalSharp"
+                        : "accidentalFlat",
+                  )
+                ],
+            })),
+    [clefType, fifths, id, prevFifths, sign, unsignedInteger],
+  );
+
   return (
     <StaffDisplayItem type="key" start={column}>
       {accidentals.length > 0 &&

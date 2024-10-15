@@ -1,22 +1,18 @@
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import clsx from "clsx";
 
 import Item from "../Item";
+import LegerLines from "./LegerLines";
 import Note from "../Note";
 import Stem from "../Stem";
 
-import { useKey } from "../../hooks/useKey";
 import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import { getPitches } from "../../utils/getPitches";
-import { getAccidentalGlyph } from "../../constants/accidentals";
-import {
-  getLegerLines,
-  getPitchString,
-  getRestGlyph,
-  isNoteOnLine,
-} from "../../utils/methods";
+import { getPitchString, isNoteOnLine } from "../../utils/methods";
 
 import styles from "./Chord.module.css";
+import Rest from "../Note/Rest";
+import Accidental from "./Accidental";
 
 // TODO: Should handle
 //         - display one or more noteheads
@@ -29,58 +25,31 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
   const {
     context: { flows },
   } = useMeasuresContext();
-  const { rangeClef } = getPitches(clef);
-  const { accidentalStep } = useKey({ clefType: rangeClef.type, event });
-  const legerLines = getLegerLines({
-    clef: event.clef,
-    clefs: event.clefs,
-    notes: event.notes,
-    pitchPrefix: event.flowId,
-  });
-  const beamEvent = flows[event.flowId].beamEvents.find(
-    (beamEvent) => beamEvent.renderId === event.renderId,
+  const { rangeClef } = useMemo(() => getPitches(clef), [clef]);
+  const beamEvent = useMemo(
+    () =>
+      flows[event.flowId].beamEvents.find(
+        (beamEvent) => beamEvent.renderId === event.renderId,
+      ),
+    [event.flowId, event.renderId, flows],
   );
 
-  // TODO: are pitches on a line or space? --> placement of augmentation dots, accidentals, etc.
   return (
     <Fragment key={id}>
-      {/* Leger Lines */}
-      {legerLines &&
-        legerLines.length > 0 &&
-        legerLines.map((legerLine, legerLineIndex) => (
-          <Item
-            key={`${id}_leg${legerLineIndex}`}
-            className={styles.legerLine}
-            column={`e${event.position.start}-not`}
-            pitch={legerLine.pitch}
-          />
-        ))}
-      {/* TODO: Calculate rest position */}
-      {event.rest && event.display !== "none" && (
-        <Item
-          key={`${id}_res`}
-          column={`e${event.position.start}-not`}
-          pitch={`${event.flowId}s${event.staff}b4`}
-        >
-          {getRestGlyph(event.duration.base)}
-        </Item>
-      )}
+      <LegerLines event={event} id={id} />
+      <Rest event={event} id={id} />
+
       {event.notes &&
         event.notes.map((note, noteIndex) => (
           <Fragment key={`${id}_not${noteIndex}`}>
             {/** Accidentals */}
-            {note.pitch.alter && !accidentalStep.includes(note.pitch.step) && (
-              <Item
-                key={`${id}_not${noteIndex}_acc`}
-                className={styles.accidental}
-                column={`e${event.position.start}-acc`}
-                pitch={`${event.flowId}s${note.staff}${getPitchString(note)}`}
-              >
-                <span className={styles.inner}>
-                  {getAccidentalGlyph(note.pitch.alter)}
-                </span>
-              </Item>
-            )}
+            <Accidental
+              event={event}
+              note={note}
+              noteIndex={noteIndex}
+              id={id}
+              clefType={rangeClef.type}
+            />
             <Note
               key={`${id}_not${noteIndex}_notehead`}
               id={`${id}_not${noteIndex}_notehead`}
@@ -91,13 +60,14 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
               note={note}
               noteIndex={noteIndex}
               pitchPrefix={`${event.flowId}`}
+              staffLinePitch={rangeClef.staffLinePitches[0].id}
             />
-            {/** Articulations */}
+            {/** TODO: Articulations */}
           </Fragment>
         ))}
       {event.notes && (
         <Stem
-          clef={clef}
+          rangeClef={rangeClef}
           direction={beamEvent?.beam.direction ?? null}
           event={event}
           notes={event.notes}
@@ -105,43 +75,6 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
           beam={beamEvent?.beam ?? null}
         />
       )}
-      {event.duration.dots &&
-        event.duration.dots > 0 &&
-        event.notes &&
-        event.notes.map((note, noteIndex) =>
-          Array.from({ length: event.duration.dots }, (_, i) => i).map(
-            (dotIndex) => (
-              <Item
-                key={`${id}_not${noteIndex}_dot${dotIndex}`}
-                className={clsx(
-                  styles.dot,
-                  isNoteOnLine(rangeClef.staffLinePitches[0].id, note) &&
-                    styles.up,
-                )}
-                column={`e${event.position.start}-ste-up `}
-                pitch={`${event.flowId}s${note.staff}${getPitchString(note)}`}
-              >
-                
-              </Item>
-            ),
-          ),
-        )}
-      {event.duration.dots &&
-        event.duration.dots > 0 &&
-        event.rest &&
-        event.display !== "none" &&
-        Array.from({ length: event.duration.dots }, (_, i) => i).map(
-          (dotIndex) => (
-            <Item
-              key={`${id}_res_dot${dotIndex}`}
-              className={styles.dot}
-              column={`e${event.position.start}-ste-up`}
-              pitch={`${event.flowId}s${event.staff}b4`}
-            >
-              
-            </Item>
-          ),
-        )}
     </Fragment>
   );
 }

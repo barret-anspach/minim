@@ -1,25 +1,17 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 
-import useVars from "../../hooks/useVars";
 import styles from "./Event.module.css";
 
-export default function Event({ children, beat, pitch }) {
+export default function Event({ children, className, beat, pitch }) {
   const ref = useRef(null);
-
-  useVars({
-    varRef: ref,
-    key: "--beat",
-    value: beat,
-  });
-  useVars({
-    varRef: ref,
-    key: "--pitch",
-    value: pitch,
-  });
+  const style = useMemo(
+    () => ({ "--beat": beat, "--pitch": pitch }),
+    [beat, pitch],
+  );
 
   return (
-    <span ref={ref} className={clsx(styles.event)}>
+    <span ref={ref} className={clsx(styles.event, className)} style={style}>
       {children}
     </span>
   );

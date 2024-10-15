@@ -1,8 +1,14 @@
+import { useMemo } from "react";
 import clsx from "clsx";
 
+import AugmentationDots from "../Chord/AugmentationDots";
 import Item from "../Item";
 
-import { getNoteGlyph, getPitchString } from "../../utils/methods";
+import {
+  getNoteGlyph,
+  getPitchString,
+  isNoteOnLine,
+} from "../../utils/methods";
 
 import styles from "./Note.module.css";
 
@@ -13,17 +19,34 @@ export default function Note({
   id,
   note,
   noteIndex,
+  staffLinePitch,
   pitchPrefix,
 }) {
-  const pitch = getPitchString(note);
+  const key = useMemo(() => `${id}_not${noteIndex}`, [id, noteIndex]);
+  const pitch = useMemo(
+    () => `${pitchPrefix}s${note.staff}${getPitchString(note)}`,
+    [note, pitchPrefix],
+  );
+  const noteOnLine = useMemo(
+    () => isNoteOnLine(staffLinePitch, note),
+    [staffLinePitch, note],
+  );
   return (
-    <Item
-      className={clsx(styles.notehead, className)}
-      key={`${id}_not${noteIndex}`}
-      column={column}
-      pitch={`${pitchPrefix}s${note.staff}${pitch}`}
-    >
-      {getNoteGlyph(event.duration.base)}
-    </Item>
+    <>
+      <Item
+        className={clsx(styles.notehead, className)}
+        key={key}
+        column={column}
+        pitch={pitch}
+      >
+        {getNoteGlyph(event.duration.base)}
+      </Item>
+      <AugmentationDots
+        className={clsx(noteOnLine && styles.up)}
+        event={event}
+        prefix={key}
+        pitch={pitch}
+      />
+    </>
   );
 }

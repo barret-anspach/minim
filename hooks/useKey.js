@@ -9,20 +9,22 @@ export function useKey({ clefType, event }) {
     context: { flows },
   } = useMeasuresContext();
 
-  // If it's the last measure in a system and there's a key change in the next measure,
-  // or a current key change,
-  // or the first measure in a system,
-  const { measures } = flows[event.flowId];
-  const measureIndex = measures.findIndex((m) =>
-    m.position.end >= event.position.end ? true : measures.length - 1,
+  const { measures } = useMemo(
+    () => flows[event.flowId],
+    [flows, event.flowId],
+  );
+  const measureIndex = useMemo(
+    () =>
+      measures.findIndex((m) =>
+        m.position.end >= event.position.end ? true : measures.length - 1,
+      ),
+    [event.position.end, measures],
   );
 
   const value = useMemo(() => {
     const fifths = measures[measureIndex].key.fifths;
-
     const unsignedInteger = Math.abs(fifths);
     const sign = Math.sign(fifths);
-
     const accidentals =
       sign === 0
         ? []

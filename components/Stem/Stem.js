@@ -1,9 +1,8 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 
 import Item from "../Item";
 
-import useVars from "../../hooks/useVars";
 import { getStem } from "../../utils/methods";
 
 import styles from "./Stem.module.css";
@@ -28,43 +27,43 @@ const flagMap = {
  */
 export default function Stem({
   beam = null,
-  clef,
+  rangeClef,
   direction = null,
   event,
   notes,
   pitchPrefix = "",
 }) {
-  const stemRef = useRef(null);
-  const _clef = Object.values(range.clefs).find((v) => clef.sign === v.sign);
-  const stem = getStem(
-    notes,
-    _clef.staffLinePitches[2].id,
-    direction,
-    beam,
-    pitchPrefix,
+  const stem = useMemo(
+    () =>
+      getStem(
+        notes,
+        rangeClef.staffLinePitches[2].id,
+        direction,
+        beam,
+        pitchPrefix,
+      ),
+    [beam, direction, notes, pitchPrefix, rangeClef.staffLinePitches],
   );
-  const _stemDirection = beam?.direction ?? direction ?? stem.direction;
+  const _stemDirection = useMemo(
+    () => beam?.direction ?? direction ?? stem.direction,
+    [beam?.direction, direction, stem.direction],
+  );
   const _stemColumn = useMemo(
     () =>
       `e${event.position.start}${_stemDirection === "up" ? "-ste-up" : "-not"}`,
     [event.position.start, _stemDirection],
   );
-
-  useVars({
-    varRef: stemRef,
-    key: "--column",
-    value: _stemColumn,
-  });
-  useVars({
-    varRef: stemRef,
-    key: "--pitch",
-    value: `${stem.row.start}/${stem.row.end}`,
-  });
+  const style = useMemo(
+    () => ({
+      "--column": _stemColumn,
+      "--pitch": `${stem.row.start}/${stem.row.end}`,
+    }),
+    [_stemColumn, stem.row.end, stem.row.start],
+  );
 
   return (
     <>
       <svg
-        ref={stemRef}
         viewBox={`0 0 1 1`}
         width={`${metadata.engravingDefaults.stemThickness / 4}rem`}
         height="100%"
@@ -74,6 +73,7 @@ export default function Stem({
           styles.stem,
           _stemDirection === "up" ? styles.up : styles.down,
         ])}
+        style={style}
       >
         <rect x={0} y={0} width={1} height={1} fill="currentColor" />
       </svg>

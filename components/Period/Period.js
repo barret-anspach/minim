@@ -1,4 +1,4 @@
-import { Fragment, useLayoutEffect, useRef } from "react";
+import { forwardRef, Fragment, useMemo } from "react";
 import clsx from "clsx";
 
 import Barline from "../Barline/Barline";
@@ -11,109 +11,68 @@ import Meter from "../Meter";
 import Staff from "../Staff";
 
 import { useMeasuresContext } from "../../contexts/MeasuresContext";
-import useVars from "../../hooks/useVars";
 import { getColumnsForPeriod } from "../../utils/methods";
 import { withNoSSR } from "../../hooks/withNoSSR";
 
 import styles from "./Period.module.css";
 
-const Period = ({
-  children,
-  handlePosition,
-  index,
-  period,
-  systemStart,
-  systemEnd,
-}) => {
+const Period = forwardRef(function Period(
+  { children, index, period, systemStart, systemEnd },
+  ref,
+) {
   const {
     context: { flows },
   } = useMeasuresContext();
-  const ref = useRef(null);
-  const columns = getColumnsForPeriod({ period });
-  const rows = Object.values(period.staves)
-    .flatMap((parts) =>
-      Object.values(parts).flatMap((part) =>
-        part.staves.flatMap((staff) => staff.pitches),
-      ),
-    )
-    .join("");
-  const lefthandBarlineRows = Object.values(flows)
-    .reduce(
-      (acc, flow) => [...acc, flow.layoutGroups.flatMap((group) => group.row)],
-      [],
-    )
-    .flat();
+  const columns = useMemo(
+    () =>
+      getColumnsForPeriod({ flows: period.flows, end: period.position.end }),
+    [period.flows, period.position.end],
+  );
+  const rows = useMemo(
+    () =>
+      Object.values(period.staves)
+        .flatMap((parts) =>
+          Object.values(parts).flatMap((part) =>
+            part.staves.flatMap((staff) => staff.pitches),
+          ),
+        )
+        .join(""),
+    [period.staves],
+  );
+  const lefthandBarlineRows = useMemo(
+    () =>
+      Object.values(flows)
+        .reduce(
+          (acc, flow) => [
+            ...acc,
+            flow.layoutGroups.flatMap((group) => group.row),
+          ],
+          [],
+        )
+        .flat(),
+    [flows],
+  );
 
-  useLayoutEffect(() => {
-    function getPositionInSystem(element) {
-      const parent = element.parentElement;
-      if (!parent || getComputedStyle(parent).display !== "flex") {
-        return false;
-      }
-      const firstChildOffsetLeft = element.offsetLeft;
-      let isNotFirst = false;
-      for (let i = 0; i < parent.children.length; i++) {
-        const child = parent.children[i];
-        if (child.offsetLeft < firstChildOffsetLeft) {
-          isNotFirst = true;
-          break;
-        }
-      }
-      if (isNotFirst) {
-        // element.setAttribute("data-first", false);
-        handlePosition({ index, first: false });
-      } else {
-        // element.setAttribute("data-first", true);
-        handlePosition({ index, first: true });
-      }
-    }
-
-    setTimeout(getPositionInSystem(ref.current), 0);
-    window.addEventListener("resize", () => getPositionInSystem(ref.current));
-
-    return () => {
-      window.removeEventListener("resize", () =>
-        getPositionInSystem(ref.current),
-      );
-    };
-  }, [index]);
-
-  const className = useVars({
-    varRef: ref,
-    defaultStyles: [styles.period],
-    conditionalStyles: [
-      {
-        condition: systemStart,
-        operator: "&&",
-        style: styles.first,
-      },
-      {
-        condition: systemEnd,
-        operator: "&&",
-        style: styles.last,
-      },
-    ],
-    key: "--duration",
-    value: period.dimensions.length,
-  });
-  useVars({
-    varRef: ref,
-    key: "--indent",
-    value: index === 0 ? "3rem" : "auto",
-  });
-  useVars({
-    varRef: ref,
-    key: "--rows",
-    value: rows,
-  });
-  useVars({
-    varRef: ref,
-    key: "--columns",
-    value: columns,
-  });
+  const style = useMemo(
+    () => ({
+      "--duration": period.dimensions.length,
+      "--indent": index === 0 ? "3rem" : "auto",
+      "--rows": rows,
+      "--columns": columns,
+    }),
+    [columns, index, period.dimensions.length, rows],
+  );
 
   return (
-    <section ref={ref} className={clsx(className)}>
+    <section
+      ref={ref}
+      className={clsx(
+        styles.period,
+        systemStart && styles.first,
+        systemEnd && styles.last,
+      )}
+      style={style}
+    >
       {Object.entries(flows).map(([flowId, flow]) =>
         flow.layoutGroups.map((group, groupIndex) => (
           <Fragment key={`${flowId}p${index}g${groupIndex}_system-start`}>
@@ -250,6 +209,6 @@ const Period = ({
       {children}
     </section>
   );
-};
+});
 
-export default withNoSSR(Period);
+export default Period;

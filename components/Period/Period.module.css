@@ -9,21 +9,9 @@
   min-width: fit-content;
   color: black;
 }
-.first {
-  background: rgba(255, 255, 0, 0.2);
+.period:first-of-type {
+  padding-left: 1rem;
 }
-.last {
-  background: rgba(255, 69, 0, 0.2);
-}
-/* .first,
-.period[data-first="true"] {
-  background: rgba(255, 255, 0, 0.2);
-}
-.last,
-.period:has(+ .period[data-first="true"]),
-.period:last-of-type {
-  background: rgba(255, 69, 0, 0.2);
-} */
 
 .partLabel {
   display: block;

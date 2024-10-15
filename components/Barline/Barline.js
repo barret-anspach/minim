@@ -1,7 +1,6 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 
-import useVars from "../../hooks/useVars";
 import metadata from "./../../public/fonts/bravura/bravura_metadata.json";
 
 import styles from "./Barline.module.css";
@@ -34,29 +33,24 @@ function Barline({
   separation,
   type = "regular",
 }) {
-  const ref = useRef(null);
-  const _className = useVars({
-    varRef: ref,
-    defaultStyles: [styles.barline],
-    conditionalStyles: [
-      { condition: separation, operator: "&&", style: styles.separation },
-    ],
-    key: "--separation",
-    value: `${metadata.engravingDefaults.barlineSeparation / 4}rem`,
-  });
-  useVars({
-    varRef: ref,
-    key: "--column",
-    value: column,
-  });
-  useVars({
-    varRef: ref,
-    key: "--row",
-    value: row,
-  });
+  const style = useMemo(
+    () => ({
+      "--separation": `${metadata.engravingDefaults.barlineSeparation / 4}rem`,
+      "--column": column,
+      "--row": row,
+    }),
+    [column, row],
+  );
 
   return (
-    <div ref={ref} className={clsx(_className, className)}>
+    <div
+      className={clsx(
+        styles.barline,
+        separation && styles.separation,
+        className,
+      )}
+      style={style}
+    >
       {children ? (
         children
       ) : type === "final" ? (
@@ -68,4 +62,4 @@ function Barline({
   );
 }
 
-export default withNoSSR(Barline);
+export default Barline;

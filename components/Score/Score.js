@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 
 import Systems from "../Systems";
 
@@ -11,30 +11,52 @@ import styles from "./Score.module.css";
 import Flow from "../Flow/Flow";
 import Period from "../Period/Period";
 
-function Score() {
+function Score({ composition }) {
   const {
     context: { initialized, periods },
   } = useMeasuresContext();
+  const periodRefs = useRef([]);
   const [periodPositions, setPeriodPositions] = useState(
     Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
   );
 
-  const handlePosition = useCallback(({ index, first }) => {
-    setPeriodPositions((prev) => {
-      const newPositions = [...prev];
-      newPositions[index] = first;
-      return newPositions;
+  useLayoutEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      const firstChildOffsetLeft = entries[0].target.offsetLeft;
+      const newArr = [...periodPositions];
+      for (let i = 0; i < entries.length; i++) {
+        newArr[i] = entries[i].target.offsetLeft === firstChildOffsetLeft;
+      }
+      setPeriodPositions(newArr);
     });
-  }, []);
+
+    if (periodRefs.current) {
+      periodRefs.current.forEach((ref) => {
+        if (ref) {
+          observer.observe(ref, {});
+        }
+      });
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [periodPositions]);
 
   return (
     initialized && (
       <main className={styles.score}>
+        <header className={styles.header}>
+          <div className={styles.title}>
+            <h1>{composition.data.name}</h1>
+          </div>
+          <h2>{composition.data.composer}</h2>
+        </header>
         <Systems id="systems">
           {Object.values(periods).map((period, _, periods) => (
             <Period
+              ref={(ref) => (periodRefs.current[period.index] = ref)}
               key={`per${period.position.start}`}
-              handlePosition={handlePosition}
               index={period.index}
               period={period}
               systemStart={periodPositions[period.index]}

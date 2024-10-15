@@ -1,9 +1,8 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 
 import Chord from "../Chord";
 
-import useVars from "../../hooks/useVars";
 import { toNumericalDuration, durationBeforeIndex } from "../../utils/methods";
 import styles from "./Tuplet.module.css";
 
@@ -22,34 +21,38 @@ export default function Tuplet({
   id,
   measureIndex,
 }) {
-  const bracketRef = useRef(null);
   const tuplet = {
     start: durationBeforeIndex(eventIndex, events),
     outer: toNumericalDuration(event.oute.duration) * event.outer.multiple,
     inner: toNumericalDuration(event.inner.duration) * event.inner.multiple,
   };
-  const scalar = tuplet.outer / tuplet.inner;
   // TODO: Bracket row should be set to either top of Staff or uppermost bounds of TupletEvents (whichever higher), plus default padding
-  const bracketPosition = {
-    start: {
-      column: `e ${tuplet.start + 1}`,
-      row: "c6",
-    },
-    end: {
-      column: `e ${tuplet.start + Math.ceil(tuplet.outer * scalar) + 1}`,
-      row: "c6",
-    },
-  };
-  useVars({
-    varRef: bracketRef,
-    key: "--column",
-    value: `${bracketPosition.start.column}/${bracketPosition.end.column}`,
-  });
-  useVars({
-    varRef: bracketRef,
-    key: "--row",
-    value: `${bracketPosition.start.row}/${bracketPosition.end.row}`,
-  });
+  const bracketPosition = useMemo(() => {
+    const scalar = tuplet.outer / tuplet.inner;
+    return {
+      start: {
+        column: `e ${tuplet.start + 1}`,
+        row: "c6",
+      },
+      end: {
+        column: `e ${tuplet.start + Math.ceil(tuplet.outer * scalar) + 1}`,
+        row: "c6",
+      },
+    };
+  }, [tuplet.inner, tuplet.outer, tuplet.start]);
+
+  const style = useMemo(
+    () => ({
+      "--column": `${bracketPosition.start.column}/${bracketPosition.end.column}`,
+      "--row": `${bracketPosition.start.row}/${bracketPosition.end.row}`,
+    }),
+    [
+      bracketPosition.end.column,
+      bracketPosition.end.row,
+      bracketPosition.start.column,
+      bracketPosition.start.row,
+    ],
+  );
 
   if (event.type !== "tuplet") return;
   return (
@@ -70,7 +73,7 @@ export default function Tuplet({
       {/** WIP: Bracket, ratio, etc */}
       {/** TODO: Bracket should be able to skew … somehow */}
       {/** TODO: Ratio display will break when multiple exceeds 9 (e.g. "12:8") */}
-      <div className={styles.tuplet} ref={bracketRef}>
+      <div className={styles.tuplet} style={style}>
         <svg
           className={clsx(styles.bracket, styles.bracketLeft)}
           viewBox="0 0 1 1"

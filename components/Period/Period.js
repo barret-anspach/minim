@@ -12,9 +12,9 @@ import Staff from "../Staff";
 
 import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import { getColumnsForPeriod } from "../../utils/methods";
-import { withNoSSR } from "../../hooks/withNoSSR";
 
 import styles from "./Period.module.css";
+import { overlap } from "../../utils/getPitches";
 
 const Period = forwardRef(function Period(
   { children, index, period, systemStart, systemEnd },
@@ -23,6 +23,7 @@ const Period = forwardRef(function Period(
   const {
     context: { flows },
   } = useMeasuresContext();
+
   const columns = useMemo(
     () =>
       getColumnsForPeriod({ flows: period.flows, end: period.position.end }),
@@ -30,14 +31,16 @@ const Period = forwardRef(function Period(
   );
   const rows = useMemo(
     () =>
-      Object.values(period.staves)
-        .flatMap((parts) =>
-          Object.values(parts).flatMap((part) =>
-            part.staves.flatMap((staff) => staff.pitches),
+      Object.entries(period.staves)
+        .filter(([id, _]) => period.measures[id].length > 0)
+        .flatMap(([_, parts]) =>
+          overlap(
+            Object.values(parts).flatMap((part) => part.staves),
+            12,
           ),
         )
-        .join(""),
-    [period.staves],
+        .join(" "),
+    [period.measures, period.staves],
   );
   const lefthandBarlineRows = useMemo(
     () =>
@@ -45,14 +48,15 @@ const Period = forwardRef(function Period(
         .reduce(
           (acc, flow) => [
             ...acc,
-            flow.layoutGroups.flatMap((group) => group.row),
+            flow.layoutGroups
+              .filter((group) => period.measures[group.flowId].length > 0)
+              .flatMap((group) => group.row),
           ],
           [],
         )
         .flat(),
-    [flows],
+    [flows, period.measures],
   );
-
   const style = useMemo(
     () => ({
       "--duration": period.dimensions.length,
@@ -76,13 +80,14 @@ const Period = forwardRef(function Period(
       {Object.entries(flows).map(([flowId, flow]) =>
         flow.layoutGroups.map((group, groupIndex) => (
           <Fragment key={`${flowId}p${index}g${groupIndex}_system-start`}>
-            {(index === 0 || systemStart) && (
-              <Bracket
-                type={group.symbol}
-                column={`e${period.position.start}-bracket`}
-                row={`${group.row[0]}/${group.row.at(-1)}`}
-              />
-            )}
+            {(index === 0 || systemStart) &&
+              period.measures[flowId].length > 0 && (
+                <Bracket
+                  type={group.symbol}
+                  column={`e${period.position.start}-bracket`}
+                  row={`${group.row[0]}/${group.row.at(-1)}`}
+                />
+              )}
             {(index === 0 || systemStart) && (
               <Barline
                 type={"regular"}
@@ -120,25 +125,34 @@ const Period = forwardRef(function Period(
                     {part.name}
                   </Item>
                 )}
-                {systemStart && period.index !== 0 && staffIndex === 0 && (
-                  <Item
-                    className={styles.partLabel}
-                    column={`e${period.position.start}-text`}
-                    pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
-                  >
-                    {part.shortName}
-                  </Item>
+                {systemStart &&
+                  period.index !== 0 &&
+                  staffIndex === 0 &&
+                  period.measures[id].length > 0 && (
+                    <Item
+                      className={styles.partLabel}
+                      column={`e${period.position.start}-text`}
+                      pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
+                    >
+                      {part.shortName}
+                    </Item>
+                  )}
+                {period.measures[id].length > 0 && (
+                  <Staff
+                    id={`${id}s${staffIndex + 1}`}
+                    key={`${id}s${staffIndex + 1}`}
+                    pitches={pitches}
+                    rangeClef={rangeClef}
+                    staffBounds={staffBounds}
+                    start={`e${period.position.start}-bar`}
+                    end={
+                      period.measures[id].find((m) => m.periodBounds.lastInFlow)
+                        ? `e${period.measures[id].find((m) => m.periodBounds.lastInFlow).position.end}-cle`
+                        : `e${period.position.end}-end`
+                    }
+                  />
                 )}
-                <Staff
-                  id={`${id}s${staffIndex + 1}`}
-                  key={`${id}s${staffIndex + 1}`}
-                  pitches={pitches}
-                  rangeClef={rangeClef}
-                  staffBounds={staffBounds}
-                  start={`e${period.position.start}-bar`}
-                  end={`e${period.position.end}-end`}
-                />
-                {clef && systemStart && (
+                {clef && systemStart && period.measures[id].length > 0 && (
                   <Clef
                     id={`${id}s${staffIndex + 1}`}
                     clef={clef.clef}
@@ -192,13 +206,21 @@ const Period = forwardRef(function Period(
         period.layoutEvents.map((layout, leIndex) =>
           layout.layoutGroups.map((group, groupIndex) => (
             <Fragment key={`${index}le${leIndex}_grp${groupIndex}`}>
-              {((group.position === "end" && systemEnd) ||
+              {((group.position === "end" &&
+                systemEnd &&
+                group.barline.type !== "final") ||
                 group.barline.type === "final" ||
                 group.position === "start") && (
                 <Barline
                   key={`${index}_grp${groupIndex}_bar`}
                   type={group.barline.type}
-                  column={group.barline.column}
+                  column={
+                    group.position === "end" &&
+                    systemEnd &&
+                    group.barline.type !== "final"
+                      ? group.barline.columnLastInSystem
+                      : group.barline.column
+                  }
                   row={group.barline.row}
                   separation={group.barline.separation}
                 />

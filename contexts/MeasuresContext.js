@@ -9,6 +9,8 @@ import {
   getFlowLayoutAtPoint,
   getFlowLayoutBarlinesAtPoint,
   getLayoutEventsForPeriod,
+  getLayoutGroupsForPeriod,
+  getMeasuresForPeriod,
   getStavesForFlow,
   timeSignatureToDuration,
 } from "../utils/methods";
@@ -198,6 +200,9 @@ function measuresReducer(context, action) {
                   ...flow.events.filter(
                     (event) => event.position.start === eventStart,
                   ),
+                  // TODO: Are we using these displayEvents (as distinct events in period.events)?
+                  // As in, can we remove ? Or will this become important to capture mid-measure
+                  // clef changes and the like ?
                   ...flowDisplayStarts[flowId]
                     .flat()
                     .filter((displayEvent) => displayEvent.at === eventStart),
@@ -220,19 +225,19 @@ function measuresReducer(context, action) {
             // If it's the first event in a period, initialize period with values.
             if (periods[acc.index] === eventStart) {
               acc.result[periods[acc.index]] = {
-                dimensions: { length: _duration },
-                flows: eventsAtStart,
-                index: acc.index,
                 beamGroups: getBeamGroupsForPeriod({
                   flows: context.flows,
                   start: periods[acc.index],
                   end: _endValue,
                 }),
+                dimensions: { length: _duration },
                 displayEvents: getDisplayEventsForPeriod({
                   flows: flowDisplayStarts,
-                  periodStart: periods[acc.index],
-                  periodEnd: _endValue,
+                  start: periods[acc.index],
+                  end: _endValue,
                 }),
+                flows: eventsAtStart,
+                index: acc.index,
                 key: Object.entries(context.flows).reduce(
                   (keyAcc, [flowId, flow]) => ({
                     ...keyAcc,
@@ -244,8 +249,13 @@ function measuresReducer(context, action) {
                 ),
                 layoutEvents: getLayoutEventsForPeriod({
                   flows: context.flows,
-                  periodStart: periods[acc.index],
-                  periodEnd: _endValue,
+                  start: periods[acc.index],
+                  end: _endValue,
+                }),
+                measures: getMeasuresForPeriod({
+                  flows: context.flows,
+                  start: periods[acc.index],
+                  end: _endValue,
                 }),
                 position: {
                   start: periods[acc.index],
@@ -270,30 +280,30 @@ function measuresReducer(context, action) {
               // Otherwise, add new eventStart to events[]
               acc.result[periods[acc.index]] = {
                 ...acc.result[periods[acc.index]],
-                dimensions: { length: _duration },
-                flows,
                 beamGroups: getBeamGroupsForPeriod({
                   flows: context.flows,
                   start: periods[acc.index],
                   end: _endValue,
                 }),
+                dimensions: { length: _duration },
                 displayEvents: [
                   ...new Set([
                     ...acc.result[periods[acc.index]].displayEvents,
                     ...getDisplayEventsForPeriod({
                       flows: flowDisplayStarts,
-                      periodStart: periods[acc.index],
-                      periodEnd: _endValue,
+                      start: periods[acc.index],
+                      end: _endValue,
                     }),
                   ]),
                 ],
+                flows,
                 layoutEvents: [
                   ...new Set([
                     ...acc.result[periods[acc.index]].layoutEvents,
                     ...getLayoutEventsForPeriod({
                       flows: context.flows,
-                      periodStart: periods[acc.index],
-                      periodEnd: _endValue,
+                      start: periods[acc.index],
+                      end: _endValue,
                     }),
                   ]),
                 ],
@@ -314,12 +324,6 @@ function measuresReducer(context, action) {
         periods: periodEvents,
       };
     }
-    case "updateWidth": {
-      return {
-        ...context,
-        page: action.width,
-      };
-    }
     default: {
       return context;
     }
@@ -330,9 +334,6 @@ const MeasuresContextProvider = ({ children }) => {
   const [context, dispatch] = useReducer(measuresReducer, initialState);
 
   const actions = {
-    updateWidth: ({ width }) => {
-      dispatch({ type: "updateWidth", width });
-    },
     setFlow: ({ flow }) => {
       const layoutEvents = [];
 
@@ -372,6 +373,7 @@ const MeasuresContextProvider = ({ children }) => {
           acc.push({
             ...m,
             type: "measureEvent",
+            id: `${flow.id}m${mi}r${i}`,
             key: m.key ?? acc[mi - 1].key,
             clefs,
             time: m.time ?? acc[mi - 1].time,
@@ -392,6 +394,7 @@ const MeasuresContextProvider = ({ children }) => {
           layoutEvents.push(
             {
               type: "layoutEvent",
+              id: `${flow.id}m${mi + i}e${start}`,
               at: start,
               eventType: "measureStart",
               measureBounds: { start, end },
@@ -400,6 +403,7 @@ const MeasuresContextProvider = ({ children }) => {
             },
             {
               type: "layoutEvent",
+              id: `${flow.id}m${mi + i}e${end}`,
               at: end,
               eventType: "measureEnd",
               measureBounds: { start, end },

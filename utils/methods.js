@@ -286,6 +286,7 @@ export function getStem(
   // *** presumes pitches in chord pitches are ordered from top to bottom
   const noteStaff =
     stemDirection === "up" ? chord[0].staff : chord[chord.length - 1].staff;
+  // TODO: notes past first leger line must reach midline
   const terminus = beam
     ? beam.pitch
     : stemDirection === "up"
@@ -359,6 +360,7 @@ export function getBeamGroupStem(beamGroup, pitchPrefix = null) {
     beamGroupNotes,
     midline,
   );
+  // TODO: notes past first leger line must reach midline
   const terminus =
     stemDirection === "up"
       ? getDiatonicTransposition(bounds.upper, 7)
@@ -469,13 +471,13 @@ export function getStavesForFlow(flow) {
     part,
     staves: Array.from({ length: part.global.staves }, (_, i) => {
       const clef = part.global.clefs.find((c) => c.staff === i + 1);
-      const { pitches, rangeClef, staffBounds } = getPitches(
-        clef.clef,
-        `${flow.id}s${i + 1}`,
-      );
+      const { pitches, pitchesArray, prefix, rangeClef, staffBounds } =
+        getPitches(clef.clef, `${flow.id}s${i + 1}`);
       return {
         clef,
         pitches,
+        pitchesArray,
+        prefix,
         rangeClef,
         staffBounds,
         staffIndex: i,
@@ -606,6 +608,7 @@ export function getFlowLayoutAtPoint({ at, flow, clefs, point, layoutId }) {
         item.type === "group"
           ? {
               type: item.type,
+              flowId: flow.id,
               content: group(item.content),
               symbol: item.symbol,
             }
@@ -681,7 +684,8 @@ export function getFlowLayoutBarlinesAtPoint({
       ...group,
       barline: {
         type: at === "end" && isLastMeasure ? "final" : "regular",
-        column: at === "end" ? `e${point}-me-bar` : `e${point}-bar`,
+        column: `e${point}-bar`,
+        columnLastInSystem: `e${point}-me-bar`,
         row: `${group.row[0]}/${group.row.at(-1)}`,
         separation: !(at === "end" || (at === "end" && isLastMeasure)),
       },
@@ -689,27 +693,27 @@ export function getFlowLayoutBarlinesAtPoint({
   });
 }
 
-export function getLayoutEventsForPeriod({ flows, periodStart, periodEnd }) {
+export function getLayoutEventsForPeriod({ flows, start, end }) {
   return Object.values(flows).flatMap((flow) =>
     flow.layoutEvents.filter((event) => {
-      if (event.at >= periodStart && event.at <= periodEnd) {
+      if (event.at >= start && event.at <= end) {
         if (
-          event.measureBounds.start >= periodStart &&
-          event.measureBounds.end <= periodEnd
+          event.measureBounds.start >= start &&
+          event.measureBounds.end <= end
         ) {
           // period contains an entire measure; return events of eventType "measureStart" and "measureEnd"
           return event;
         } else if (
-          event.measureBounds.start >= periodStart &&
-          event.measureBounds.start < periodEnd &&
-          event.measureBounds.end > periodEnd
+          event.measureBounds.start >= start &&
+          event.measureBounds.start < end &&
+          event.measureBounds.end > end
         ) {
           // period contains the beginning of a measure; return events of eventType "measureStart"
           return event.eventType === "measureStart";
         } else if (
-          event.measureBounds.end > periodStart &&
-          event.measureBounds.end <= periodEnd &&
-          event.measureBounds.start < periodStart
+          event.measureBounds.end > start &&
+          event.measureBounds.end <= end &&
+          event.measureBounds.start < start
         ) {
           return event.eventType === "measureEnd";
         }
@@ -720,27 +724,27 @@ export function getLayoutEventsForPeriod({ flows, periodStart, periodEnd }) {
 
 // TODO: Get flow's state of display events at a specific point.
 // Used to render system-start and cautionary clefs/meters/key signatures.
-export function getDisplayEventsForPeriod({ flows, periodStart, periodEnd }) {
+export function getDisplayEventsForPeriod({ flows, start, end }) {
   return Object.values(flows).flatMap((displayEvents) =>
     displayEvents.filter((event) => {
-      if (event.at >= periodStart && event.at <= periodEnd) {
+      if (event.at >= start && event.at <= end) {
         if (
-          event.measureBounds.start >= periodStart &&
-          event.measureBounds.end <= periodEnd
+          event.measureBounds.start >= start &&
+          event.measureBounds.end <= end
         ) {
           // period contains an entire measure; return events of eventType "measureStart" and "measureEnd"
           return event;
         } else if (
-          event.measureBounds.start >= periodStart &&
-          event.measureBounds.start < periodEnd &&
-          event.measureBounds.end > periodEnd
+          event.measureBounds.start >= start &&
+          event.measureBounds.start < end &&
+          event.measureBounds.end > end
         ) {
           // period contains the beginning of a measure; return events of eventType "measureStart"
           return event.eventType === "measureStart";
         } else if (
-          event.measureBounds.end > periodStart &&
-          event.measureBounds.end <= periodEnd &&
-          event.measureBounds.start < periodStart
+          event.measureBounds.end > start &&
+          event.measureBounds.end <= end &&
+          event.measureBounds.start < start
         ) {
           return event.eventType === "measureEnd";
         }
@@ -795,6 +799,45 @@ export function getBeamGroupsForPeriod({ flows, start, end }) {
                       },
           })),
         ),
+    }),
+    {},
+  );
+}
+
+export function getMeasuresForPeriod({ flows, start, end }) {
+  return Object.entries(flows).reduce(
+    (measuresAcc, [flowId, flow]) => ({
+      ...measuresAcc,
+      [flowId]: flow.measures
+        .filter(
+          (measure) =>
+            /* contained within period */
+            (measure.position.start >= start && measure.position.end <= end) ||
+            /* straddles period */
+            (measure.position.start < start && measure.position.end > end) ||
+            /* starts in period */
+            (measure.position.start >= start &&
+              measure.position.start < end &&
+              measure.position.end > end) ||
+            /* ends in period */
+            (measure.position.start < start &&
+              measure.position.end > start &&
+              measure.position.end <= end),
+        )
+        .map((measure) => ({
+          ...measure,
+          periodBounds: {
+            startsInPeriod:
+              measure.position.start >= start &&
+              measure.position.start < end &&
+              measure.position.end > end,
+            endsInPeriod:
+              measure.position.start < start &&
+              measure.position.end > start &&
+              measure.position.end <= end,
+            lastInFlow: flow.measures.at(-1).id === measure.id,
+          },
+        })),
     }),
     {},
   );

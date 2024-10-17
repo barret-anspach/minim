@@ -46,12 +46,14 @@ function Score({ composition }) {
   return (
     initialized && (
       <main className={styles.score}>
-        <header className={styles.header}>
-          <div className={styles.title}>
-            <h1>{composition.data.name}</h1>
-          </div>
-          <h2>{composition.data.composer}</h2>
-        </header>
+        {composition.data && (
+          <header className={styles.header}>
+            <div className={styles.title}>
+              <h1>{composition.data.name}</h1>
+            </div>
+            <h2>{composition.data.composer}</h2>
+          </header>
+        )}
         <Systems id="systems">
           {Object.values(periods).map((period, _, periods) => (
             <Period

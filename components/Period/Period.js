@@ -79,7 +79,7 @@ const Period = forwardRef(function Period(
     >
       {Object.entries(flows).map(([flowId, flow]) =>
         flow.layoutGroups.map((group, groupIndex) => (
-          <Fragment key={`${flowId}p${index}g${groupIndex}_system-start`}>
+          <Fragment key={`${flowId}per${index}grp${groupIndex}_system-start`}>
             {(index === 0 || systemStart) &&
               period.measures[flowId].length > 0 && (
                 <Bracket
@@ -104,9 +104,9 @@ const Period = forwardRef(function Period(
           (beamGroup, beamGroupIndex) =>
             beamGroup.length > 0 && (
               <BeamGroup
-                key={`${flowId}p${index}bea${beamGroupIndex}`}
+                key={`${flowId}per${index}bea${beamGroupIndex}`}
                 beamGroup={beamGroup}
-                prefix={flowId}
+                prefix={`${flowId}p${beamGroup[0].partIndex}`}
               />
             ),
         ),
@@ -120,7 +120,7 @@ const Period = forwardRef(function Period(
                   <Item
                     className={styles.partLabel}
                     column={`e0-text`}
-                    pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
+                    pitch={`${id}p${part.partIndex}s${staffIndex + 1}${staffBounds.upper.id}/${id}p${part.partIndex}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
                   >
                     {part.name}
                   </Item>
@@ -132,15 +132,15 @@ const Period = forwardRef(function Period(
                     <Item
                       className={styles.partLabel}
                       column={`e${period.position.start}-text`}
-                      pitch={`${id}s${staffIndex + 1}${staffBounds.upper.id}/${id}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
+                      pitch={`${id}p${part.partIndex}s${staffIndex + 1}${staffBounds.upper.id}/${id}p${part.partIndex}s${staves.length}${staves[staves.length - 1].staffBounds.lower.id}`}
                     >
                       {part.shortName}
                     </Item>
                   )}
                 {period.measures[id].length > 0 && (
                   <Staff
-                    id={`${id}s${staffIndex + 1}`}
-                    key={`${id}s${staffIndex + 1}`}
+                    id={`${id}p${part.partIndex}s${staffIndex + 1}`}
+                    key={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     pitches={pitches}
                     rangeClef={rangeClef}
                     staffBounds={staffBounds}
@@ -154,14 +154,14 @@ const Period = forwardRef(function Period(
                 )}
                 {clef && systemStart && period.measures[id].length > 0 && (
                   <Clef
-                    id={`${id}s${staffIndex + 1}`}
+                    id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     clef={clef.clef}
                     column={`e${period.position.start}-cle`}
                   />
                 )}
                 {period.key[id] && systemStart && (
                   <Key
-                    id={`${id}s${staffIndex + 1}`}
+                    id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     clefType={rangeClef.type}
                     column={`e${period.position.start}-key`}
                     fifths={period.key[id].fifths}
@@ -175,7 +175,7 @@ const Period = forwardRef(function Period(
                       >
                         {event.key && (
                           <Key
-                            id={`${id}s${staffIndex + 1}`}
+                            id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                             clefType={rangeClef.type}
                             column={event.key.column}
                             fifths={event.key.fifths}
@@ -187,7 +187,7 @@ const Period = forwardRef(function Period(
                             (event.eventType === "measureEnd" &&
                               systemEnd)) && (
                             <Meter
-                              id={`${id}s${staffIndex + 1}`}
+                              id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                               clef={clef.clef}
                               count={event.time.count}
                               unit={event.time.unit}

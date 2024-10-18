@@ -24,7 +24,7 @@ export default function Note({
 }) {
   const key = useMemo(() => `${id}_not${noteIndex}`, [id, noteIndex]);
   const pitch = useMemo(
-    () => `${pitchPrefix}s${note.staff}${getPitchString(note)}`,
+    () => `${pitchPrefix}s${note.staff ?? 1}${getPitchString(note)}`,
     [note, pitchPrefix],
   );
   const noteOnLine = useMemo(

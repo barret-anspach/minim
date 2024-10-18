@@ -285,7 +285,9 @@ export function getStem(
   const stemDirection = direction ?? chordDirection;
   // *** presumes pitches in chord pitches are ordered from top to bottom
   const noteStaff =
-    stemDirection === "up" ? chord[0].staff : chord[chord.length - 1].staff;
+    stemDirection === "up"
+      ? (chord[0].staff ?? 1)
+      : (chord[chord.length - 1].staff ?? 1);
   // TODO: notes past first leger line must reach midline
   const terminus = beam
     ? beam.pitch
@@ -320,17 +322,9 @@ export function getBeamGroupStem(beamGroup, pitchPrefix = null) {
           voice 2: "down"
    */
   const beamGroupStaves = beamGroupNotes.reduce(
-    (acc, note) => acc.add(note.staff),
+    (acc, note) => acc.add(note.staff ?? 1),
     new Set(),
   );
-  // const beamGroupNoteStaves = beamGroupNotes.map((note) => note.staff, []);
-  // const staffWithMostNotes = Array.from(new Set(beamGroupNoteStaves)).reduce(
-  //   (prev, curr) =>
-  //     beamGroupNoteStaves.filter((el) => el === curr).length >
-  //     beamGroupNoteStaves.filter((el) => el === prev).length
-  //       ? curr
-  //       : prev,
-  // );
   const directionForMultipleVoices =
     beamGroup[0].partVoices === 1
       ? direction
@@ -378,7 +372,9 @@ export function getLegerLines({ clef, clefs, notes, pitchPrefix = null }) {
   if (!notes) return null;
 
   const legerLines = notes.reduce((acc, note) => {
-    const { staffBounds } = getPitches(clefs[note.staff - 1].clef ?? clef.clef);
+    const { staffBounds } = getPitches(
+      clefs[(note?.staff ?? 1) - 1].clef ?? clef.clef,
+    );
     const pitchString = getPitchString(note);
     const lowerThanTop = getLowestPitch(pitchString, staffBounds.upper.id);
     const higherThanBottom = getHighestPitch(pitchString, staffBounds.lower.id);
@@ -401,7 +397,7 @@ export function getLegerLines({ clef, clefs, notes, pitchPrefix = null }) {
         position === "upper"
           ? interval > 0 && count > 0
           : interval < 0 && count < 0;
-      const prefix = pitchPrefix ? `${pitchPrefix}s${note.staff}` : null;
+      const prefix = pitchPrefix ? `${pitchPrefix}s${note.staff ?? 1}` : null;
       const lines = condition
         ? Array.from({ length: Math.abs(count) }, (_, i) => i).map((index) => ({
             index,
@@ -430,6 +426,8 @@ export function decorateEvent({
   partIndex,
 }) {
   const _duration = toNumericalDuration(event.duration);
+  const voiceNumber = voice?.voice ?? 1;
+  const staffNumber = voice?.staff ?? 1;
   acc.push({
     ...event,
     renderId: `${event.id}_rep${i}`,
@@ -438,25 +436,27 @@ export function decorateEvent({
     partIndex,
     partVoices: part.sequences.length,
     // TODO: rename to 'voiceNumber'
-    voice: voice.voice,
+    voice: voiceNumber,
     eventGroup: voiceItem,
-    clef: part.global.clefs[voice.staff - 1],
+    clef: part.global.clefs[staffNumber - 1],
     clefs: part.global.clefs,
     // TODO: rename to 'staffNumber'
-    staff: voice.staff,
+    staff: staffNumber,
     staves: Array.from({ length: part.global.staves }, (_, i) => i + 1),
     index: acc[acc.length - 1] ? acc[acc.length - 1]?.index + i + 1 : i,
     position: {
       start:
         acc.length === 0 ||
-        acc[acc.length - 1].voice !== voice.voice ||
-        acc[acc.length - 1].staff !== voice.staff
+        acc[acc.length - 1].partIndex !== partIndex ||
+        acc[acc.length - 1].voice !== voiceNumber ||
+        acc[acc.length - 1].staff !== staffNumber
           ? 0
           : acc[acc.length - 1].position.end,
       end:
         acc.length === 0 ||
-        acc[acc.length - 1].voice !== voice.voice ||
-        acc[acc.length - 1].staff !== voice.staff
+        acc[acc.length - 1].partIndex !== partIndex ||
+        acc[acc.length - 1].voice !== voiceNumber ||
+        acc[acc.length - 1].staff !== staffNumber
           ? _duration
           : acc[acc.length - 1].position.end + _duration,
     },
@@ -467,12 +467,18 @@ export function decorateEvent({
 }
 
 export function getStavesForFlow(flow) {
-  return flow.parts.map((part) => ({
-    part,
+  return flow.parts.map((part, partIndex) => ({
+    part: {
+      ...part,
+      partIndex,
+    },
     staves: Array.from({ length: part.global.staves }, (_, i) => {
-      const clef = part.global.clefs.find((c) => c.staff === i + 1);
+      const clef = {
+        ...part.global.clefs.find((c) => c.staff === i + 1),
+        partIndex,
+      };
       const { pitches, pitchesArray, prefix, rangeClef, staffBounds } =
-        getPitches(clef.clef, `${flow.id}s${i + 1}`);
+        getPitches(clef.clef, `${flow.id}p${partIndex}s${i + 1}`);
       return {
         clef,
         pitches,
@@ -601,6 +607,32 @@ export function areClefsEqual(clefsA, clefsB) {
   );
 }
 
+export function getRowString(
+  layoutMember,
+  layoutMemberIndex,
+  layoutMembers,
+  clefs,
+  flowId,
+  partIds,
+) {
+  const staffNumber = layoutMember?.staff ?? 1;
+  const partIndex = partIds.indexOf(layoutMember.part);
+  const clef = clefs.find(
+    (c) =>
+      c.partIndex === partIndex &&
+      (c.staff !== undefined ? c.staff === staffNumber : true),
+  );
+  const { staffBounds } = getPitches(clef.clef);
+  const rowString =
+    layoutMembers.length === 1
+      ? [
+          `${flowId}p${partIndex}s${staffNumber}${staffBounds.upper.id}`,
+          `${flowId}p${partIndex}s${staffNumber}${staffBounds.lower.id}`,
+        ]
+      : `${flowId}p${partIndex}s${staffNumber}${staffBounds[layoutMemberIndex === 0 ? "upper" : "lower"].id}`;
+  return rowString;
+}
+
 export function getFlowLayoutAtPoint({ at, flow, clefs, point, layoutId }) {
   function group(content) {
     return content.flatMap(
@@ -612,7 +644,7 @@ export function getFlowLayoutAtPoint({ at, flow, clefs, point, layoutId }) {
               content: group(item.content),
               symbol: item.symbol,
             }
-          : item, // type="staff"
+          : item, // item.type === "staff"
     );
   }
 
@@ -622,18 +654,7 @@ export function getFlowLayoutAtPoint({ at, flow, clefs, point, layoutId }) {
       (layoutId ?? flow.global.measures.find((m) => m.layout).layout),
   );
   const groups = group(layout.content);
-
-  function getRowString(member, memberIndex, members) {
-    const { staffBounds } = getPitches(clefs[member.staff - 1].clef);
-    const rowString =
-      members.length === 1
-        ? [
-            `${flow.id}s${member.staff}${staffBounds.upper.id}`,
-            `${flow.id}s${member.staff}${staffBounds.lower.id}`,
-          ]
-        : `${flow.id}s${member.staff}${staffBounds[memberIndex === 0 ? "upper" : "lower"].id}`;
-    return rowString;
-  }
+  const partIds = flow.parts.map((part) => part.id);
 
   function getGroupRow(group) {
     if (group.type === "group") {
@@ -643,23 +664,30 @@ export function getFlowLayoutAtPoint({ at, flow, clefs, point, layoutId }) {
         } else {
           return member.sources.flatMap(
             (memberSource, memberSourceIndex, memberSources) =>
-              getRowString(memberSource, memberSourceIndex, memberSources),
+              getRowString(
+                memberSource,
+                memberSourceIndex,
+                memberSources,
+                clefs,
+                flow.id,
+                partIds,
+              ),
           );
         }
       });
     } else {
       // type="staff"
       return group.sources.flatMap((member, memberIndex, members) =>
-        getRowString(member, memberIndex, members),
+        getRowString(member, memberIndex, members, clefs, flow.id, partIds),
       );
     }
   }
 
-  return groups.map((group) => ({
+  return groups.map((group, groupIndex) => ({
     ...group,
     at: point,
     position: at,
-    row: getGroupRow(group),
+    row: getGroupRow(group, groupIndex),
   }));
 }
 

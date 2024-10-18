@@ -61,7 +61,7 @@ export default function Stem({
     [_stemColumn, stem.row.end, stem.row.start],
   );
 
-  return (
+  return event.dimensions.length < DURATION.WHOLE ? (
     <>
       <svg
         viewBox={`0 0 1 1`}
@@ -77,8 +77,6 @@ export default function Stem({
       >
         <rect x={0} y={0} width={1} height={1} fill="currentColor" />
       </svg>
-      {/** TODO: Flag, if not part of a beam group */}
-      {/** Flag, if less than quarter */}
       {!beam && event.dimensions.length < DURATION.QUARTER && (
         <Item
           className={clsx(
@@ -96,5 +94,5 @@ export default function Stem({
         </Item>
       )}
     </>
-  );
+  ) : null;
 }

@@ -33,11 +33,14 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
       ),
     [event.flowId, event.renderId, flows],
   );
+  // TODO: If any seconds exist in a chord, we'll need to know the stem direction *here*
+  // so we're placing noteheads correctly in relation to other notes at the timestamp:
+  // stem always goes through the second, higher note to right of stem.
 
   return (
     <Fragment key={id}>
-      <LegerLines event={event} id={id} />
-      <Rest event={event} id={id} />
+      <LegerLines event={event} id={`${event.flowId}p${event.partIndex}`} />
+      <Rest event={event} id={`${event.flowId}p${event.partIndex}`} />
 
       {event.notes &&
         event.notes.map((note, noteIndex) => (
@@ -59,7 +62,7 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
               events={events}
               note={note}
               noteIndex={noteIndex}
-              pitchPrefix={`${event.flowId}`}
+              pitchPrefix={`${event.flowId}p${event.partIndex}`}
               staffLinePitch={rangeClef.staffLinePitches[0].id}
             />
             {/** TODO: Articulations */}
@@ -71,7 +74,7 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
           direction={beamEvent?.beam.direction ?? null}
           event={event}
           notes={event.notes}
-          pitchPrefix={event.flowId}
+          pitchPrefix={`${event.flowId}p${event.partIndex}`}
           beam={beamEvent?.beam ?? null}
         />
       )}

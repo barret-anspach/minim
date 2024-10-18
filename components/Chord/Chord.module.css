@@ -9,8 +9,18 @@
   transform: translateY(-0.12rem);
 }
 .legerLine {
-  justify-self: center;
-  width: calc(100% + 0.2rem);
+  position: relative;
+  justify-self: start;
+  width: 100%;
+}
+.legerLine:after {
+  content: '';
+  position: absolute;
   border-bottom: 0.04rem solid currentColor;
-  transform: translateY(-50%);
+  width: calc(100% + 0.18rem);
+  transform: translate(-0.05rem, -50%);
+}
+.wide:after {
+  width: calc(100% + 0.37rem);
+  transform: translate(-0.1rem, -50%);
 }

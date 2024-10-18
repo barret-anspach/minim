@@ -1,5 +1,6 @@
 .notehead {
-  justify-self: start;
+  justify-self: center;
+  text-align: center;
   width: 0.27rem;
 }
 .dot {

@@ -26,7 +26,7 @@ function Flow({ period, periodFlow, id }) {
               <Tuplet
                 key={`${event.renderId}_tup`}
                 id={`${event.renderId}_tup`}
-                clef={event.clefs[event.staff - 1].clef}
+                clef={event.clefs[event?.staff - 1].clef}
                 event={event}
                 eventIndex={eventIndex}
                 events={events}
@@ -36,7 +36,7 @@ function Flow({ period, periodFlow, id }) {
               <Chord
                 key={`${event.renderId}_cho`}
                 id={`${event.renderId}_cho`}
-                clef={event.clefs[event.staff - 1].clef}
+                clef={event.clefs[event?.staff - 1].clef}
                 event={event}
                 eventIndex={eventIndex}
                 events={events}

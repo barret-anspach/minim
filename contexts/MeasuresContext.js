@@ -463,7 +463,7 @@ const MeasuresContextProvider = ({ children }) => {
       const eventGroupsWithBeams = events.filter((e) => e.eventGroup?.beams);
       const beamGroups =
         eventGroupsWithBeams.length === 0
-          ? null
+          ? []
           : eventGroupsWithBeams
               .reduce(
                 (acc, event) => {
@@ -497,15 +497,18 @@ const MeasuresContextProvider = ({ children }) => {
                 [],
               );
 
-      const beamEvents = beamGroups.flatMap((beamGroup) =>
-        beamGroup.flatMap((event) => ({
-          renderId: event.renderId,
-          beam: {
-            ...getBeamGroupStem(beamGroup, event.flowId),
-            staff: event.staff,
-          },
-        })),
-      );
+      const beamEvents =
+        beamGroups.length === 0
+          ? []
+          : beamGroups.flatMap((beamGroup) =>
+              beamGroup.flatMap((event) => ({
+                renderId: event.renderId,
+                beam: {
+                  ...getBeamGroupStem(beamGroup, event.flowId),
+                  staff: event.staff,
+                },
+              })),
+            );
 
       const staves = getStavesForFlow(flow);
 

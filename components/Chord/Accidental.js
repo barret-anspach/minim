@@ -16,7 +16,7 @@ export default function Accidental({ clefType, event, id, note, noteIndex }) {
     [event.position.start],
   );
   const pitch = useMemo(
-    () => `${event.flowId}s${note.staff}${getPitchString(note)}`,
+    () => `${event.flowId}s${note.staff ?? 1}${getPitchString(note)}`,
     [event.flowId, note],
   );
   const glyph = useMemo(

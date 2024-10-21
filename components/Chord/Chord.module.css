@@ -1,6 +1,9 @@
 .accidental {
   margin-right: 0.04rem;
 }
+.articulation {
+  justify-self: center;
+}
 .dot {
   margin-left: 0.12rem;
   justify-self: start;

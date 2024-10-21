@@ -717,11 +717,11 @@
         {
           "node": "lowerBound",
           "base": {
-            "id": "c1",
+            "id": "c0",
             "pitchClass": "c",
-            "octave": 1,
+            "octave": 0,
             "units": {
-              "midi": 24
+              "midi": 12
             }
           }
         },

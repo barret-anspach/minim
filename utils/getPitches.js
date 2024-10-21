@@ -21,7 +21,7 @@ export function getPitches(clef, prefix) {
   ];
   const steps = range.gamut.base.slice(
     range.gamut.base.findIndex((p) => p.id === upperBound.base.id),
-    range.gamut.base.findIndex((p) => p.id === lowerBound.base.id),
+    range.gamut.base.findIndex((p) => p.id === lowerBound.base.id) + 1,
   );
   return {
     pitches: steps.reduce(
@@ -32,8 +32,7 @@ export function getPitches(clef, prefix) {
       "",
     ),
     pitchesArray: steps.reduce(
-      (acc, curr, index) =>
-        index !== steps.length && [...acc, `${prefix ?? ""}${curr.id}`],
+      (acc, curr) => [...acc, `${prefix ?? ""}${curr.id}`],
       [],
     ),
     prefix,
@@ -46,21 +45,34 @@ export function getPitches(clef, prefix) {
   };
 }
 
-const INTER_STAFF_SPACE = 7;
+const SPACE_BETWEEN_STAVES_IN_PART = 12;
+const SPACE_BETWEEN_PARTS = 18;
+const SPACE_BETWEEN_FLOWS = 24;
+const defaultOptions = {
+  staffSpace: SPACE_BETWEEN_STAVES_IN_PART,
+  partSpace: SPACE_BETWEEN_PARTS,
+  flowSpace: SPACE_BETWEEN_FLOWS,
+};
 
 // overlap any number of staves' named (pitched) grid rows to render appropriate inter-staff spacing.
-// should allow for customization of inter-staff spacing.
-export function overlap(staves, space) {
+export function overlapStaffRows(staves, options = defaultOptions) {
   const result = staves.reduce(
     (acc, staff, i, staves) => {
+      // Compare only two staves at a time.
       if (i + 1 !== staves.length) {
-        // figure out which of the next staff's pitch rows should be an alias for
-        // the current staff's staffBounds.lower
-        const currentBoundsLower = staves[i].staffBounds.lower.id;
+        const space =
+          staff.flowId !== staves[i + 1].flowId
+            ? options.flowSpace
+            : staff.partIndex !== staves[i + 1].partIndex
+              ? options.partSpace
+              : options.staffSpace;
+        // figure out which of the next staff's pitch rows should be
+        // an alias for the current staff's staffBounds.lower.id.
+        const currentBoundsLower = staff.staffBounds.lower.id;
         const nextBoundsUpper = staves[i + 1].staffBounds.upper.id;
         // What's the pitch an octave above the top of the next staff?
         // This pitch will overlap the current staff's bottom line pitch.
-        const nextPitchAtCurrentBoundsLower = `${staves[i + 1].prefix}${getDiatonicTransposition(nextBoundsUpper, space ?? INTER_STAFF_SPACE)}`;
+        const nextPitchAtCurrentBoundsLower = `${staves[i + 1].prefix}${getDiatonicTransposition(nextBoundsUpper, space ?? SPACE_BETWEEN_STAVES_IN_PART)}`;
         const nextIndexAtCurrentBoundsLower = staves[
           i + 1
         ].pitchesArray.findIndex(
@@ -70,25 +82,19 @@ export function overlap(staves, space) {
         const currentIndexAtCurrentBoundsLower = staves[
           i
         ].pitchesArray.findIndex(
-          (pitch) => pitch === `${staves[i].prefix}${currentBoundsLower}`,
+          (pitch) => pitch === `${staff.prefix}${currentBoundsLower}`,
         );
         // The current staff's pitch index at which we start zipping things together.
         const currentIndexOfNextPitchesStart =
           currentIndexAtCurrentBoundsLower - nextIndexAtCurrentBoundsLower;
+        // we're offsetting the next staff's pitches against the first staff's.
         const overlapArray = Array.from(
           {
-            length:
-              Math.max(
-                staff.pitchesArray.length,
-                staves[i + 1].pitchesArray.length,
-              ) +
-              currentIndexOfNextPitchesStart -
-              Math.abs(
-                staff.pitchesArray.length - staves[i + 1].pitchesArray.length,
-              ),
-            // staves[i].pitchesArray.length +
-            // staves[i + 1].pitchesArray.length -
-            // currentIndexOfNextPitchesStart,
+            length: Math.max(
+              staff.pitchesArray.length,
+              staves[i + 1].pitchesArray.length +
+                currentIndexOfNextPitchesStart,
+            ),
           },
           (_, i) => i,
         );
@@ -102,7 +108,7 @@ export function overlap(staves, space) {
               : [];
           definedRowsSoFar[rowIndex + acc.index].push(
             ...(rowIndex < currentIndexOfNextPitchesStart
-              ? [staves[i].pitchesArray[rowIndex]]
+              ? [staff.pitchesArray[rowIndex]]
               : rowIndex >= staff.pitchesArray.length
                 ? [
                     staves[i + 1].pitchesArray[
@@ -110,7 +116,7 @@ export function overlap(staves, space) {
                     ],
                   ]
                 : [
-                    staves[i].pitchesArray[rowIndex],
+                    staff.pitchesArray[rowIndex],
                     staves[i + 1].pitchesArray[
                       rowIndex - currentIndexOfNextPitchesStart
                     ],

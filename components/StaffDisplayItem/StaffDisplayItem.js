@@ -10,7 +10,7 @@ function StaffDisplayItem({ children, type, start }) {
       className={clsx(
         styles.staffDisplayItem,
         ["key", "brace"].includes(type) && styles.row,
-        ["tim", "bracket"].includes(type) && styles.column,
+        ["tim", "bracket", "art"].includes(type) && styles.column,
         start.includes("me-") && styles.end,
       )}
       style={{ "--start": start }}

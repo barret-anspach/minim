@@ -2,7 +2,8 @@
   "data": {
     "name": "Two pianos",
     "composer": "Barret Anspach",
-    "copyright": "Copyright © 2024. All rights reserved."
+    "copyright": "Copyright © 2024. All rights reserved.",
+    "description": "Testing whether measures and part sequences are independent — and they are, thank goodness."
   },
   "scores": [
     {
@@ -20,28 +21,21 @@
                   "count": 12,
                   "unit": 16
                 },
-                "repeatCount": 6,
                 "layout": "sco0_flo0_lay0"
               },
-              {
-                "time": {
-                  "count": 15,
-                  "unit": 16
-                }
-              },
-              {
-                "time": {
-                  "count": 12,
-                  "unit": 16
-                },
-                "repeatCount": 5
-              },
-              {
-                "time": {
-                  "count": 15,
-                  "unit": 16
-                }
-              }
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
             ]
           },
           "layouts": [
@@ -102,413 +96,6 @@
                 "staves": 2
               },
               "sequences": [
-                {
-                  "staff": 1,
-                  "voice": 1,
-                  "content": [
-                    {
-                      "id": "flo0_par0_voi1_dyn0",
-                      "type": "dynamic",
-                      "value": "pp"
-                    },
-                    {
-                      "id": "flo0_par0_voi1_mea0",
-                      "type": "group",
-                      "repeatCount": 6,
-                      "beams": [
-                        {
-                          "events": [
-                            "flo0_par0_voi1_mea0_eve0",
-                            "flo0_par0_voi1_mea0_eve1",
-                            "flo0_par0_voi1_mea0_eve2",
-                            "flo0_par0_voi1_mea0_eve3"
-                          ]
-                        }
-                      ],
-                      "sequence": [
-                        {
-                          "id": "flo0_par0_voi1_mea0_eve0",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
-                          "markings": {
-                            "staccato": {},
-                            "tenuto": {},
-                            "stress": {}
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 4,
-                                "step": "C"
-                              },
-                              "staff": 1
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea0_eve1",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 5,
-                                "step": "D"
-                              },
-                              "staff": 1
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea0_eve2",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 3,
-                                "step": "E",
-                                "alter": -1
-                              },
-                              "staff": 2
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea0_eve3",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 4,
-                                "step": "F"
-                              },
-                              "staff": 2
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "id": "flo0_par0_voi1_dyn1",
-                      "type": "dynamic",
-                      "value": "mp"
-                    },
-                    {
-                      "id": "flo0_par0_voi1_mea1",
-                      "type": "group",
-                      "beams": [
-                        {
-                          "events": [
-                            "flo0_par0_voi1_mea1_eve1",
-                            "flo0_par0_voi1_mea1_eve3"
-                          ]
-                        }
-                      ],
-                      "sequence": [
-                        {
-                          "id": "flo0_par0_voi1_mea1_eve0",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "rest": {},
-                          "display": "none"
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea1_eve1",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 3,
-                                "step": "D"
-                              },
-                              "staff": 2
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea1_eve2",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "rest": {},
-                          "display": "none"
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea1_eve3",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 5,
-                                "step": "F"
-                              },
-                              "staff": 1
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea1_eve4",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "rest": {},
-                          "display": "none"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "flo0_par0_voi1_dyn2",
-                      "type": "dynamic",
-                      "value": "pp"
-                    },
-                    {
-                      "id": "flo0_par0_voi1_mea2",
-                      "type": "group",
-                      "repeatCount": 5,
-                      "beams": [
-                        {
-                          "events": [
-                            "flo0_par0_voi1_mea2_eve0",
-                            "flo0_par0_voi1_mea2_eve1",
-                            "flo0_par0_voi1_mea2_eve2",
-                            "flo0_par0_voi1_mea2_eve3"
-                          ]
-                        }
-                      ],
-                      "sequence": [
-                        {
-                          "id": "flo0_par0_voi1_mea2_eve0",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 4,
-                                "step": "D"
-                              },
-                              "staff": 1
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea2_eve1",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 5,
-                                "step": "C"
-                              },
-                              "staff": 1
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea2_eve2",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 3,
-                                "step": "F"
-                              },
-                              "staff": 2
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea2_eve3",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 4,
-                                "step": "E",
-                                "alter": -1
-                              },
-                              "staff": 2
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "id": "flo0_par0_voi1_dyn3",
-                      "type": "dynamic",
-                      "value": "mp"
-                    },
-                    {
-                      "id": "flo0_par0_voi1_mea3",
-                      "type": "group",
-                      "beams": [
-                        {
-                          "events": [
-                            "flo0_par0_voi1_mea3_eve1",
-                            "flo0_par0_voi1_mea3_eve3"
-                          ]
-                        }
-                      ],
-                      "sequence": [
-                        {
-                          "id": "flo0_par0_voi1_mea3_eve0",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "rest": {},
-                          "display": "none"
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea3_eve1",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 3,
-                                "step": "C"
-                              },
-                              "staff": 2
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea3_eve2",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "rest": {},
-                          "display": "none"
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea3_eve3",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
-                          "notes": [
-                            {
-                              "pitch": {
-                                "octave": 5,
-                                "step": "G"
-                              },
-                              "staff": 1
-                            }
-                          ]
-                        },
-                        {
-                          "id": "flo0_par0_voi1_mea3_eve4",
-                          "type": "event",
-                          "duration": {
-                            "base": "eighth",
-                            "dots": 1
-                          },
-                          "rest": {},
-                          "display": "none"
-                        }
-                      ]
-                    }
-                  ]
-                },
                 {
                   "staff": 2,
                   "voice": 1,
@@ -806,6 +393,414 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "staff": 1,
+                  "voice": 1,
+                  "content": [
+                    {
+                      "id": "flo0_par0_voi1_dyn0",
+                      "type": "dynamic",
+                      "value": "pp"
+                    },
+                    {
+                      "id": "flo0_par0_voi1_mea0",
+                      "type": "group",
+                      "repeatCount": 6,
+                      "beams": [
+                        {
+                          "events": [
+                            "flo0_par0_voi1_mea0_eve0",
+                            "flo0_par0_voi1_mea0_eve1",
+                            "flo0_par0_voi1_mea0_eve2",
+                            "flo0_par0_voi1_mea0_eve3"
+                          ]
+                        }
+                      ],
+                      "sequence": [
+                        {
+                          "id": "flo0_par0_voi1_mea0_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": true,
+                            "end": false
+                          },
+                          "markings": {
+                            "accent": {}
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "C"
+                              },
+                              "staff": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea0_eve1",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": false,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 5,
+                                "step": "D"
+                              },
+                              "staff": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea0_eve2",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": false,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 3,
+                                "step": "E",
+                                "alter": -1
+                              },
+                              "staff": 2
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea0_eve3",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": false,
+                            "end": true
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "F"
+                              },
+                              "staff": 2
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "flo0_par0_voi1_dyn1",
+                      "type": "dynamic",
+                      "value": "mp"
+                    },
+                    {
+                      "id": "flo0_par0_voi1_mea1",
+                      "type": "group",
+                      "beams": [
+                        {
+                          "events": [
+                            "flo0_par0_voi1_mea1_eve1",
+                            "flo0_par0_voi1_mea1_eve3"
+                          ]
+                        }
+                      ],
+                      "sequence": [
+                        {
+                          "id": "flo0_par0_voi1_mea1_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "rest": {},
+                          "display": "none"
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea1_eve1",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": true,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 3,
+                                "step": "D"
+                              },
+                              "staff": 2
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea1_eve2",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "rest": {},
+                          "display": "none"
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea1_eve3",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": true,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 5,
+                                "step": "F"
+                              },
+                              "staff": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea1_eve4",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "rest": {},
+                          "display": "none"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "flo0_par0_voi1_dyn2",
+                      "type": "dynamic",
+                      "value": "pp"
+                    },
+                    {
+                      "id": "flo0_par0_voi1_mea2",
+                      "type": "group",
+                      "repeatCount": 5,
+                      "beams": [
+                        {
+                          "events": [
+                            "flo0_par0_voi1_mea2_eve0",
+                            "flo0_par0_voi1_mea2_eve1",
+                            "flo0_par0_voi1_mea2_eve2",
+                            "flo0_par0_voi1_mea2_eve3"
+                          ]
+                        }
+                      ],
+                      "sequence": [
+                        {
+                          "id": "flo0_par0_voi1_mea2_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": true,
+                            "end": false
+                          },
+                          "markings": {
+                            "accent": {}
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "D"
+                              },
+                              "staff": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea2_eve1",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": false,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 5,
+                                "step": "C"
+                              },
+                              "staff": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea2_eve2",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": false,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 3,
+                                "step": "F"
+                              },
+                              "staff": 2
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea2_eve3",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": false,
+                            "end": true
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "E",
+                                "alter": -1
+                              },
+                              "staff": 2
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "flo0_par0_voi1_dyn3",
+                      "type": "dynamic",
+                      "value": "mp"
+                    },
+                    {
+                      "id": "flo0_par0_voi1_mea3",
+                      "type": "group",
+                      "beams": [
+                        {
+                          "events": [
+                            "flo0_par0_voi1_mea3_eve1",
+                            "flo0_par0_voi1_mea3_eve3"
+                          ]
+                        }
+                      ],
+                      "sequence": [
+                        {
+                          "id": "flo0_par0_voi1_mea3_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "rest": {},
+                          "display": "none"
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea3_eve1",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": true,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 3,
+                                "step": "C"
+                              },
+                              "staff": 2
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea3_eve2",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "rest": {},
+                          "display": "none"
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea3_eve3",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "beam": {
+                            "start": true,
+                            "end": false
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 5,
+                                "step": "G"
+                              },
+                              "staff": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "flo0_par0_voi1_mea3_eve4",
+                          "type": "event",
+                          "duration": {
+                            "base": "eighth",
+                            "dots": 1
+                          },
+                          "rest": {},
+                          "display": "none"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -820,31 +815,19 @@
                   "fifths": -3
                 },
                 "time": {
-                  "count": 2,
+                  "count": 3,
                   "unit": 4
                 },
-                "repeatCount": 6,
                 "layout": "sco0_flo1_lay0"
               },
-              {
-                "time": {
-                  "count": 5,
-                  "unit": 8
-                }
-              },
-              {
-                "time": {
-                  "count": 2,
-                  "unit": 4
-                },
-                "repeatCount": 5
-              },
-              {
-                "time": {
-                  "count": 5,
-                  "unit": 8
-                }
-              }
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
             ]
           },
           "layouts": [

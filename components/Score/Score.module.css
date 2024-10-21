@@ -3,7 +3,7 @@
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: stretch;
-  padding: 8rem 2rem 5rem 1rem;
+  padding: 20vmin 2rem 5rem 10vmin;
 }
 .header {
   font-family: 'Inter', sans-serif;
@@ -11,7 +11,7 @@
   padding-left: 1rem;
 }
 .header .title {
-  margin-bottom: 4rem;
+  margin-bottom: 10vmin;
 }
 .header h1 {
   font-size: xx-large;

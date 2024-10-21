@@ -66,7 +66,9 @@ function measuresReducer(context, action) {
 
       // Ib. For all flows, are there intersections of event.position.start?
       const flowEventStarts = Object.values(context.flows).map((flow) =>
-        flow.events.flatMap((event) => event.position.start),
+        flow.events
+          .filter((event) => event.type === "event")
+          .flatMap((event) => event.position.start),
       );
       let periods = [
         ...new Set([
@@ -236,6 +238,19 @@ function measuresReducer(context, action) {
                   start: periods[acc.index],
                   end: _endValue,
                 }),
+                dynamics: Object.entries(context.flows).reduce(
+                  (dynAcc, [flowId, flow]) => ({
+                    ...dynAcc,
+                    [flowId]: flow.events
+                      .filter((event) => event.type === "dynamic")
+                      .filter(
+                        (event) =>
+                          event.position.at >= periods[acc.index] &&
+                          event.position.at < _endValue,
+                      ),
+                  }),
+                  {},
+                ),
                 flows: eventsAtStart,
                 index: acc.index,
                 key: Object.entries(context.flows).reduce(
@@ -278,6 +293,9 @@ function measuresReducer(context, action) {
                 {},
               );
               // Otherwise, add new eventStart to events[]
+              // TODO: If last event for the flow/part/period and its duration extends beyond period end,
+              // We should subdivide the event to period bounds. Would also need to flag the next period
+              // to insert and render the overlapping event content.
               acc.result[periods[acc.index]] = {
                 ...acc.result[periods[acc.index]],
                 beamGroups: getBeamGroupsForPeriod({
@@ -426,7 +444,6 @@ const MeasuresContextProvider = ({ children }) => {
       const events = flow.parts.reduce((acc, part, partIndex) => {
         part.sequences.map((voice) =>
           voice.content.map((voiceItem) => {
-            // TODO: Need to inject meter and key changes as "events"
             const count = Array.from(
               { length: voiceItem.repeatCount ?? 1 },
               (_, i) => i,

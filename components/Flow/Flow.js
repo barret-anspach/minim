@@ -2,15 +2,24 @@
 
 import React, { Fragment } from "react";
 
-import { BeamGroup } from "../BeamGroup/BeamGroup";
 import Chord from "../Chord/Chord";
-import MeasureDisplayMatter from "../MeasureDisplayMatter/MeasureDisplayMatter";
 import Tuplet from "./../Tuplet/Tuplet";
 
 import { withNoSSR } from "./../../hooks/withNoSSR";
 import { useMeasuresContext } from "./../../contexts/MeasuresContext";
 
 import styles from "./Flow.module.css";
+
+/**
+ *
+ * @type event.type can be one of:
+ *       - event
+ *       - tuplet
+ *       - ottava
+ *       - grace (grace note(s))
+ *       - dynamic (NOTE: duration-less!)
+ *       - space
+ */
 
 function Flow({ period, periodFlow, id }) {
   const {

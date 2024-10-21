@@ -5,6 +5,7 @@ import Barline from "../Barline/Barline";
 import { BeamGroup } from "../BeamGroup/BeamGroup";
 import Bracket from "../Bracket/Bracket";
 import Clef from "../Clef";
+import Dynamic from "../Dynamic/Dynamic";
 import Item from "../Item";
 import Key from "../Key";
 import Meter from "../Meter";
@@ -14,7 +15,7 @@ import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import { getColumnsForPeriod } from "../../utils/methods";
 
 import styles from "./Period.module.css";
-import { overlap } from "../../utils/getPitches";
+import { overlapStaffRows } from "../../utils/getPitches";
 
 const Period = forwardRef(function Period(
   { children, index, period, systemStart, systemEnd },
@@ -31,18 +32,16 @@ const Period = forwardRef(function Period(
   );
   const rows = useMemo(
     () =>
-      Object.entries(period.staves)
-        .filter(([id, _]) => period.measures[id].length > 0)
-        .flatMap(([_, parts]) =>
-          overlap(
+      overlapStaffRows(
+        Object.entries(period.staves)
+          .filter(([id, _]) => period.measures[id].length > 0)
+          .flatMap(([_, parts]) =>
             Object.values(parts).flatMap((part) => part.staves),
-            12,
           ),
-        )
-        .join(" "),
+      ),
     [period.measures, period.staves],
   );
-  const lefthandBarlineRows = useMemo(
+  const systemBarlineRows = useMemo(
     () =>
       Object.values(flows)
         .reduce(
@@ -92,10 +91,16 @@ const Period = forwardRef(function Period(
               <Barline
                 type={"regular"}
                 column={`e${period.position.start}-bar`}
-                row={`${lefthandBarlineRows[0]}/${lefthandBarlineRows.at(-1)}`}
+                row={`${systemBarlineRows[0]}/${systemBarlineRows.at(-1)}`}
                 separation={true}
               />
             )}
+            {/* <Barline
+              type={"period"}
+              column={`e${period.position.start}-bar`}
+              row={`${systemBarlineRows[0]}/${systemBarlineRows.at(-1)}`}
+              separation={true}
+            /> */}
           </Fragment>
         )),
       )}
@@ -202,6 +207,11 @@ const Period = forwardRef(function Period(
           ),
         ),
       )}
+      {/* TODO: figure out dynamic "pitch" placement */}
+      {period.dynamics &&
+        Object.values(period.dynamics).map((flow) =>
+          flow.map((dynamic) => <Dynamic key={dynamic.id} dynamic={dynamic} />),
+        )}
       {period.layoutEvents &&
         period.layoutEvents.map((layout, leIndex) =>
           layout.layoutGroups.map((group, groupIndex) => (

@@ -296,6 +296,16 @@ export function getStem(
       : getDiatonicTransposition(bounds.lower, -7);
   return {
     direction: stemDirection,
+    pitch:
+      stemDirection === "up"
+        ? {
+            start: terminus,
+            end: bounds.lower,
+          }
+        : {
+            start: bounds.upper,
+            end: terminus,
+          },
     row:
       stemDirection === "up"
         ? {
@@ -410,8 +420,8 @@ export function getLegerLines({ clef, clefs, notes, pitchPrefix = null }) {
       return [...acc, lines.flat()];
     }
   }, []);
-  // De-duplicate leger lines (i.e. if two notes in chord are below staff,
-  // only draw one set of leger lines);
+  // De-duplicate leger lines (i.e. if two notes in chord
+  // are below staff, only draw one set of leger lines).
   return legerLines.length === 0 ? null : [...new Set(legerLines.flat())];
 }
 
@@ -425,9 +435,32 @@ export function decorateEvent({
   part,
   partIndex,
 }) {
-  const _duration = toNumericalDuration(event.duration);
+  const _duration = event.duration ? toNumericalDuration(event.duration) : 0;
   const voiceNumber = voice?.voice ?? 1;
   const staffNumber = voice?.staff ?? 1;
+  const positionRestartConditions =
+    acc.length === 0 ||
+    acc[acc.length - 1].partIndex !== partIndex ||
+    acc[acc.length - 1].voice !== voiceNumber ||
+    acc[acc.length - 1].staff !== staffNumber;
+  const prevEventPosition =
+    acc.length > 0
+      ? acc[acc.length - 1].type !== "event"
+        ? acc[acc.length - 1].position.at
+        : acc[acc.length - 1].position.end
+      : 0;
+  const positionStart = positionRestartConditions ? 0 : prevEventPosition;
+  const position =
+    _duration !== 0
+      ? {
+          start: positionStart,
+          end: positionRestartConditions
+            ? _duration
+            : prevEventPosition + _duration,
+        }
+      : {
+          at: positionStart,
+        };
   acc.push({
     ...event,
     renderId: `${event.id}_rep${i}`,
@@ -444,22 +477,7 @@ export function decorateEvent({
     staff: staffNumber,
     staves: Array.from({ length: part.global.staves }, (_, i) => i + 1),
     index: acc[acc.length - 1] ? acc[acc.length - 1]?.index + i + 1 : i,
-    position: {
-      start:
-        acc.length === 0 ||
-        acc[acc.length - 1].partIndex !== partIndex ||
-        acc[acc.length - 1].voice !== voiceNumber ||
-        acc[acc.length - 1].staff !== staffNumber
-          ? 0
-          : acc[acc.length - 1].position.end,
-      end:
-        acc.length === 0 ||
-        acc[acc.length - 1].partIndex !== partIndex ||
-        acc[acc.length - 1].voice !== voiceNumber ||
-        acc[acc.length - 1].staff !== staffNumber
-          ? _duration
-          : acc[acc.length - 1].position.end + _duration,
-    },
+    position,
     dimensions: {
       length: _duration,
     },
@@ -481,6 +499,8 @@ export function getStavesForFlow(flow) {
         getPitches(clef.clef, `${flow.id}p${partIndex}s${i + 1}`);
       return {
         clef,
+        flowId: flow.id,
+        partIndex,
         pitches,
         pitchesArray,
         prefix,
@@ -562,7 +582,7 @@ export function getColumnArray({ start, columnWidth }) {
     },
     {
       lines: ["not"],
-      value: "auto",
+      value: "0.25rem",
     },
     {
       lines: ["ste-up"],

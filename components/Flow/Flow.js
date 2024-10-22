@@ -21,7 +21,7 @@ import styles from "./Flow.module.css";
  *       - space
  */
 
-function Flow({ period, periodFlow, id }) {
+function Flow({ periodFlow, id }) {
   const {
     context: { initialized },
   } = useMeasuresContext();

@@ -1,12 +1,16 @@
-import { Fragment, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import clsx from "clsx";
 import Item from "../Item";
 import styles from "./Chord.module.css";
 import {
+  getDiatonicInterval,
   getDiatonicTransposition,
   getHighestPitch,
+  getLowestPitch,
   isNoteOnLine,
 } from "../../utils/methods";
 
+// N.B. keys are in sorted stack order for position === "up".
 const articulationMap = {
   key: [
     "articStaccatissimo",
@@ -89,9 +93,9 @@ const regions = {
   accentStaccato: "outside",
   tenutoAccent: "outside",
   tenutoStaccato: "outside",
-  stress: "outside",
-  unstress: "outside",
-  laissezVibrer: "outside",
+  stress: "above",
+  unstress: "above",
+  laissezVibrer: "above",
   marcato: "above",
   marcatoStaccato: "above",
   marcatoTenuto: "above",
@@ -102,18 +106,19 @@ const regions = {
     "staccatissimoStroke",
     "tenuto",
   ],
-  outside: [
-    "accent",
-    "accentStaccato",
-    "tenutoAccent",
-    "tenutoStaccato",
+  outside: ["accent", "accentStaccato", "tenutoAccent", "tenutoStaccato"],
+  above: [
     "stress",
     "unstress",
     "laissezVibrer",
+    "marcato",
+    "marcatoStaccato",
+    "marcatoTenuto",
   ],
-  above: ["marcato", "marcatoStaccato", "marcatoTenuto"],
 };
 
+// TODO: reconsider how placement is done, esp. when considering injecting
+// dynamics into the placement scheme.
 export default function Markings({
   beam,
   chordBounds,
@@ -123,112 +128,186 @@ export default function Markings({
   rangeClef,
   stem,
 }) {
-  const markingDirection = useCallback(
-    (articulation) => articulation.pointing ?? beam.direction ?? stem.direction,
+  const staffBounds = {
+    upper: rangeClef.staffLinePitches[0].id,
+    lower: rangeClef.staffLinePitches.at(-1).id,
+  };
+  const getStemDirection = useCallback(
+    () => beam.direction ?? stem.direction,
     [beam.direction, stem.direction],
   );
-  const staffBounds = {
-    upper: rangeClef.bounds.find((n) => n.node === "upperBound").base.id,
-    lower: rangeClef.bounds.find((n) => n.node === "lowerBound").base.id,
-  };
-  const groups = Object.entries(event.markings).reduce(
-    (acc, [name, options]) => {
-      return !acc[regions[name]]
+  const markingPitch = useCallback(
+    (region) => {
+      const highestPitch = getHighestPitch(
+        beam.pitch ?? stem.pitch.start ?? chordBounds.upper,
+        staffBounds.upper,
+      );
+      const lowestPitch = getLowestPitch(
+        beam.pitch ?? stem.pitch.start ?? chordBounds.lower,
+        staffBounds.lower,
+      );
+
+      if (event.partVoices > 0) {
+        const pitch =
+          event.voice % event.partVoices === 1 ? highestPitch : lowestPitch;
+        return {
+          up: pitch,
+          down: pitch,
+        };
+      }
+
+      switch (region) {
+        case "note": {
+          return { up: chordBounds.upper, down: chordBounds.lower };
+        }
+        case "above": {
+          return {
+            up: highestPitch,
+            down: highestPitch,
+          };
+        }
+        case "outside": {
+          return {
+            up: lowestPitch,
+            down: lowestPitch,
+          };
+        }
+      }
+    },
+    [
+      beam.pitch,
+      chordBounds.lower,
+      chordBounds.upper,
+      event.partVoices,
+      event.voice,
+      staffBounds.lower,
+      staffBounds.upper,
+      stem.pitch.start,
+    ],
+  );
+  const markingsByPosition = Object.entries(event.markings).reduce(
+    (acc, [name, options], index) => {
+      const region = regions[name];
+      const pitch = markingPitch(region);
+      const stemDirection = options.pointing ?? getStemDirection();
+      const noteOnLine = isNoteOnLine(
+        rangeClef.staffLinePitches[0].id,
+        chordBounds[stemDirection === "up" ? "lower" : "upper"],
+      );
+      const position =
+        options.pointing ??
+        (event.partVoices > 0
+          ? event.voice % event.partVoices === 1
+            ? "up"
+            : "down"
+          : region === "above"
+            ? "up"
+            : stemDirection === "up"
+              ? "down"
+              : "up");
+      const marking = {
+        name,
+        properties: {
+          column: `e${event.position.start}-not`,
+          glyph:
+            articulationMap[position === "up" ? "above" : "below"][
+              articulationMap.shorthand.indexOf(name)
+            ],
+          key: `${id}_art_${region}${index}`,
+          noteOnLine,
+          noteWithinStaff:
+            getDiatonicInterval(
+              staffBounds.upper,
+              chordBounds[stemDirection === "up" ? "lower" : "upper"],
+            ) < 0 &&
+            getDiatonicInterval(
+              chordBounds[stemDirection === "up" ? "lower" : "upper"],
+              staffBounds.lower,
+            ) > 0,
+          pitch: pitch[position],
+          position,
+          region,
+          rowPrefix: `${pitchPrefix}s${beam.staff ?? stem.noteStaff}`,
+          stemDirection,
+        },
+        options: {
+          ...options,
+        },
+      };
+      return !acc[position]
         ? {
             ...acc,
-            [regions[name]]: [{ name, options }],
+            [position]: [marking],
           }
         : {
             ...acc,
-            [regions[name]]: [...acc[regions[name]], { name, options }],
+            [position]: [...acc[position], marking],
           };
     },
     {},
   );
   const markings = useMemo(() => {
-    return Object.entries(groups).reduce(
-      (acc, [groupName, group], articulationIndex, groups) => [
+    return Object.entries(markingsByPosition).reduce(
+      (acc, [position, markingsAtPosition]) => [
         ...acc,
-        ...Object.entries(group).map(([index, { name, options }]) => {
-          const direction = markingDirection(options);
-          const interval = 1 * (direction === "up" ? 1 : -1);
-          const notePitch = chordBounds[direction === "up" ? "upper" : "lower"];
-          const outsidePitch = getHighestPitch(
-            beam.pitch ?? stem.pitch.start ?? notePitch,
-            staffBounds[direction === "up" ? "upper" : "lower"],
-          );
-          const abovePitch = getHighestPitch(
-            beam.pitch ?? stem.pitch.start ?? notePitch,
-            staffBounds.upper,
-          );
-          // const pitch =
-          //   articulationIndex !== 0
-          //     ? getDiatonicTransposition(
-          //         acc[articulationIndex - 1].pitch,
-          //         interval,
-          //       )
-          //     : getDiatonicTransposition(
-          //         beam.pitch ??
-          //           stem.pitch.start ??
-          //           chordBounds[direction === "up" ? "upper" : "lower"],
-          //         interval,
-          //       );
-          const pitch =
-            articulationIndex !== 0
-              ? getDiatonicTransposition(
-                  acc[articulationIndex - 1].pitch,
-                  interval,
-                )
-              : getDiatonicTransposition(
-                  groupName === "above"
-                    ? abovePitch
-                    : groupName === "outside"
-                      ? outsidePitch
-                      : notePitch,
-                  interval,
-                );
-          const row = `${pitchPrefix}s${beam.staff ?? stem.noteStaff}${pitch}`;
-          const glyph =
-            articulationMap[direction === "up" ? "above" : "below"][
-              articulationMap.shorthand.indexOf(name)
-            ];
+        markingsAtPosition
+          .sort((a, b) => {
+            const lookup =
+              position === "up"
+                ? articulationMap.shorthand
+                : articulationMap.shorthand.reverse();
+            return lookup.indexOf(a.name) - lookup.indexOf(b.name);
+          })
+          .reduce((markingsAcc, { name, properties }, index) => {
+            const interval =
+              index === 0
+                ? properties.region === "note" &&
+                  properties.noteOnLine &&
+                  properties.noteWithinStaff
+                  ? properties.position === "up"
+                    ? 3
+                    : -3
+                  : properties.position === "up"
+                    ? 2
+                    : -2
+                : properties.position === "up"
+                  ? 1
+                  : -1;
+            const pitch = getDiatonicTransposition(properties.pitch, interval);
+            const row = `${properties.rowPrefix}${pitch}`;
 
-          return {
-            column: `e${event.position.start}-not`,
-            direction,
-            glyph,
-            key: `${id}_art${articulationIndex}_${groupName}${index}`,
-            name,
-            pitch,
-            row,
-          };
-        }),
+            return index === 0
+              ? {
+                  column: properties.column,
+                  position: properties.position,
+                  key: properties.key,
+                  name,
+                  pitch,
+                  row,
+                  glyphs: [properties.glyph],
+                }
+              : {
+                  ...markingsAcc,
+                  glyphs: [...markingsAcc.glyphs, properties.glyph],
+                };
+          }, {}),
       ],
       [],
     );
-  }, [
-    beam.pitch,
-    beam.staff,
-    chordBounds,
-    event.position.start,
-    groups,
-    id,
-    markingDirection,
-    pitchPrefix,
-    stem.noteStaff,
-    stem.pitch.start,
-  ]);
+  }, [markingsByPosition]);
 
   return (
     <>
       {markings.map((marking) => (
         <Item
           key={marking.key}
-          className={styles.articulation}
+          className={clsx(styles.articulation, styles[marking.position])}
           column={marking.column}
           pitch={marking.row}
         >
-          {marking.glyph}
+          {marking.glyphs.map((glyph, glyphIndex) => (
+            <span key={`${marking.key}_glyph${glyphIndex}`}>{glyph}</span>
+          ))}
         </Item>
       ))}
     </>

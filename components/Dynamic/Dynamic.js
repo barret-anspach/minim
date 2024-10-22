@@ -100,7 +100,7 @@ const dynamicMap = {
   ],
 };
 
-// Do we consider a Dynamic a marking on a chord? There are conditions where a dynamic isn't related to an event (it)
+// Do we consider a Dynamic a marking on a chord? There are conditions where a dynamic isn't related to an event ...
 
 export default function Dynamic({ dynamic, pitch = "c4" }) {
   return (

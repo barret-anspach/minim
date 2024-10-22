@@ -137,11 +137,6 @@
                             "start": true,
                             "end": false
                           },
-                          "markings": {
-                            "staccato": {},
-                            "tenuto": {},
-                            "stress": {}
-                          },
                           "notes": [
                             {
                               "pitch": {

@@ -2,7 +2,16 @@
   margin-right: 0.04rem;
 }
 .articulation {
+  display: flex;
+  flex-flow: column nowrap;
   justify-self: center;
+  gap: 0.15rem;
+}
+.articulation.up {
+  justify-content: flex-end;
+}
+.articulation.down {
+  justify-content: flex-start;
 }
 .dot {
   margin-left: 0.12rem;

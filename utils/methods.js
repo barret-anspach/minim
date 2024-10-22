@@ -180,7 +180,13 @@ export function getLowestPitch(a, b) {
 }
 export function isNoteOnLine(staffLinePitch, note) {
   return (
-    mod(getDiatonicInterval(staffLinePitch, getPitchString(note)), 2) === 0
+    mod(
+      getDiatonicInterval(
+        staffLinePitch,
+        typeof note === "string" ? note : getPitchString(note),
+      ),
+      2,
+    ) === 0
   );
 }
 

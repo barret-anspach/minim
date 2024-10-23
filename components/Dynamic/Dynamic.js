@@ -102,12 +102,12 @@ const dynamicMap = {
 
 // Do we consider a Dynamic a marking on a chord? There are conditions where a dynamic isn't related to an event ...
 
-export default function Dynamic({ dynamic, pitch = "c4" }) {
+export default function Dynamic({ dynamic }) {
   return (
     <Item
       className={styles.dynamic}
       column={`e${dynamic.position.at}-not`}
-      pitch={`${dynamic.flowId}p${dynamic.partIndex}s${dynamic.staff + 1}${pitch}`}
+      pitch={`${dynamic.flowId}p${dynamic.partIndex}s${dynamic.staff + 1}-dyn`}
     >
       {dynamicMap.value[dynamicMap.shorthand.indexOf(dynamic.value)]}
     </Item>

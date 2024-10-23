@@ -48,13 +48,14 @@ export function getPitches(clef, prefix) {
 const SPACE_BETWEEN_STAVES_IN_PART = 12;
 const SPACE_BETWEEN_PARTS = 18;
 const SPACE_BETWEEN_FLOWS = 24;
+
 const defaultOptions = {
   staffSpace: SPACE_BETWEEN_STAVES_IN_PART,
   partSpace: SPACE_BETWEEN_PARTS,
   flowSpace: SPACE_BETWEEN_FLOWS,
 };
 
-// overlap any number of staves' named (pitched) grid rows to render appropriate inter-staff spacing.
+/* overlap any number of staves' named (pitched) grid rows to render controlled-width spaces between them. */
 export function overlapStaffRows(staves, options = defaultOptions) {
   const result = staves.reduce(
     (acc, staff, i, staves) => {
@@ -70,15 +71,23 @@ export function overlapStaffRows(staves, options = defaultOptions) {
         // an alias for the current staff's staffBounds.lower.id.
         const currentBoundsLower = staff.staffBounds.lower.id;
         const nextBoundsUpper = staves[i + 1].staffBounds.upper.id;
-        // What's the pitch an octave above the top of the next staff?
+        const nextOverlapPitch = getDiatonicTransposition(
+          nextBoundsUpper,
+          space ?? SPACE_BETWEEN_STAVES_IN_PART,
+        );
+        const dynamicsPitch = `${staff.prefix}${getDiatonicTransposition(
+          currentBoundsLower,
+          -1 * Math.floor((space ?? SPACE_BETWEEN_STAVES_IN_PART) / 2),
+        )}`;
+        // What's the next's staff's pitch at top of its staff equal to the desired space?
         // This pitch will overlap the current staff's bottom line pitch.
-        const nextPitchAtCurrentBoundsLower = `${staves[i + 1].prefix}${getDiatonicTransposition(nextBoundsUpper, space ?? SPACE_BETWEEN_STAVES_IN_PART)}`;
+        const nextPitchAtCurrentBoundsLower = `${staves[i + 1].prefix}${nextOverlapPitch}`;
         const nextIndexAtCurrentBoundsLower = staves[
           i + 1
         ].pitchesArray.findIndex(
           (pitch) => pitch === nextPitchAtCurrentBoundsLower,
         );
-
+        // The current staff's lowest line
         const currentIndexAtCurrentBoundsLower = staves[
           i
         ].pitchesArray.findIndex(
@@ -108,7 +117,12 @@ export function overlapStaffRows(staves, options = defaultOptions) {
               : [];
           definedRowsSoFar[rowIndex + acc.index].push(
             ...(rowIndex < currentIndexOfNextPitchesStart
-              ? [staff.pitchesArray[rowIndex]]
+              ? [
+                  staff.pitchesArray[rowIndex],
+                  ...(staff.pitchesArray[rowIndex] === dynamicsPitch
+                    ? [`${staff.prefix}-dyn`]
+                    : []),
+                ]
               : rowIndex >= staff.pitchesArray.length
                 ? [
                     staves[i + 1].pitchesArray[
@@ -117,11 +131,17 @@ export function overlapStaffRows(staves, options = defaultOptions) {
                   ]
                 : [
                     staff.pitchesArray[rowIndex],
+                    ...(staff.pitchesArray[rowIndex] === dynamicsPitch
+                      ? [`${staff.prefix}-dyn`]
+                      : []),
                     staves[i + 1].pitchesArray[
                       rowIndex - currentIndexOfNextPitchesStart
                     ],
                   ]),
           );
+          definedRowsSoFar[rowIndex + acc.index] = [
+            ...new Set(definedRowsSoFar[rowIndex + acc.index]),
+          ];
         }
 
         return {

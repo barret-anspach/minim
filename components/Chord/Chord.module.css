@@ -1,17 +1,36 @@
 .accidental {
   margin-right: 0.04rem;
 }
-.articulation {
+.markings {
   display: flex;
   flex-flow: column nowrap;
   justify-self: center;
+  height: auto;
   gap: 0.15rem;
 }
-.articulation.up {
+.markings.up {
   justify-content: flex-end;
+  align-self: flex-end;
 }
-.articulation.down {
+.markings.down {
   justify-content: flex-start;
+  align-self: flex-start;
+}
+.articulation {
+  display: flex;
+  height: auto;
+  line-height: 0;
+}
+.markings.up .articulation.marking {
+  align-items: flex-end;
+}
+.markings.down .articulation.marking {
+  align-items: flex-start;
+}
+.articulation.dynamic {
+  align-items: center;
+  /* Workaround for glyph not exactly centered */
+  margin-top: 0.08rem;
 }
 .dot {
   margin-left: 0.12rem;
@@ -28,11 +47,11 @@
 .legerLine:after {
   content: '';
   position: absolute;
-  border-bottom: 0.04rem solid currentColor;
-  width: calc(100% + 0.18rem);
-  transform: translate(-0.05rem, -50%);
+  border-bottom: 0.0325rem solid currentColor;
+  width: calc(100% + 0.27rem);
+  transform: translate(-0.12rem, -50%);
 }
 .wide:after {
   width: calc(100% + 0.37rem);
-  transform: translate(-0.1rem, -50%);
+  transform: translate(-0.17rem, -50%);
 }

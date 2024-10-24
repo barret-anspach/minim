@@ -1,3 +1,5 @@
 .dynamic {
+  height: auto;
+  line-height: 0.5;
   justify-self: center;
 }

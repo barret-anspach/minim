@@ -476,6 +476,32 @@ const MeasuresContextProvider = ({ children }) => {
         );
         return acc;
       }, []);
+      const dynamics = events.filter((e) => e.type === "dynamic");
+      const eventsWithDynamicsAsMarkings = events
+        .filter((e) => e.type !== "dynamic")
+        .map((event) => {
+          const dynamic = dynamics.find(
+            (dynamic) =>
+              dynamic.position.at === event.position.start &&
+              dynamic.partIndex === event.partIndex &&
+              dynamic.staff === event.staff,
+          );
+          if (dynamic) {
+            return {
+              ...event,
+              markings: {
+                ...event.markings,
+                dynamic: {
+                  type: "dynamic",
+                  value: dynamic.value,
+                  staff: dynamic.staff,
+                },
+              },
+            };
+          } else {
+            return event;
+          }
+        });
 
       const eventGroupsWithBeams = events.filter((e) => e.eventGroup?.beams);
       const beamGroups =
@@ -545,7 +571,7 @@ const MeasuresContextProvider = ({ children }) => {
         type: "setFlow",
         beamEvents,
         beamGroups,
-        events,
+        events: eventsWithDynamicsAsMarkings,
         flowId: flow.id,
         measureEvents,
         layouts: flow.layouts,

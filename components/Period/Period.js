@@ -208,10 +208,10 @@ const Period = forwardRef(function Period(
         ),
       )}
       {/* TODO: figure out dynamic "pitch" placement */}
-      {period.dynamics &&
+      {/* {period.dynamics &&
         Object.values(period.dynamics).map((flow) =>
           flow.map((dynamic) => <Dynamic key={dynamic.id} dynamic={dynamic} />),
-        )}
+        )} */}
       {period.layoutEvents &&
         period.layoutEvents.map((layout, leIndex) =>
           layout.layoutGroups.map((group, groupIndex) => (

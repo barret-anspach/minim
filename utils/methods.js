@@ -552,8 +552,9 @@ export function makeColumn({ start, columnWidth }) {
   );
 }
 // Every possible event placement type is given its own named column line (per *event*)
-export function getColumnArray({ start, columnWidth }) {
-  const columnArray = [
+// TODO: Final measure of all flows should end at 'bar'
+export function getColumnArray({ start, columnWidth, final = false }) {
+  const columns = [
     {
       lines: ["start", "text"],
       value: "auto",
@@ -563,6 +564,7 @@ export function getColumnArray({ start, columnWidth }) {
       value: "auto",
     },
     {
+      final: true,
       lines: ["bar"],
       value: "auto",
     },
@@ -619,10 +621,18 @@ export function getColumnArray({ start, columnWidth }) {
       value: false,
     },
   ];
-  return columnArray.map((column) => ({
-    ...column,
-    lines: column.lines.map((line) => `e${start}-${line}`),
-  }));
+  const result = [];
+  for (const column of columns) {
+    result.push({
+      ...column,
+      lines: column.lines.map((line) => `e${start}-${line}`),
+    });
+    if (final && column.final) {
+      delete column.final;
+      break;
+    }
+  }
+  return result;
 }
 
 export function areClefsEqual(clefsA, clefsB) {

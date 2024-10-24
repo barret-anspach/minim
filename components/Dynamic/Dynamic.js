@@ -1,7 +1,7 @@
 import Item from "../Item";
 import styles from "./Dynamic.module.css";
 
-const dynamicMap = {
+export const dynamicMap = {
   key: [
     "dynamicPiano",
     "dynamicMezzo",
@@ -106,8 +106,8 @@ export default function Dynamic({ dynamic }) {
   return (
     <Item
       className={styles.dynamic}
-      column={`e${dynamic.position.at}-not`}
-      pitch={`${dynamic.flowId}p${dynamic.partIndex}s${dynamic.staff + 1}-dyn`}
+      column={dynamic.column}
+      pitch={dynamic.row}
     >
       {dynamicMap.value[dynamicMap.shorthand.indexOf(dynamic.value)]}
     </Item>

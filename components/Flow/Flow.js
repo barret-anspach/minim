@@ -21,7 +21,7 @@ import styles from "./Flow.module.css";
  *       - space
  */
 
-function Flow({ periodFlow, id }) {
+function Flow({ period, periodFlow, id }) {
   const {
     context: { initialized },
   } = useMeasuresContext();
@@ -49,6 +49,7 @@ function Flow({ periodFlow, id }) {
                 event={event}
                 eventIndex={eventIndex}
                 events={events}
+                period={period}
               />
             )}
           </Fragment>

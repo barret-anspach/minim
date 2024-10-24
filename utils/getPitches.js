@@ -75,9 +75,13 @@ export function overlapStaffRows(staves, options = defaultOptions) {
           nextBoundsUpper,
           space ?? SPACE_BETWEEN_STAVES_IN_PART,
         );
-        const dynamicsPitch = `${staff.prefix}${getDiatonicTransposition(
+        const currentDynamicsPitch = `${staff.prefix}${getDiatonicTransposition(
           currentBoundsLower,
           -1 * Math.floor((space ?? SPACE_BETWEEN_STAVES_IN_PART) / 2),
+        )}`;
+        const nextDynamicsPitch = `${staves[i + 1].prefix}${getDiatonicTransposition(
+          staves[i + 1].staffBounds.lower.id,
+          -1 * Math.floor(space ?? SPACE_BETWEEN_STAVES_IN_PART / 2),
         )}`;
         // What's the next's staff's pitch at top of its staff equal to the desired space?
         // This pitch will overlap the current staff's bottom line pitch.
@@ -119,7 +123,7 @@ export function overlapStaffRows(staves, options = defaultOptions) {
             ...(rowIndex < currentIndexOfNextPitchesStart
               ? [
                   staff.pitchesArray[rowIndex],
-                  ...(staff.pitchesArray[rowIndex] === dynamicsPitch
+                  ...(staff.pitchesArray[rowIndex] === currentDynamicsPitch
                     ? [`${staff.prefix}-dyn`]
                     : []),
                 ]
@@ -128,15 +132,25 @@ export function overlapStaffRows(staves, options = defaultOptions) {
                     staves[i + 1].pitchesArray[
                       rowIndex - currentIndexOfNextPitchesStart
                     ],
+                    ...(staves[i + 1].pitchesArray[
+                      rowIndex - currentIndexOfNextPitchesStart
+                    ] === nextDynamicsPitch
+                      ? [`${staves[i + 1].prefix}-dyn`]
+                      : []),
                   ]
                 : [
                     staff.pitchesArray[rowIndex],
-                    ...(staff.pitchesArray[rowIndex] === dynamicsPitch
+                    ...(staff.pitchesArray[rowIndex] === currentDynamicsPitch
                       ? [`${staff.prefix}-dyn`]
                       : []),
                     staves[i + 1].pitchesArray[
                       rowIndex - currentIndexOfNextPitchesStart
                     ],
+                    ...(staves[i + 1].pitchesArray[
+                      rowIndex - currentIndexOfNextPitchesStart
+                    ] === nextDynamicsPitch
+                      ? [`${staves[i + 1].prefix}-dyn`]
+                      : []),
                   ]),
           );
           definedRowsSoFar[rowIndex + acc.index] = [

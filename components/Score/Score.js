@@ -27,7 +27,9 @@ function Score({ composition }) {
       for (let i = 0; i < entries.length; i++) {
         newArr[i] = entries[i].target.offsetLeft === firstChildOffsetLeft;
       }
-      setPeriodPositions(newArr);
+      if (periodPositions.some((p, i) => p !== newArr[i])) {
+        setPeriodPositions(newArr);
+      }
     });
 
     if (periodRefs.current) {

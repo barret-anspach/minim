@@ -20,7 +20,7 @@ import StaffDisplayItem from "../StaffDisplayItem";
 /**
  * Convenience wrapper of note-related elements that are usually rendered together.
  */
-export default function Chord({ clef, event, eventIndex, events, id }) {
+export default function Chord({ clef, event, eventIndex, events, id, period }) {
   const {
     context: { flows },
   } = useMeasuresContext();
@@ -103,6 +103,7 @@ export default function Chord({ clef, event, eventIndex, events, id }) {
           chordBounds={chordBounds}
           event={event}
           id={`${pitchPrefix}_mar`}
+          period={period}
           pitchPrefix={pitchPrefix}
           rangeClef={rangeClef}
           stem={stem}

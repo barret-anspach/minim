@@ -6,17 +6,18 @@
   padding: 20vmin 2rem 5rem 10vmin;
 }
 .header {
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
+  font-family: 'Test Untitled Sans', sans-serif;
   padding-left: 1rem;
 }
 .header .title {
   margin-bottom: 10vmin;
 }
 .header h1 {
-  font-size: xx-large;
-  font-weight: 400;
+  font-size: large;
+  font-weight: 500;
+  text-transform: uppercase;
   text-align: center;
+  letter-spacing: 0.4rem;
 }
 .header h2 {
   font-size: large;

@@ -55,3 +55,17 @@
   width: calc(100% + 0.37rem);
   transform: translate(-0.17rem, -50%);
 }
+
+.tie {
+  border-bottom: 0.1875rem solid #ff4500CC;
+  width: 100%;
+  height: 0;
+  transform: translateY(-50%);
+}
+.beam {
+  border-bottom: 0.125rem solid currentColor;
+  width: 100%;
+}
+.beam.below {
+  transform: translateY(-100%);
+}

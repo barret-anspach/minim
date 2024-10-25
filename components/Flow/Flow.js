@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import Chord from "../Chord/Chord";
 import Tuplet from "./../Tuplet/Tuplet";
@@ -21,16 +21,59 @@ import styles from "./Flow.module.css";
  *       - space
  */
 
-function Flow({ period, periodFlow, id }) {
+function Flow({ id, period, systemStart, systemEnd }) {
   const {
     context: { initialized },
   } = useMeasuresContext();
+  const [flowEvents, setFlowEvents] = useState(period.flows[id]);
+
+  // TODO: Period child components would benefit from these side effects, not just Flow
+  useEffect(() => {
+    function switchOrAddEvents(events, clipEvents) {
+      const switched = [...events];
+      clipEvents.forEach((clipEvent) => {
+        const flowEventIndex = events.findIndex(
+          (e) => e.renderId === clipEvent.renderId,
+        );
+        if (flowEventIndex !== -1) {
+          switched[flowEventIndex] = clipEvent;
+        } else {
+          // make sure clipEvent belongs in this period
+          if (
+            clipEvent.position.start >= period.position.start &&
+            clipEvent.position.end <= period.position.end
+          ) {
+            switched.push(clipEvent);
+          }
+        }
+      });
+      setFlowEvents(switched);
+    }
+    if (!systemStart && !systemEnd) {
+      setFlowEvents(period.flows[id]);
+    }
+    if (systemStart && period.flowsClipped[id].start.length > 0) {
+      switchOrAddEvents(period.flows[id], period.flowsClipped[id].start);
+    }
+    if (systemEnd && period.flowsClipped[id].end.length > 0) {
+      switchOrAddEvents(period.flows[id], period.flowsClipped[id].end);
+    }
+  }, [
+    id,
+    period.flows,
+    period.flowsClipped,
+    systemStart,
+    systemEnd,
+    period.index,
+    period.position.start,
+    period.position.end,
+  ]);
 
   return (
     initialized && (
-      <Fragment key={id}>
-        {periodFlow.map((event, eventIndex, events) => (
-          <Fragment key={`${id}e${eventIndex}_items`}>
+      <Fragment key={`per${period.index}_${id}`}>
+        {flowEvents.map((event, eventIndex, events) => (
+          <Fragment key={`per${period.index}_${id}e${eventIndex}_items`}>
             {event.type === "tuplet" && (
               <Tuplet
                 key={`${event.renderId}_tup`}
@@ -59,4 +102,4 @@ function Flow({ period, periodFlow, id }) {
   );
 }
 
-export default withNoSSR(Flow);
+export default Flow;

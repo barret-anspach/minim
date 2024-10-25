@@ -5,6 +5,7 @@ import styles from "./Chord.module.css";
 import {
   getDiatonicInterval,
   getDiatonicTransposition,
+  getFlowVoiceNumbersByPartStaff,
   getHighestPitch,
   getLowestPitch,
   isNoteOnLine,
@@ -123,17 +124,9 @@ export default function Markings({
   };
   // For each staff of the current part, are there multiple voices?
   // voiceNumbersByPartStaff[event.staff].length === 1 ? single : multiple.
-  const voiceNumbersByPartStaff = Object.values(
+  const voiceNumbersByPartStaff = getFlowVoiceNumbersByPartStaff(
     period.flows[event.flowId],
-  ).reduce(
-    (acc, e) =>
-      !["displayEvent"].includes(e.type) && event.partIndex === e.partIndex
-        ? {
-            ...acc,
-            [e.staff]: [...new Set([...(acc[e.staff] ?? []), e.voice])],
-          }
-        : acc,
-    {},
+    event.partIndex,
   );
   const getStemDirection = useCallback(
     () => beam?.direction ?? stem?.direction ?? "down",
@@ -158,6 +151,7 @@ export default function Markings({
             : chordBounds.lower,
         staffBounds.lower,
       );
+      // Multiple voices on the event's staff?
       if (
         event.partVoices > 0 &&
         voiceNumbersByPartStaff[event.staff].length > 1
@@ -170,6 +164,8 @@ export default function Markings({
           down: pitch,
         };
       }
+      // Multiple staves and marking type is "dynamic"?
+      // Place if possible "between" the two staves
 
       switch (region) {
         case "note": {

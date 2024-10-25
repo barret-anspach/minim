@@ -7,7 +7,6 @@
   grid-template-columns: var(--columns);
   flex: var(--duration) var(--duration) content;
   min-width: fit-content;
-  color: black;
 }
 .period:first-of-type {
   padding-left: 0.5in;

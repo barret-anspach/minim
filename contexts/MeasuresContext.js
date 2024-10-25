@@ -9,9 +9,9 @@ import {
   getFlowLayoutAtPoint,
   getFlowLayoutBarlinesAtPoint,
   getLayoutEventsForPeriod,
-  getLayoutGroupsForPeriod,
   getMeasuresForPeriod,
   getStavesForFlow,
+  lengthToDurationObj,
   timeSignatureToDuration,
 } from "../utils/methods";
 
@@ -203,8 +203,8 @@ function measuresReducer(context, action) {
                     (event) => event.position.start === eventStart,
                   ),
                   // TODO: Are we using these displayEvents (as distinct events in period.events)?
-                  // As in, can we remove ? Or will this become important to capture mid-measure
-                  // clef changes and the like ?
+                  // As in, can we remove? Or will this become important to capture mid-measure
+                  // clef changes and the like?
                   ...flowDisplayStarts[flowId]
                     .flat()
                     .filter((displayEvent) => displayEvent.at === eventStart),
@@ -252,6 +252,23 @@ function measuresReducer(context, action) {
                   {},
                 ),
                 flows: eventsAtStart,
+                flowsClipped: Object.keys(context.flows).reduce(
+                  (clipAcc, flowId) => ({
+                    ...clipAcc,
+                    [flowId]: {
+                      start:
+                        acc.next.index &&
+                        acc.next.index === acc.index &&
+                        acc.next.flowsClipped &&
+                        acc.next.flowsClipped[flowId] &&
+                        acc.next.flowsClipped[flowId].length > 0
+                          ? acc.next.flowsClipped[flowId]
+                          : [],
+                      end: [],
+                    },
+                  }),
+                  {},
+                ),
                 index: acc.index,
                 key: Object.entries(context.flows).reduce(
                   (keyAcc, [flowId, flow]) => ({
@@ -292,10 +309,108 @@ function measuresReducer(context, action) {
                 }),
                 {},
               );
+
+              if (acc.next && acc.next.index === acc.index) {
+                acc.next = {};
+              }
+
+              const flowsClipped = Object.entries(flows).reduce(
+                (flowAcc, [flowId, flow]) => ({
+                  ...flowAcc,
+                  [flowId]: flow
+                    .filter(
+                      (e) =>
+                        e.type === "event" &&
+                        e.display !== "none" &&
+                        e.position.end > _endValue,
+                    )
+                    .reduce(
+                      (eventAcc, e) => {
+                        if (acc.index < periods.length) {
+                          acc.next = {
+                            index: acc.index + 1,
+                            flowsClipped: {
+                              [flowId]: [
+                                ...(acc.next &&
+                                acc.next.flowsClipped &&
+                                acc.next.flowsClipped[flowId] &&
+                                acc.next.flowsClipped[flowId].length > 0
+                                  ? acc.next.flowsClipped[flowId]
+                                  : []),
+                                {
+                                  ...e,
+                                  clipPosition: "start",
+                                  dimensions: {
+                                    length: e.position.end - _endValue,
+                                  },
+                                  duration: lengthToDurationObj(
+                                    e.position.end - _endValue,
+                                  ),
+                                  position: {
+                                    ...e.position,
+                                    start: _endValue,
+                                  },
+                                  ...(e.notes
+                                    ? {
+                                        notes: [
+                                          ...e.notes.map((n) => ({
+                                            ...n,
+                                            tie: {},
+                                          })),
+                                        ],
+                                      }
+                                    : {}),
+                                },
+                              ],
+                            },
+                          };
+                          console.log("acc.next:", acc.next);
+                        }
+                        return {
+                          start:
+                            acc.result[periods[acc.index]].flowsClipped[flowId]
+                              .start || [],
+                          end: [
+                            ...eventAcc.end,
+                            {
+                              ...e,
+                              clipPosition: "end",
+                              dimensions: {
+                                length: _endValue - e.position.start,
+                              },
+                              duration: lengthToDurationObj(
+                                _endValue - e.position.start,
+                              ),
+                              position: {
+                                ...e.position,
+                                end: _endValue,
+                              },
+                              ...(e.notes
+                                ? {
+                                    notes: [
+                                      ...e.notes.map((n) => ({
+                                        ...n,
+                                        tie: {},
+                                      })),
+                                    ],
+                                  }
+                                : {}),
+                            },
+                          ],
+                        };
+                      },
+                      {
+                        start:
+                          acc.result[periods[acc.index]].flowsClipped[flowId]
+                            .start || [],
+                        end: [],
+                      },
+                    ),
+                }),
+                {},
+              );
+
               // Otherwise, add new eventStart to events[]
-              // TODO: If last event for the flow/part/period and its duration extends beyond period end,
-              // We should subdivide the event to period bounds. Would also need to flag the next period
-              // to insert and render the overlapping event content.
               acc.result[periods[acc.index]] = {
                 ...acc.result[periods[acc.index]],
                 beamGroups: getBeamGroupsForPeriod({
@@ -315,6 +430,7 @@ function measuresReducer(context, action) {
                   ]),
                 ],
                 flows,
+                flowsClipped,
                 layoutEvents: [
                   ...new Set([
                     ...acc.result[periods[acc.index]].layoutEvents,
@@ -334,7 +450,7 @@ function measuresReducer(context, action) {
 
             return acc;
           },
-          { result: {}, index: 0 },
+          { result: {}, index: 0, next: {} },
         ).result;
 
       return {
@@ -476,6 +592,7 @@ const MeasuresContextProvider = ({ children }) => {
         );
         return acc;
       }, []);
+
       const dynamics = events.filter((e) => e.type === "dynamic");
       const eventsWithDynamicsAsMarkings = events
         .filter((e) => e.type !== "dynamic")
@@ -546,6 +663,7 @@ const MeasuresContextProvider = ({ children }) => {
           : beamGroups.flatMap((beamGroup) =>
               beamGroup.flatMap((event) => ({
                 renderId: event.renderId,
+                ...(event.duration ? { duration: event.duration } : {}),
                 beam: {
                   ...getBeamGroupStem(beamGroup, event.flowId),
                   staff: event.staff,

@@ -1,4 +1,4 @@
-import { durationMap } from "../constants/durations";
+import { DURATION, durationMap } from "../constants/durations";
 import { noteheadMap } from "../constants/noteheads";
 import { restMap } from "../constants/rests";
 import { getPitches } from "./getPitches";
@@ -55,6 +55,20 @@ export function toNumericalDuration(duration) {
     durationMap.value[durationMap.key.indexOf(duration.base)] *
     (1 + (1 - Math.pow(2, duration.dots ? duration.dots * -1 : 0)))
   );
+}
+/**
+ * @method lengthToDurationObj
+ * @description Given a numerical duration value, returns an MNX duration object.
+ * @param {number} length a numerical duration value, where base whole note = 4096.
+ * @returns {object} an MNX duration object
+ */
+export function lengthToDurationObj(length) {
+  const baseIndex = durationMap.value.findIndex((d) => d <= length);
+  const baseValue = durationMap.value[baseIndex];
+  return {
+    base: durationMap.key[baseIndex],
+    dots: Math.floor(1 / (1 + (1 - length / baseValue)) / 2),
+  };
 }
 /**
  * @method durationBeforeIndex
@@ -325,6 +339,22 @@ export function getStem(
     noteStaff,
   };
 }
+/* For each staff of the current part, are there multiple voices?
+/  ex. const voiceNumbersByPartStaff = getFlowVoiceNumbersByPartStaff(flow, event.partIndex);
+/  ex. voiceNumbersByPartStaff[event.staff].length === 1 ? <single voice> : <multiple voices>
+*/
+export function getFlowVoiceNumbersByPartStaff(flow, eventPartIndex) {
+  return Object.values(flow).reduce(
+    (acc, e) =>
+      !["displayEvent"].includes(e.type) && eventPartIndex === e.partIndex
+        ? {
+            ...acc,
+            [e.staff]: [...new Set([...(acc[e.staff] ?? []), e.voice])],
+          }
+        : acc,
+    {},
+  );
+}
 export function getBeamGroupStem(beamGroup, pitchPrefix = null) {
   // TODO: Lots of cleanup to do here. And a lot more complexity to add, unfortunately.
   // Pitch:
@@ -370,11 +400,18 @@ export function getBeamGroupStem(beamGroup, pitchPrefix = null) {
     beamGroupNotes,
     midline,
   );
+  // TODO: sub-beam count should shift terminus up/down by count * 2
+  const maxSubBeamCountInGroup = beamGroup.reduce(
+    (acc, event) => Math.max(acc, getSubBeamCountFromBeamEvent(event) || 0),
+    0,
+  );
   // TODO: notes past first leger line must reach midline
+  // TODO: any system incipit matter (clef, key signature) should be "cleared"
+  // by beam if entering at start of system.
   const terminus =
     stemDirection === "up"
-      ? getDiatonicTransposition(bounds.upper, 7)
-      : getDiatonicTransposition(bounds.lower, -7);
+      ? getDiatonicTransposition(bounds.upper, 7 + 2 * maxSubBeamCountInGroup)
+      : getDiatonicTransposition(bounds.lower, -7 - 2 * maxSubBeamCountInGroup);
   return {
     direction: stemDirection,
     pitch: terminus,
@@ -779,6 +816,7 @@ export function getLayoutEventsForPeriod({ flows, start, end }) {
           event.measureBounds.end <= end &&
           event.measureBounds.start < start
         ) {
+          // period contains the ending of a measure; return events of eventType "measureEnd"
           return event.eventType === "measureEnd";
         }
       }
@@ -816,9 +854,13 @@ export function getDisplayEventsForPeriod({ flows, start, end }) {
     }),
   );
 }
-
+export function getSubBeamCountFromBeamEvent(beamEvent) {
+  const _eighthIndex = durationMap.value.indexOf(DURATION.EIGHTH);
+  const _durationIndex = durationMap.key.indexOf(beamEvent.duration.base);
+  const _duration = durationMap.value[_durationIndex];
+  return _duration <= DURATION.EIGHTH ? _eighthIndex - _durationIndex : 0;
+}
 export function getBeamGroupsForPeriod({ flows, start, end }) {
-  // TODO: Logic not quite right. Some artifacts and incomplete/missing beams.
   return Object.entries(flows).reduce(
     (acc, [flowId, flow]) => ({
       ...acc,
@@ -834,34 +876,42 @@ export function getBeamGroupsForPeriod({ flows, start, end }) {
               beamGroup.at(-1).position.start >= end),
         )
         .map((beamGroup) =>
-          beamGroup.map((beamEvent) => ({
-            ...beamEvent,
-            beam:
-              beamGroup[0].position.start < start &&
-              beamGroup.at(-1).position.start >= end
-                ? {
-                    clip: "both",
-                    start: `e${start}-bar`,
-                    end: `e${end}-end`,
-                  }
-                : beamGroup[0].position.start < start
+          beamGroup.map((beamEvent) => {
+            const subBeamCount = getSubBeamCountFromBeamEvent(beamEvent);
+
+            return {
+              ...beamEvent,
+              beam:
+                beamGroup[0].position.start < start &&
+                beamGroup.at(-1).position.start >= end
                   ? {
-                      clip: "start",
+                      clip: "both",
                       start: `e${start}-bar`,
-                      end: beamGroup.at(-1).position.start,
+                      end: `e${end}-end`,
+                      subBeamCount,
                     }
-                  : beamGroup.at(-1).position.start >= end
+                  : beamGroup[0].position.start < start
                     ? {
-                        clip: "end",
-                        start: beamEvent.position.start,
-                        end: `e${end}-end`,
-                      }
-                    : {
-                        clip: "none",
-                        start: beamGroup[0].position.start,
+                        clip: "start",
+                        start: `e${start}-bar`,
                         end: beamGroup.at(-1).position.start,
-                      },
-          })),
+                        subBeamCount,
+                      }
+                    : beamGroup.at(-1).position.start >= end
+                      ? {
+                          clip: "end",
+                          start: beamEvent.position.start,
+                          end: `e${end}-end`,
+                          subBeamCount,
+                        }
+                      : {
+                          clip: "none",
+                          start: beamGroup[0].position.start,
+                          end: beamGroup.at(-1).position.start,
+                          subBeamCount,
+                        },
+            };
+          }),
         ),
     }),
     {},

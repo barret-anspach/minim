@@ -60,7 +60,7 @@ function Score({ composition }) {
           {Object.values(periods).map((period, _, periods) => (
             <Period
               ref={(ref) => (periodRefs.current[period.index] = ref)}
-              key={`per${period.position.start}`}
+              key={`per${period.index}`}
               index={period.index}
               period={period}
               systemStart={periodPositions[period.index]}
@@ -69,13 +69,16 @@ function Score({ composition }) {
                 period.index === periods.length - 1
               }
             >
-              {Object.entries(period.flows).map(([flowId, flow]) => (
+              {Object.keys(period.flows).map((flowId) => (
                 <Flow
                   key={`per${period.index}_${flowId}`}
                   id={flowId}
                   period={period}
-                  periods={periods}
-                  periodFlow={flow}
+                  systemStart={periodPositions[period.index]}
+                  systemEnd={
+                    periodPositions[period.index + 1] ??
+                    period.index === periods.length - 1
+                  }
                 />
               ))}
             </Period>

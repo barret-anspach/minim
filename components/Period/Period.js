@@ -1,11 +1,10 @@
-import { forwardRef, Fragment, useMemo } from "react";
+import { forwardRef, Fragment, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 
 import Barline from "../Barline/Barline";
 import { BeamGroup } from "../BeamGroup/BeamGroup";
 import Bracket from "../Bracket/Bracket";
 import Clef from "../Clef";
-import Dynamic from "../Dynamic/Dynamic";
 import Item from "../Item";
 import Key from "../Key";
 import Meter from "../Meter";
@@ -207,11 +206,6 @@ const Period = forwardRef(function Period(
           ),
         ),
       )}
-      {/* TODO: figure out dynamic "pitch" placement */}
-      {/* {period.dynamics &&
-        Object.values(period.dynamics).map((flow) =>
-          flow.map((dynamic) => <Dynamic key={dynamic.id} dynamic={dynamic} />),
-        )} */}
       {period.layoutEvents &&
         period.layoutEvents.map((layout, leIndex) =>
           layout.layoutGroups.map((group, groupIndex) => (

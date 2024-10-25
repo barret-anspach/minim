@@ -6,12 +6,20 @@ import Stem from "../Stem";
 
 import { useMeasuresContext } from "../../contexts/MeasuresContext";
 import { getPitches } from "../../utils/getPitches";
-import { getStem, isNoteOnLine, getBoundsFromChord } from "../../utils/methods";
+import {
+  getPitchString,
+  getStem,
+  getBoundsFromChord,
+  getSubBeamCountFromBeamEvent,
+  getDiatonicTransposition,
+} from "../../utils/methods";
 
 import Rest from "../Note/Rest";
 import Accidental from "./Accidental";
 import Markings from "./Markings";
-import StaffDisplayItem from "../StaffDisplayItem";
+import Item from "../Item";
+
+import styles from "./Chord.module.css";
 
 // TODO: Should handle
 //         - display one or more noteheads
@@ -25,12 +33,8 @@ export default function Chord({ clef, event, eventIndex, events, id, period }) {
     context: { flows },
   } = useMeasuresContext();
   const { rangeClef } = useMemo(() => getPitches(clef), [clef]);
-  const beamEvent = useMemo(
-    () =>
-      flows[event.flowId].beamEvents.find(
-        (beamEvent) => beamEvent.renderId === event.renderId,
-      ),
-    [event.flowId, event.renderId, flows],
+  const beamEvent = flows[event.flowId].beamEvents.find(
+    (beamEvent) => beamEvent.renderId === event.renderId,
   );
   const pitchPrefix = useMemo(
     () => `${event.flowId}p${event.partIndex}`,
@@ -84,6 +88,17 @@ export default function Chord({ clef, event, eventIndex, events, id, period }) {
               pitchPrefix={pitchPrefix}
               staffLinePitch={rangeClef.staffLinePitches[0].id}
             />
+            {note.tie && (
+              <Item
+                className={styles.tie}
+                column={
+                  event.clipPosition === "end"
+                    ? `e${event.position.start}-ste-up / e${period.position.end}-end`
+                    : `e${event.position.start}-bar / e${period.position.start}-not`
+                }
+                pitch={`${pitchPrefix}s${note.staff ?? 1}${getPitchString(note)}`}
+              />
+            )}
           </Fragment>
         ))}
       {event.notes && (

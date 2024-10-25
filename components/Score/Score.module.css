@@ -4,10 +4,10 @@
   justify-content: flex-start;
   align-items: stretch;
   padding: 20vmin 2rem 5rem 10vmin;
+  color: #091f4e;
 }
 .header {
   font-family: 'Test Untitled Sans', sans-serif;
-  padding-left: 1rem;
 }
 .header .title {
   margin-bottom: 10vmin;

@@ -3,7 +3,10 @@ import clsx from "clsx";
 
 import Item from "../Item";
 
-import { getBeamGroupStem } from "../../utils/methods";
+import {
+  getBeamGroupStem,
+  getSubBeamCountFromBeamEvent,
+} from "../../utils/methods";
 import styles from "./BeamGroup.module.css";
 
 export function BeamGroup({ beamGroup, prefix }) {
@@ -35,13 +38,35 @@ export function BeamGroup({ beamGroup, prefix }) {
     }
   }, [beamGroup, direction]);
 
+  const subBeamCount = (beamEvent) =>
+    beamEvent ? getSubBeamCountFromBeamEvent(beamEvent) : 0;
+
   return (
-    <Item
-      className={clsx(styles.beam, {
-        [`${styles.below}`]: direction === "down",
-      })}
-      column={column}
-      pitch={row}
-    />
+    <>
+      <Item
+        className={clsx(styles.beam, {
+          [`${styles.below}`]: direction === "down",
+        })}
+        column={column}
+        pitch={row}
+      />
+      {beamGroup.map(
+        (beamEvent) =>
+          subBeamCount(beamEvent) > 0 &&
+          Array.from({ length: subBeamCount(beamEvent) }, (_, i) => i + 1).map(
+            (subBeam) => (
+              <Item
+                key={`${prefix}_sub${subBeam}`}
+                className={styles.beam}
+                column={beamEvent.beam.column}
+                pitch={getDiatonicTransposition(
+                  stem.pitch.start,
+                  stem.direction === "up" ? 2 * subBeam : -2 * subBeam,
+                )}
+              />
+            ),
+          ),
+      )}
+    </>
   );
 }

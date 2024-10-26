@@ -26,6 +26,9 @@ function Flow({ id, period, systemStart, systemEnd }) {
     context: { initialized },
   } = useMeasuresContext();
   const [flowEvents, setFlowEvents] = useState(period.flows[id]);
+  const [[previouslyAtSystemStart, previouslyAtSystemEnd], setPosition] =
+    useState([systemStart, systemEnd]);
+  const [addedEventRenderIds, _] = useState(new Set());
 
   // TODO: Period child components would benefit from these side effects, not just Flow
   useEffect(() => {
@@ -38,26 +41,72 @@ function Flow({ id, period, systemStart, systemEnd }) {
         if (flowEventIndex !== -1) {
           switched[flowEventIndex] = clipEvent;
         } else {
-          // make sure clipEvent belongs in this period
+          // clipEvent doesn't exist in event flow; add: and,
+          // make sure clipEvent belongs in this period.
           if (
+            systemStart &&
             clipEvent.position.start >= period.position.start &&
             clipEvent.position.end <= period.position.end
           ) {
             switched.push(clipEvent);
+            addedEventRenderIds.add(clipEvent.renderId);
           }
         }
       });
       setFlowEvents(switched);
     }
-    if (!systemStart && !systemEnd) {
-      setFlowEvents(period.flows[id]);
+
+    if (
+      !previouslyAtSystemStart &&
+      !systemEnd &&
+      !previouslyAtSystemEnd &&
+      !systemEnd
+    ) {
+      // √√√
+      // Do nothing!
+    } else {
+      if (
+        (previouslyAtSystemStart && !systemStart && !systemEnd) ||
+        (previouslyAtSystemEnd && !systemStart && !systemEnd)
+      ) {
+        // Return events minus clipEvent substitutions/additions
+        setFlowEvents(period.flows[id]);
+        addedEventRenderIds.clear();
+      } else {
+        if (
+          (systemStart && previouslyAtSystemEnd) ||
+          (systemEnd && previouslyAtSystemStart)
+        ) {
+          addedEventRenderIds.clear();
+        }
+        switchOrAddEvents(
+          period.flows[id],
+          systemStart
+            ? period.flowsClipped[id].start || []
+            : period.flowsClipped[id].end || [],
+        );
+      }
+      // if (
+      // (previouslyAtSystemStart && !systemStart && !systemEnd) ||
+      // (previouslyAtSystemEnd && !systemStart && !systemEnd)
+      // ) {
+      //   // Return events minus clipEvent substitutions/additions
+      //   setFlowEvents(period.flows[id]);
+      //   addedEventRenderIds.clear();
+      // }
+      // if (systemStart && period.flowsClipped[id].start.length > 0) {
+      //   // Substitute/add events overflowing from previous period
+      //   switchOrAddEvents(
+      //     period.flows[id],
+      //     period.flowsClipped[id].start || [],
+      //   );
+      // }
+      // if (systemEnd && period.flowsClipped[id].end.length > 0) {
+      //   // Substitute clipEvents that overflow into the next period
+      //   switchOrAddEvents(period.flows[id], period.flowsClipped[id].end || []);
+      // }
     }
-    if (systemStart && period.flowsClipped[id].start.length > 0) {
-      switchOrAddEvents(period.flows[id], period.flowsClipped[id].start);
-    }
-    if (systemEnd && period.flowsClipped[id].end.length > 0) {
-      switchOrAddEvents(period.flows[id], period.flowsClipped[id].end);
-    }
+    setPosition([systemStart, systemEnd]);
   }, [
     id,
     period.flows,
@@ -67,6 +116,9 @@ function Flow({ id, period, systemStart, systemEnd }) {
     period.index,
     period.position.start,
     period.position.end,
+    previouslyAtSystemStart,
+    previouslyAtSystemEnd,
+    addedEventRenderIds,
   ]);
 
   return (

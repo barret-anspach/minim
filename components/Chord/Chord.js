@@ -1,4 +1,5 @@
 import { Fragment, useMemo } from "react";
+import clsx from "clsx";
 
 import LegerLines from "./LegerLines";
 import Note from "../Note";
@@ -10,7 +11,7 @@ import {
   getPitchString,
   getStem,
   getBoundsFromChord,
-  getSubBeamCountFromBeamEvent,
+  isNoteOnLine,
   getDiatonicTransposition,
 } from "../../utils/methods";
 
@@ -20,6 +21,7 @@ import Markings from "./Markings";
 import Item from "../Item";
 
 import styles from "./Chord.module.css";
+import Tie from "./Tie";
 
 // TODO: Should handle
 //         - display one or more noteheads
@@ -88,17 +90,14 @@ export default function Chord({ clef, event, eventIndex, events, id, period }) {
               pitchPrefix={pitchPrefix}
               staffLinePitch={rangeClef.staffLinePitches[0].id}
             />
-            {note.tie && (
-              <Item
-                className={styles.tie}
-                column={
-                  event.clipPosition === "end"
-                    ? `e${event.position.start}-ste-up / e${period.position.end}-end`
-                    : `e${event.position.start}-bar / e${period.position.start}-not`
-                }
-                pitch={`${pitchPrefix}s${note.staff ?? 1}${getPitchString(note)}`}
-              />
-            )}
+            <Tie
+              event={event}
+              note={note}
+              period={period}
+              pitchPrefix={pitchPrefix}
+              rangeClef={rangeClef}
+              stem={stem}
+            />
           </Fragment>
         ))}
       {event.notes && (

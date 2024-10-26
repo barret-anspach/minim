@@ -21,3 +21,11 @@
   justify-self: start;
   width: min-content;
 }
+
+.beam {
+  border-bottom: 0.125rem solid currentColor;
+  width: 100%;
+}
+.beam.below {
+  transform: translateY(-100%);
+}

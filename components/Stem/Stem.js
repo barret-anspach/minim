@@ -3,12 +3,15 @@ import clsx from "clsx";
 
 import Item from "../Item";
 
-import { getStem } from "../../utils/methods";
+import {
+  getDiatonicTransposition,
+  getStem,
+  getSubBeamCountFromBeamEvent,
+} from "../../utils/methods";
+import { DURATION } from "../../constants/durations";
 
 import styles from "./Stem.module.css";
-import { DURATION } from "../../constants/durations";
 const metadata = require("./../../public/fonts/bravura/bravura_metadata.json");
-const range = require("./../../fixtures/pitch/range.json");
 
 const flagMap = {
   key: ["eighth", "16th", "32nd", "64th"],
@@ -53,6 +56,7 @@ export default function Stem({
       `e${event.position.start}${_stemDirection === "up" ? "-ste-up" : "-not"}`,
     [event.position.start, _stemDirection],
   );
+  const _beamColumn = `e${event.position.start}-not / e${event.position.start}-ste-up`;
   const style = useMemo(
     () => ({
       "--column": _stemColumn,
@@ -92,6 +96,23 @@ export default function Stem({
             ][_stemDirection]
           }
         </Item>
+      )}
+      {/* TODO: temporary fix; whole beaming situation needs an overhaul. */}
+      {beam && event.dimensions.length < DURATION.EIGHTH && (
+        <Item
+          className={clsx(
+            styles.beam,
+            _stemDirection === "up" ? styles.above : styles.below,
+          )}
+          column={_beamColumn}
+          pitch={`${pitchPrefix}s${beam.staff}`.concat(
+            getDiatonicTransposition(
+              beam.pitch,
+              getSubBeamCountFromBeamEvent(event) *
+                (beam.direction === "up" ? 2 : -2),
+            ),
+          )}
+        />
       )}
     </>
   ) : null;

@@ -618,6 +618,10 @@ export function getColumnArray({ start, columnWidth, final = false }) {
       value: "auto",
     },
     {
+      lines: ["flow-start"],
+      value: "auto",
+    },
+    {
       lines: ["acc"],
       value: "auto",
     },
@@ -638,7 +642,7 @@ export function getColumnArray({ start, columnWidth, final = false }) {
       value: `minmax(0.1rem, ${columnWidth})`,
     },
     {
-      lines: ["me-cle"],
+      lines: ["flow-end", "me-cle"],
       value: "auto",
     },
     {

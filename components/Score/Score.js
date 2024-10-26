@@ -45,6 +45,10 @@ function Score({ composition }) {
     };
   }, [periodPositions]);
 
+  // TODO: using periodPositions to determine which periods are in a given system,
+  // we can set flex–basis on periods to "soften" some of flexbox's spacing choices,
+  // and even provide a means to customize period spacing.
+
   return (
     initialized && (
       <main className={styles.score}>

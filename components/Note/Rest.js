@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
-import Item from "../Item";
+import Item from "../item";
 
 import { getRestGlyph } from "../../utils/methods";
-import AugmentationDots from "../Chord/AugmentationDots";
+import AugmentationDots from "../chord/augmentationDots";
 
 export default function Rest({ event, id }) {
   const key = useMemo(() => `${id}_res`, [id]);

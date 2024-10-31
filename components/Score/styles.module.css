@@ -24,3 +24,15 @@
   text-align: right;
   font-weight: 400;
 }
+
+@media print {
+  .score {
+    padding: 1rem;
+  }
+  .header .title {
+    margin-bottom: 1rem;
+  }
+  .score #systems {
+    margin-top: 0;
+  }
+}

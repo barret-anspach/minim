@@ -1,5 +1,5 @@
-import Item from "../Item";
-import styles from "./Dynamic.module.css";
+import Item from "../item";
+import styles from "./styles.module.css";
 
 export const dynamicMap = {
   key: [

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Score from "../components/Score/Score";
+import Score from "../components/score";
 import { useMeasuresContext } from "../contexts/MeasuresContext";
 
 const composition = require("../fixtures/scores/minim-score-test.json");

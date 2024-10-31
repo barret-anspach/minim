@@ -1,16 +1,16 @@
 import { useMemo } from "react";
 
-import Item from "../Item";
+import Item from "../item";
 
 import { useKey } from "../../hooks/useKey";
 import { getPitchString } from "../../utils/methods";
 import { getAccidentalGlyph } from "../../constants/accidentals";
 
-import styles from "./Chord.module.css";
+import styles from "./styles.module.css";
 
 export default function Accidental({ clefType, event, id, note, noteIndex }) {
   const { accidentalStep } = useKey({ clefType, event });
-  const key = useMemo(() => `${id}_not${noteIndex}_acc`, [id]);
+  const key = useMemo(() => `${id}_not${noteIndex}_acc`, [id, noteIndex]);
   const column = useMemo(
     () => `e${event.position.start}-acc`,
     [event.position.start],

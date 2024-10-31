@@ -2,13 +2,10 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 
-import Chord from "../Chord/Chord";
-import Tuplet from "./../Tuplet/Tuplet";
+import Chord from "../chord";
+import Tuplet from "../tuplet";
 
-import { withNoSSR } from "./../../hooks/withNoSSR";
-import { useMeasuresContext } from "./../../contexts/MeasuresContext";
-
-import styles from "./Flow.module.css";
+import { useMeasuresContext } from "../../contexts/MeasuresContext";
 
 /**
  *
@@ -30,7 +27,8 @@ function Flow({ id, period, systemStart, systemEnd }) {
     useState([systemStart, systemEnd]);
   const [addedEventRenderIds, _] = useState(new Set());
 
-  // TODO: Period child components would benefit from these side effects, not just Flow
+  // TODO: Period child components would benefit from these side effects,
+  // not just Flow.
   useEffect(() => {
     function switchOrAddEvents(events, clipEvents) {
       const switched = [...events];
@@ -41,7 +39,7 @@ function Flow({ id, period, systemStart, systemEnd }) {
         if (flowEventIndex !== -1) {
           switched[flowEventIndex] = clipEvent;
         } else {
-          // clipEvent doesn't exist in event flow; add: and,
+          // clipEvent doesn't exist in event flow; add: AND,
           // make sure clipEvent belongs in this period.
           if (
             systemStart &&

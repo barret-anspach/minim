@@ -7,6 +7,15 @@
     url(../public/fonts/bravura/otf/Bravura.otf) format('otf'),
     url(../public/fonts/bravura/svg/Bravura.svg) format('svg');
 }
+@font-face {
+  font-family: 'Bravura Text';
+  src:
+    url(../public/fonts/bravura/woff/BravuraText.woff) format('woff'),
+    url(../public/fonts/bravura/woff/BravuraText.woff2) format('woff2'),
+    url(../public/fonts/bravura/eot/BravuraText.eot) format('eot'),
+    url(../public/fonts/bravura/otf/BravuraText.otf) format('otf'),
+    url(../public/fonts/bravura/svg/BravuraText.svg) format('svg');
+}
 
 html,
 body {
@@ -21,6 +30,10 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+hr {
+  color: currentColor;
 }
 
 *, *:before, *:after {

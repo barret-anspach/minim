@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer } from "react";
 import {
   areClefsEqual,
+  areTempiEqual,
   areTimeSignaturesEqual,
   decorateEvent,
   getBeamGroupsForPeriod,
@@ -59,6 +60,10 @@ function measuresReducer(context, action) {
       };
     }
     case "setPeriods": {
+      // PERIODS: sections of musical material (that may match the bounds of an
+      // entire measure, but might be shorter), which allow for synchronizing
+      // independent flows and placing material into systems.
+
       // Ia. For all flows, are there intersections of measure.position.start?
       const flowMeasureStarts = Object.values(context.flows).map((flow) =>
         flow.measures.flatMap((measure) => measure.position.start),
@@ -102,6 +107,16 @@ function measuresReducer(context, action) {
                     ? measure.clefs.map((clef) => ({
                         ...clef,
                         column: `e${measure.position.start}-cle`,
+                      }))
+                    : null,
+                tempos:
+                  // TODO: Account for mid-measure tempo change
+                  mi === 0 ||
+                  (mi > 0 && !areTempiEqual(mm[mi - 1].tempos, measure.tempos))
+                    ? // TODO: Account for mid-measure tempo change
+                      measure.tempos.map((tempo) => ({
+                        ...tempo,
+                        column: `e${measure.position.start}-tim / e${measure.position.end}-flow-end`,
                       }))
                     : null,
                 time:
@@ -339,6 +354,7 @@ function measuresReducer(context, action) {
                                   : []),
                                 {
                                   ...e,
+                                  // TODO: Update eventGroup (if one) with beams[{events: [<insert event>]}]
                                   clipPosition: "start",
                                   dimensions: {
                                     length: e.position.end - _endValue,
@@ -364,7 +380,6 @@ function measuresReducer(context, action) {
                               ],
                             },
                           };
-                          console.log("acc.next:", acc.next);
                         }
                         return {
                           start:
@@ -374,6 +389,7 @@ function measuresReducer(context, action) {
                             ...eventAcc.end,
                             {
                               ...e,
+                              // TODO: Update eventGroup (if one) with beams[{events: [<insert event>]}]
                               clipPosition: "end",
                               dimensions: {
                                 length: _endValue - e.position.start,

@@ -1,12 +1,14 @@
 .period {
+  --basis: content;
   --columns: "";
   --duration: 1024;
   --rows: "";
   display: grid;
   grid-template-rows: var(--rows);
   grid-template-columns: var(--columns);
-  flex: var(--duration) var(--duration) content;
+  flex: var(--duration) var(--duration) var(--basis);
   min-width: fit-content;
+  break-inside: avoid;
 }
 .period:first-of-type {
   padding-left: 0.5in;

@@ -1,0 +1,29 @@
+.tempo {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: normal;
+  width: fit-content;
+  height: fit-content;
+  gap: 0.5ch;
+  /* padding-bottom: 0.08rem;
+  border-bottom: 0.04rem solid black; */
+}
+.pulse,
+.mm {
+  font-family: var(--musicTextFont, "Bravura Text");
+  line-height: 1;
+}
+.pulse {
+  height: 0;
+}
+.mm {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: normal;
+  font-family: var(--textFont, "Test Untitled Sans");
+  font-size: 0.5rem;
+  font-weight: 500;
+  height: fit-content;
+}

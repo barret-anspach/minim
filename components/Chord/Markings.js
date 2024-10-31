@@ -1,7 +1,9 @@
-import { Fragment, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import clsx from "clsx";
-import Item from "../Item";
-import styles from "./Chord.module.css";
+
+import { dynamicMap } from "../dynamic";
+import Item from "../item";
+
 import {
   getDiatonicInterval,
   getDiatonicTransposition,
@@ -10,8 +12,8 @@ import {
   getLowestPitch,
   isNoteOnLine,
 } from "../../utils/methods";
-import { dynamicMap } from "../Dynamic/Dynamic";
 
+import styles from "./styles.module.css";
 const metadata = require("../../public/fonts/bravura/bravura_metadata.json");
 
 // N.B. keys are in sorted stack order for position === "up".

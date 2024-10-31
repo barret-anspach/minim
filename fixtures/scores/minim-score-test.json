@@ -16,12 +16,21 @@
                 "key": {
                   "fifths": -3
                 },
+                "layout": "sco0_flo0_lay0",
+                "tempos": [
+                  {
+                    "bpm": 168,
+                    "value": {
+                      "base": "eighth",
+                      "dots": 1
+                    }
+                  }
+                ],
                 "time": {
                   "count": 12,
                   "unit": 16
                 },
-                "repeatCount": 6,
-                "layout": "sco0_flo0_lay0"
+                "repeatCount": 6
               },
               {
                 "time": {
@@ -814,12 +823,20 @@
                 "key": {
                   "fifths": -3
                 },
+                "layout": "sco0_flo1_lay0",
+                "tempos": [
+                  {
+                    "bpm": 126,
+                    "value": {
+                      "base": "quarter"
+                    }
+                  }
+                ],
                 "time": {
                   "count": 2,
                   "unit": 4
                 },
-                "repeatCount": 6,
-                "layout": "sco0_flo1_lay0"
+                "repeatCount": 6
               },
               {
                 "time": {
@@ -947,10 +964,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -976,10 +989,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
                           },
                           "notes": [
                             {
@@ -1045,10 +1054,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1074,10 +1079,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
                           },
                           "notes": [
                             {
@@ -1133,10 +1134,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1153,10 +1150,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
                           },
                           "notes": [
                             {
@@ -1175,10 +1168,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1194,10 +1183,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
                           },
                           "notes": [
                             {
@@ -1237,10 +1222,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
                           "markings": {
                             "accent": {}
                           },
@@ -1261,10 +1242,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1282,10 +1259,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1302,10 +1275,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1321,10 +1290,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
                           },
                           "notes": [
                             {
@@ -1365,10 +1330,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1385,10 +1346,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
                           },
                           "notes": [
                             {
@@ -1407,10 +1364,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1426,10 +1379,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
                           },
                           "notes": [
                             {
@@ -1469,10 +1418,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": true,
-                            "end": false
-                          },
                           "markings": {
                             "accent": {}
                           },
@@ -1493,10 +1438,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1514,10 +1455,6 @@
                           "duration": {
                             "base": "eighth"
                           },
-                          "beam": {
-                            "start": false,
-                            "end": false
-                          },
                           "notes": [
                             {
                               "pitch": {
@@ -1533,10 +1470,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": false
                           },
                           "notes": [
                             {
@@ -1554,10 +1487,6 @@
                           "type": "event",
                           "duration": {
                             "base": "eighth"
-                          },
-                          "beam": {
-                            "start": false,
-                            "end": true
                           },
                           "notes": [
                             {

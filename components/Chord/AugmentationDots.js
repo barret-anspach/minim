@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import clsx from "clsx";
 
-import Item from "../Item";
+import Item from "../item";
 
-import styles from "./Chord.module.css";
+import styles from "./styles.module.css";
 
 export default function AugmentationDots({ className, event, prefix, pitch }) {
   const dotArray = useMemo(

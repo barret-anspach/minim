@@ -1,11 +1,11 @@
-import Item from "../Item/Item";
+import Item from "../item";
 import clsx from "clsx";
 import {
   isNoteOnLine,
   getDiatonicTransposition,
   getPitchString,
 } from "../../utils/methods";
-import styles from "./Chord.module.css";
+import styles from "./styles.module.css";
 
 export default function Tie({
   event,

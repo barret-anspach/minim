@@ -570,7 +570,7 @@ export function getColumnsForPeriod({ flows, end }) {
           ? starts[index + 1][1][0].position.start - parseInt(start) + "fr"
           : (end - parseInt(start) + "fr" ?? "auto");
       if (index === starts.length - 1) {
-        // Add start- and end-positions for the last event in a flow
+        // Add start- and end-positions for the last event of a period's flows
         return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: end, columnWidth: "auto" })}`;
       } else {
         return `${acc}${makeColumn({ start, columnWidth })}`;
@@ -958,5 +958,15 @@ export function getMeasuresForPeriod({ flows, start, end }) {
         })),
     }),
     {},
+  );
+}
+
+export function areTempiEqual(a, b) {
+  if (!a || !b) return true;
+  return a.every(
+    (tempo, tempoIndex) =>
+      tempo.bpm === b[tempoIndex].bpm &&
+      tempo.value.base === b[tempoIndex].value.base &&
+      (tempo.value.dots ? tempo.value.dots === b[tempoIndex].value.dots : true),
   );
 }

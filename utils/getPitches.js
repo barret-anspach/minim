@@ -75,6 +75,15 @@ export function overlapStaffRows(staves, options = defaultOptions) {
           nextBoundsUpper,
           space ?? SPACE_BETWEEN_STAVES_IN_PART,
         );
+        // TODO: should account for anything rendered in period
+        const currentTempoPitch = `${staff.prefix}${getDiatonicTransposition(
+          staff.staffBounds.upper.id,
+          12,
+        )}`;
+        const nextTempoPitch = `${staff.prefix}${getDiatonicTransposition(
+          staves[i + 1].staffBounds.upper.id,
+          12,
+        )}`;
         const currentDynamicsPitch = `${staff.prefix}${getDiatonicTransposition(
           currentBoundsLower,
           -1 * Math.floor((space ?? SPACE_BETWEEN_STAVES_IN_PART) / 2),
@@ -126,6 +135,9 @@ export function overlapStaffRows(staves, options = defaultOptions) {
                   ...(staff.pitchesArray[rowIndex] === currentDynamicsPitch
                     ? [`${staff.prefix}-dyn`]
                     : []),
+                  ...(staff.pitchesArray[rowIndex] === currentTempoPitch
+                    ? [`${staff.prefix}-tempo`]
+                    : []),
                 ]
               : rowIndex >= staff.pitchesArray.length
                 ? [
@@ -137,12 +149,21 @@ export function overlapStaffRows(staves, options = defaultOptions) {
                     ] === nextDynamicsPitch
                       ? [`${staves[i + 1].prefix}-dyn`]
                       : []),
+                    ...(staves[i + 1].pitchesArray[
+                      rowIndex - currentIndexOfNextPitchesStart
+                    ] === nextTempoPitch
+                      ? [`${staves[i + 1].prefix}-tempo`]
+                      : []),
                   ]
                 : [
                     staff.pitchesArray[rowIndex],
                     ...(staff.pitchesArray[rowIndex] === currentDynamicsPitch
                       ? [`${staff.prefix}-dyn`]
                       : []),
+                    ...(staff.pitchesArray[rowIndex] === currentTempoPitch
+                      ? [`${staff.prefix}-tempo`]
+                      : []),
+
                     staves[i + 1].pitchesArray[
                       rowIndex - currentIndexOfNextPitchesStart
                     ],
@@ -150,6 +171,11 @@ export function overlapStaffRows(staves, options = defaultOptions) {
                       rowIndex - currentIndexOfNextPitchesStart
                     ] === nextDynamicsPitch
                       ? [`${staves[i + 1].prefix}-dyn`]
+                      : []),
+                    ...(staves[i + 1].pitchesArray[
+                      rowIndex - currentIndexOfNextPitchesStart
+                    ] === nextTempoPitch
+                      ? [`${staves[i + 1].prefix}-tempo`]
                       : []),
                   ]),
           );

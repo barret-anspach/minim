@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-
+import styles from "./styles.module.css";
 const metadata = require("../../public/fonts/bravura/bravura_metadata.json");
-import styles from "./Staff.module.css";
 
 export default function StaffLine({
   pitch,

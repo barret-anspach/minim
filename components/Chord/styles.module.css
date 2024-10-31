@@ -57,7 +57,7 @@
 }
 
 .tie {
-  width: 100%;
+  width: 100%; /* <-- 100% might be causing mobile browsers to flex-grow the tie extension and max out an entire system */
   height: 0;
   overflow: visible;
   display: flex;
@@ -66,7 +66,6 @@
   justify-content: stretch;
   transform-origin: bottom left;
   transform:  scaleY(0.75) translateY(-0.0625rem);
-  color: #FF4000;
 }
 .tie.below {
   transform-origin: top left;
@@ -103,8 +102,8 @@
   transform: scale(-1, 1.5);
 }
 .tieExtensionLine {
-  flex: 1 1 0%;
-  width: 100%;
+  flex: 1 1 0;
+  width: auto; /* <-- 100% might be causing mobile browsers to flex-grow the tie extension and max out an entire system */
   height: 0.25rem;
   overflow: visible;
   align-self: flex-end;

@@ -1,4 +1,4 @@
-import circleOfFifths from "./../../fixtures/pitch/circleOfFifths";
+import circleOfFifths from "./pitch/circleOfFifths";
 
 // Some rules about key signatures:
 //

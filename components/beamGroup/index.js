@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import clsx from "clsx";
 
-import Item from "../Item";
+import Item from "../item";
 
 import {
   getBeamGroupStem,
   getSubBeamCountFromBeamEvent,
 } from "../../utils/methods";
-import styles from "./BeamGroup.module.css";
+import styles from "./styles.module.css";
 
 export function BeamGroup({ beamGroup, prefix }) {
   const { direction, row } = useMemo(

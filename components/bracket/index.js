@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import styles from "./Bracket.module.css";
+import styles from "./styles.module.css";
 
 function Brace({ size }) {
   switch (size) {

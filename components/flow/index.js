@@ -84,25 +84,6 @@ function Flow({ id, period, systemStart, systemEnd }) {
             : period.flowsClipped[id].end || [],
         );
       }
-      // if (
-      // (previouslyAtSystemStart && !systemStart && !systemEnd) ||
-      // (previouslyAtSystemEnd && !systemStart && !systemEnd)
-      // ) {
-      //   // Return events minus clipEvent substitutions/additions
-      //   setFlowEvents(period.flows[id]);
-      //   addedEventRenderIds.clear();
-      // }
-      // if (systemStart && period.flowsClipped[id].start.length > 0) {
-      //   // Substitute/add events overflowing from previous period
-      //   switchOrAddEvents(
-      //     period.flows[id],
-      //     period.flowsClipped[id].start || [],
-      //   );
-      // }
-      // if (systemEnd && period.flowsClipped[id].end.length > 0) {
-      //   // Substitute clipEvents that overflow into the next period
-      //   switchOrAddEvents(period.flows[id], period.flowsClipped[id].end || []);
-      // }
     }
     setPosition([systemStart, systemEnd]);
   }, [

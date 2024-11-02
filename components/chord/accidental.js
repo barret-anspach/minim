@@ -8,16 +8,24 @@ import { getAccidentalGlyph } from "../../constants/accidentals";
 
 import styles from "./styles.module.css";
 
-export default function Accidental({ clefType, event, id, note, noteIndex }) {
-  const { accidentalStep } = useKey({ clefType, event });
+export default function Accidental({
+  clefType,
+  event,
+  id,
+  note,
+  noteIndex,
+  period,
+  pitchPrefix,
+}) {
+  const { accidentalStep } = useKey({ clefType, event, period });
   const key = useMemo(() => `${id}_not${noteIndex}_acc`, [id, noteIndex]);
   const column = useMemo(
     () => `e${event.position.start}-acc`,
     [event.position.start],
   );
   const pitch = useMemo(
-    () => `${event.flowId}s${note.staff ?? 1}${getPitchString(note)}`,
-    [event.flowId, note],
+    () => `${pitchPrefix}s${note.staff ?? 1}${getPitchString(note)}`,
+    [pitchPrefix, note],
   );
   const glyph = useMemo(
     () => getAccidentalGlyph(note.pitch.alter),

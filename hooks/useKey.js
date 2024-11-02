@@ -1,28 +1,15 @@
 import { useMemo } from "react";
 
-import { useMeasuresContext } from "../contexts/MeasuresContext";
 import { accidentalMap } from "./../constants/accidentals";
 const range = require("./../fixtures/pitch/range.json");
 
-export function useKey({ clefType, event }) {
-  const {
-    context: { flows },
-  } = useMeasuresContext();
-
-  const { measures } = useMemo(
-    () => flows[event.flowId],
-    [flows, event.flowId],
-  );
-  const measureIndex = useMemo(
-    () =>
-      measures.findIndex((m) =>
-        m.position.end >= event.position.end ? true : measures.length - 1,
-      ),
-    [event.position.end, measures],
-  );
+export function useKey({ clefType, event, period }) {
+  const key = period.measures[event.flowId].find(
+    (m) => m.position.start <= event.position.start,
+  )?.key;
 
   const value = useMemo(() => {
-    const fifths = measures[measureIndex].key.fifths;
+    const fifths = key.fifths;
     const unsignedInteger = Math.abs(fifths);
     const sign = Math.sign(fifths);
     const accidentals =
@@ -45,14 +32,14 @@ export function useKey({ clefType, event }) {
             }));
 
     return {
-      key: measures[measureIndex].key,
+      key: key,
       accidentals,
       accidentalStep: accidentals.reduce(
         (acc, k) => [...acc, k.pitch.slice(0, 1).toUpperCase()],
         [],
       ),
     };
-  }, [clefType, measureIndex, measures]);
+  }, [clefType, key]);
 
   return value;
 }

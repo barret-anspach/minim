@@ -3,8 +3,8 @@
   src:
     url(../public/fonts/bravura/woff/Bravura.woff) format('woff'),
     url(../public/fonts/bravura/woff/Bravura.woff2) format('woff2'),
-    url(../public/fonts/bravura/eot/Bravura.eot) format('eot'),
-    url(../public/fonts/bravura/otf/Bravura.otf) format('otf'),
+    url(../public/fonts/bravura/eot/Bravura.eot) format('embedded-opentype'),
+    url(../public/fonts/bravura/otf/Bravura.otf) format('opentype'),
     url(../public/fonts/bravura/svg/Bravura.svg) format('svg');
 }
 @font-face {
@@ -12,8 +12,8 @@
   src:
     url(../public/fonts/bravura/woff/BravuraText.woff) format('woff'),
     url(../public/fonts/bravura/woff/BravuraText.woff2) format('woff2'),
-    url(../public/fonts/bravura/eot/BravuraText.eot) format('eot'),
-    url(../public/fonts/bravura/otf/BravuraText.otf) format('otf'),
+    url(../public/fonts/bravura/eot/BravuraText.eot) format('embedded-opentype'),
+    url(../public/fonts/bravura/otf/BravuraText.otf) format('opentype'),
     url(../public/fonts/bravura/svg/BravuraText.svg) format('svg');
 }
 

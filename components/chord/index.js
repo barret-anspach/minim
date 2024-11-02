@@ -62,11 +62,13 @@ export default function Chord({ clef, event, eventIndex, events, id, period }) {
         event.notes.map((note, noteIndex) => (
           <Fragment key={`${id}_not${noteIndex}`}>
             <Accidental
+              clefType={rangeClef.type}
               event={event}
+              id={id}
               note={note}
               noteIndex={noteIndex}
-              id={id}
-              clefType={rangeClef.type}
+              period={period}
+              pitchPrefix={pitchPrefix}
             />
             <Note
               key={`${id}_not${noteIndex}_notehead`}

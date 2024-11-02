@@ -556,7 +556,7 @@ export function getStavesForFlow(flow) {
     // expressed as `partPitches`
   }));
 }
-export function getColumnsForPeriod({ flows, end }) {
+export function getColumnsForPeriod({ flows, end, final = false }) {
   const uniqueStarts = Object.groupBy(Object.values(flows).flat(), (e) =>
     e.type === "event" ? e.position.start : e.at,
   );
@@ -571,7 +571,7 @@ export function getColumnsForPeriod({ flows, end }) {
           : (end - parseInt(start) + "fr" ?? "auto");
       if (index === starts.length - 1) {
         // Add start- and end-positions for the last event of a period's flows
-        return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: end, columnWidth: "auto" })}`;
+        return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: end, columnWidth: "auto", final })}`;
       } else {
         return `${acc}${makeColumn({ start, columnWidth })}`;
       }
@@ -580,8 +580,8 @@ export function getColumnsForPeriod({ flows, end }) {
   return columns;
 }
 
-export function makeColumn({ start, columnWidth }) {
-  const columnArray = getColumnArray({ start, columnWidth });
+export function makeColumn({ start, columnWidth, final = false }) {
+  const columnArray = getColumnArray({ start, columnWidth, final });
   return columnArray.reduce(
     (str, column, index) =>
       `${str}${index > 0 ? "[" : ""}${column.lines.join(" ")}${index !== columnArray.length - 1 ? `] ${column.value} ` : " "}`,
@@ -601,12 +601,12 @@ export function getColumnArray({ start, columnWidth, final = false }) {
       value: "auto",
     },
     {
-      final: true,
-      lines: ["bar"],
+      lines: ["bar-start"],
       value: "auto",
     },
     {
-      lines: ["cle"],
+      final: true,
+      lines: final ? ["bar-end"] : ["bar-end", "cle"],
       value: "auto",
     },
     {
@@ -665,13 +665,10 @@ export function getColumnArray({ start, columnWidth, final = false }) {
   const result = [];
   for (const column of columns) {
     result.push({
-      ...column,
+      value: column.value,
       lines: column.lines.map((line) => `e${start}-${line}`),
     });
-    if (final && column.final) {
-      delete column.final;
-      break;
-    }
+    if (final && column.final) break;
   }
   return result;
 }
@@ -790,6 +787,7 @@ export function getFlowLayoutBarlinesAtPoint({
       barline: {
         type: at === "end" && isLastMeasure ? "final" : "regular",
         column: `e${point}-bar`,
+        final: false,
         columnLastInSystem: `e${point}-me-bar`,
         row: `${group.row[0]}/${group.row.at(-1)}`,
         separation: !(at === "end" || (at === "end" && isLastMeasure)),

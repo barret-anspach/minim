@@ -12,6 +12,7 @@ export default function Key({
   fifths,
   id,
   prevFifths,
+  period,
 }) {
   const unsignedInteger = useMemo(() => Math.abs(fifths), [fifths]);
   const sign = useMemo(() => Math.sign(fifths), [fifths]);

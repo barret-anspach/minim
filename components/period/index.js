@@ -25,10 +25,27 @@ const Period = forwardRef(function Period(
     context: { flows },
   } = useMeasuresContext();
 
+  // final is true if all measures in a period are last in their flow, OR only one flow is remaining and it's last in its flow
+  // TODO: move to setPeriods
+  const final =
+    (Object.values(period.measures).every((mm) => mm.length > 0) &&
+      Object.values(period.measures)
+        .flat()
+        .every((m) => m.periodBounds.lastInFlow)) ||
+    (Object.values(period.measures).reduce((acc, mm) => acc + mm.length, 0) ===
+      1 &&
+      Object.values(period.measures)
+        .filter((mm) => mm.length > 0)
+        .flat()
+        .some((m) => m.periodBounds.lastInFlow));
   const columns = useMemo(
     () =>
-      getColumnsForPeriod({ flows: period.flows, end: period.position.end }),
-    [period.flows, period.position.end],
+      getColumnsForPeriod({
+        flows: period.flows,
+        end: period.position.end,
+        final,
+      }),
+    [final, period.flows, period.position.end],
   );
   const rows = useMemo(
     () =>
@@ -154,7 +171,7 @@ const Period = forwardRef(function Period(
                     start={`e${period.position.start}-bar`}
                     end={
                       period.measures[id].find((m) => m.periodBounds.lastInFlow)
-                        ? `e${period.measures[id].find((m) => m.periodBounds.lastInFlow).position.end}-me-bar-end`
+                        ? `e${period.measures[id].find((m) => m.periodBounds.lastInFlow).position.end}-bar-end`
                         : `e${period.position.end}-end`
                     }
                   />
@@ -172,6 +189,7 @@ const Period = forwardRef(function Period(
                     clefType={rangeClef.type}
                     column={`e${period.position.start}-key`}
                     fifths={period.key[id].fifths}
+                    period={period}
                   />
                 )}
                 {period.displayEvents.map(
@@ -180,15 +198,19 @@ const Period = forwardRef(function Period(
                       <Fragment
                         key={`${id}s${staffIndex + 1}eve${eventIndex}_dis`}
                       >
-                        {event.key && (
-                          <Key
-                            id={`${id}p${part.partIndex}s${staffIndex + 1}`}
-                            clefType={rangeClef.type}
-                            column={event.key.column}
-                            fifths={event.key.fifths}
-                            prevFifths={event.key.prevFifths}
-                          />
-                        )}
+                        {event.key &&
+                          (event.eventType === "measureStart" ||
+                            (event.eventType === "measureEnd" &&
+                              systemEnd)) && (
+                            <Key
+                              id={`${id}p${part.partIndex}s${staffIndex + 1}`}
+                              clefType={rangeClef.type}
+                              column={event.key.column}
+                              fifths={event.key.fifths}
+                              prevFifths={event.key.prevFifths.fifths}
+                              period={period}
+                            />
+                          )}
                         {event.tempos &&
                           // TODO: this isn't quite right; tempo markings are displayed on certain staves in a score,
                           // should be driven by layout not staffIndex 0
@@ -236,12 +258,10 @@ const Period = forwardRef(function Period(
                   type={group.barline.type}
                   column={
                     group.position === "end" && systemEnd
-                      ? group.barline.columnLastInSystem
-                      : group.barline.type === "final"
+                      ? group.barline.type === "final"
                         ? group.barline.column
-                            .slice(0, group.barline.column.lastIndexOf("-"))
-                            .concat("-me-bar")
-                        : group.barline.column
+                        : group.barline.columnLastInSystem
+                      : group.barline.column
                   }
                   row={group.barline.row}
                   separation={group.barline.separation}

@@ -250,6 +250,11 @@ function measuresReducer(context, action) {
 
             // If it's the first event in a period, initialize period with values.
             if (periods[acc.index] === eventStart) {
+              const measures = getMeasuresForPeriod({
+                flows: context.flows,
+                start: periods[acc.index],
+                end: _endValue,
+              });
               acc.result[periods[acc.index]] = {
                 beamGroups: getBeamGroupsForPeriod({
                   flows: context.flows,
@@ -294,11 +299,11 @@ function measuresReducer(context, action) {
                   {},
                 ),
                 index: acc.index,
-                key: Object.entries(context.flows).reduce(
-                  (keyAcc, [flowId, flow]) => ({
+                key: Object.entries(measures).reduce(
+                  (keyAcc, [flowId, mm]) => ({
                     ...keyAcc,
-                    [flowId]: flow.measures.find(
-                      (m) => m.position.end >= periods[acc.index],
+                    [flowId]: mm.find(
+                      (m) => m.position.start <= periods[acc.index],
                     )?.key,
                   }),
                   {},
@@ -308,11 +313,7 @@ function measuresReducer(context, action) {
                   start: periods[acc.index],
                   end: _endValue,
                 }),
-                measures: getMeasuresForPeriod({
-                  flows: context.flows,
-                  start: periods[acc.index],
-                  end: _endValue,
-                }),
+                measures,
                 position: {
                   start: periods[acc.index],
                   end: _endValue,
@@ -527,15 +528,14 @@ const MeasuresContextProvider = ({ children }) => {
             measureIndex: mi,
             measures: mm,
           });
-          delete m.repeatCount;
 
           acc.push({
             ...m,
             type: "measureEvent",
             id: `${flow.id}m${mi}r${i}`,
-            key: m.key ?? acc[mi - 1].key,
+            key: m.key ?? acc.at(-1).key,
             clefs,
-            time: m.time ?? acc[mi - 1].time,
+            time: m.time ?? acc.at(-1).time,
             layout,
             dimensions: {
               length: duration,

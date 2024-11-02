@@ -190,7 +190,8 @@ const Period = forwardRef(function Period(
                           />
                         )}
                         {event.tempos &&
-                          // TODO: this isn't quite right; tempo markings only show up in specific places
+                          // TODO: this isn't quite right; tempo markings are displayed on certain staves in a score,
+                          // should be driven by layout not staffIndex 0
                           staffIndex === 0 &&
                           event.tempos.map((tempo, tempoIndex) => (
                             <Tempo

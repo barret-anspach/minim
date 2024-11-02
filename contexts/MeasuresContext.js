@@ -64,6 +64,15 @@ function measuresReducer(context, action) {
       // entire measure, but might be shorter), which allow for synchronizing
       // independent flows and placing material into systems.
 
+      // TODO: TEMPO affects all events positions in a flow!!!
+      // Need to adjust each event's position by tempo (if one).
+      // Should happen when setting flows? ==> NOPE, don't have enough context yet.
+      // const scalar = Object.values(context.flows).reduce((acc, flow) => [
+      //   ...acc,
+      //   flow.measures.flatMap((measure, mi, mm) => measure.tempos.flatMap((tempo) => mi < mm.length ? areTempiEquivalent() : <something>))
+      // ]
+      // )
+
       // Ia. For all flows, are there intersections of measure.position.start?
       const flowMeasureStarts = Object.values(context.flows).map((flow) =>
         flow.measures.flatMap((measure) => measure.position.start),

@@ -961,6 +961,7 @@ export function getMeasuresForPeriod({ flows, start, end }) {
   );
 }
 
+/** Are two tempi exactly equal? */
 export function areTempiEqual(a, b) {
   if (!a || !b) return true;
   return a.every(
@@ -969,4 +970,47 @@ export function areTempiEqual(a, b) {
       tempo.value.base === b[tempoIndex].value.base &&
       (tempo.value.dots ? tempo.value.dots === b[tempoIndex].value.dots : true),
   );
+}
+function getDurationalUnitsPerMinute(tempo) {
+  return toNumericalDuration(tempo.value) * tempo.bpm;
+}
+/** Are two tempi having different display expressions equal? */
+export function areTempiEquivalent(a, b) {
+  if (!a || !b) return false;
+  const aMinuteLength = getDurationalUnitsPerMinute(a);
+  const bMinuteLength = getDurationalUnitsPerMinute(b);
+  return aMinuteLength === bMinuteLength;
+}
+export function getBaseFromEquivalentTempo(tempoA, bpmB) {
+  return getDurationalUnitsPerMinute(tempoA) / bpmB;
+}
+export function getBPMFromEquivalentTempo(tempoA, baseB) {
+  return getDurationalUnitsPerMinute(tempoA) / baseB;
+}
+
+function getObjectFraction(object) {
+  const [numerator, denominator] = object.position.fraction;
+  return numerator / denominator;
+  // object.position.graceIndex;
+}
+function getBeforeObjectFraction(object) {
+  const [numerator, denominator] = object.position.fraction;
+  return (denominator - numerator) / denominator;
+  // object.position.graceIndex;
+}
+// what's the length of a measure with multiple tempi defined?
+// TODO: HOW DO WE DEFINE A TEMPO'S SCALE? DO WE JUST CREATE A NEW UNIT????
+//
+function getMeasureLength(object, measure) {
+  const beforeFraction = getBeforeObjectFraction(object);
+  const afterFraction = getObjectFraction(object);
+  const duration = toNumericalDuration(measure.duration);
+  return measure.tempos.reduce(
+    (acc, tempo, index, tempi) =>
+      index === 0 && tempi.length > 1
+        ? acc + getBeforeObjectFraction(tempi[index + 1]) * duration
+        : acc + getObjectFraction(tempo) * duration,
+    0,
+  );
+  return duration * beforeFraction + duration * afterFraction;
 }

@@ -6,12 +6,13 @@
   width: fit-content;
   height: fit-content;
   gap: 0.5ch;
-  /* padding-bottom: 0.08rem;
-  border-bottom: 0.04rem solid black; */
+  padding-bottom: 0.08rem;
+  border-bottom: 0.04rem solid black;
+  transform: translateY(-0.12rem);
 }
 .pulse,
 .mm {
-  font-family: var(--musicTextFont, "Bravura Text");
+  font-family: var(--musicTextFont, "Bravura Text"), sans-serif;
   line-height: 1;
 }
 .pulse {
@@ -22,7 +23,7 @@
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: normal;
-  font-family: var(--textFont, "Test Untitled Sans");
+  font-family: var(--textFont, "Test Untitled Sans"), sans-serif;
   font-size: 0.5rem;
   font-weight: 500;
   height: fit-content;

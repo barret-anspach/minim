@@ -81,7 +81,7 @@ function Score({ composition }) {
 
   return (
     initialized && (
-      <main className={styles.score}>
+      <main className={styles.score} role="main">
         {composition.data && (
           <header className={styles.header}>
             <div className={styles.title}>

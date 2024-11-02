@@ -250,17 +250,18 @@ function measuresReducer(context, action) {
 
             // If it's the first event in a period, initialize period with values.
             if (periods[acc.index] === eventStart) {
+              const beamGroups = getBeamGroupsForPeriod({
+                flows: context.flows,
+                start: periods[acc.index],
+                end: _endValue,
+              });
               const measures = getMeasuresForPeriod({
                 flows: context.flows,
                 start: periods[acc.index],
                 end: _endValue,
               });
               acc.result[periods[acc.index]] = {
-                beamGroups: getBeamGroupsForPeriod({
-                  flows: context.flows,
-                  start: periods[acc.index],
-                  end: _endValue,
-                }),
+                beamGroups,
                 dimensions: { length: _duration },
                 displayEvents: getDisplayEventsForPeriod({
                   flows: flowDisplayStarts,
@@ -281,6 +282,7 @@ function measuresReducer(context, action) {
                   {},
                 ),
                 flows: eventsAtStart,
+                // add any flows from the previous period here
                 flowsClipped: Object.keys(context.flows).reduce(
                   (clipAcc, flowId) => ({
                     ...clipAcc,
@@ -335,10 +337,12 @@ function measuresReducer(context, action) {
                 {},
               );
 
+              // Reset `next` for flowsClipped
               if (acc.next && acc.next.index === acc.index) {
                 acc.next = {};
               }
 
+              // To render events that overflow the end of a system
               const flowsClipped = Object.entries(flows).reduce(
                 (flowAcc, [flowId, flow]) => ({
                   ...flowAcc,

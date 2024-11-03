@@ -10,17 +10,7 @@ export const accidentalMap = {
     "accidentalParensLeft",
     "accidentalParensRight",
   ],
-  value: [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]
+  value: ["", "", "", "", "", "", "", "", ""],
 };
 
 const alterationValue = {
@@ -28,9 +18,9 @@ const alterationValue = {
   ["-1"]: "accidentalFlat",
   ["0"]: "accidentalNatural",
   ["1"]: "accidentalSharp",
-  ["2"]: "accidentalDoubleSharp"
-}
+  ["2"]: "accidentalDoubleSharp",
+};
 
 export const getAccidentalGlyph = (alter) => {
   return accidentalMap.value[accidentalMap.key.indexOf(alterationValue[alter])];
-}
+};

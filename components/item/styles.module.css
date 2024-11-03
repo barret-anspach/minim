@@ -1,0 +1,25 @@
+.item {
+  --padEnd: 0rem;
+  --pitch: '';
+  --column: 'e 1';
+  --size: 4rem;
+  align-self: start;
+  justify-self: end;
+  grid-row: var(--pitch);
+  grid-column: var(--column);
+  display: flex;
+  align-items: center;
+  height: 0;
+  padding-right: calc(var(--padEnd) / 4);
+  font-family: Bravura, sans-serif;
+  font-size: calc(var(--size) / 4);
+  line-height: 0;
+}
+.item.text {
+  justify-self: center;
+  font-size: 0.7rem;
+}
+.item.label {
+  line-height: 0.75;
+  vertical-align: middle;
+}

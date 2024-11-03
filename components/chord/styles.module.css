@@ -1,0 +1,126 @@
+.accidental {
+  margin-right: 0.04rem;
+}
+.markings {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-self: center;
+  height: auto;
+  gap: 0.15rem;
+}
+.markings.up {
+  justify-content: flex-end;
+  align-self: flex-end;
+}
+.markings.down {
+  justify-content: flex-start;
+  align-self: flex-start;
+}
+.articulation {
+  display: flex;
+  height: auto;
+  line-height: 0;
+}
+.markings.up .articulation.marking {
+  align-items: flex-end;
+}
+.markings.down .articulation.marking {
+  align-items: flex-start;
+}
+.articulation.dynamic {
+  align-items: center;
+  /* Workaround for glyph not exactly centered */
+  margin-top: 0.08rem;
+}
+.dot {
+  margin-left: 0.12rem;
+  justify-self: start;
+}
+.dot.up {
+  transform: translateY(-0.12rem);
+}
+.legerLine {
+  position: relative;
+  justify-self: start;
+  width: 100%;
+}
+.legerLine:after {
+  content: '';
+  position: absolute;
+  border-bottom: 0.0325rem solid currentColor;
+  width: calc(100% + 0.27rem);
+  transform: translate(-0.12rem, -50%);
+}
+.wide:after {
+  width: calc(100% + 0.37rem);
+  transform: translate(-0.17rem, -50%);
+}
+
+.tie {
+  width: 100%; /* <-- 100% might be causing mobile browsers to flex-grow the tie extension and max out an entire system */
+  height: 0;
+  overflow: visible;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: stretch;
+  transform-origin: bottom left;
+  transform:  scaleY(0.75) translateY(-0.0625rem);
+}
+.tie.below {
+  transform-origin: top left;
+  transform:  scaleY(0.75) translateY(0.0625rem);
+}
+.tie.end {
+  padding-left: 0.12rem;
+}
+.tie.start {
+  padding-right: 0.12rem;
+}
+.tieCurve {
+  flex: 0 0 auto;
+  width: 0.375rem;
+  height: 0.25rem;
+  align-self: flex-end;
+}
+.tieCurve.below {
+  align-self: flex-start;
+}
+.tieCurve.end {
+  transform: scale(1, -1.5);
+}
+.tieCurve.start {
+  transform: scale(-1, -1.5);
+}
+.tieCurve.below.end {
+  transform: scale(1, 1.5);
+}
+.tieCurve.start {
+  order: 2;
+}
+.tieCurve.below.start {
+  transform: scale(-1, 1.5);
+}
+.tieExtensionLine {
+  flex: 1 1 0;
+  width: auto; /* <-- 100% might be causing mobile browsers to flex-grow the tie extension and max out an entire system */
+  height: 0.25rem;
+  overflow: visible;
+  align-self: flex-end;
+  transform: scale(1, -1.5);
+}
+.tieExtensionLine.below {
+  align-self: flex-start;
+  transform: scale(1, 1.5);
+}
+.tieExtensionLine.start {
+  order: 1;
+}
+
+.beam {
+  border-bottom: 0.125rem solid currentColor;
+  width: 100%;
+}
+.beam.below {
+  transform: translateY(-100%);
+}

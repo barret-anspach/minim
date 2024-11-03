@@ -1,0 +1,13 @@
+.event {
+  --beat: e1;
+  --pitch: b4;
+  font-family: Bravura, sans-serif;
+  height: 0;
+  width: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  line-height: 0;
+  grid-column: var(--beat);
+  grid-row: var(--pitch);
+}

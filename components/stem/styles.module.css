@@ -1,0 +1,31 @@
+.stem {
+  --stem-length: 1rem;
+  grid-row: var(--pitch);
+  grid-column: var(--column);
+  height: 100%;
+}
+.stem.up {
+  justify-self: start;
+}
+.stem.down {
+  justify-self: start;
+}
+
+.flag.down {
+  align-self: end;
+  justify-self: start;
+  width: 0;
+}
+.flag.up {
+  align-self: start;
+  justify-self: start;
+  width: min-content;
+}
+
+.beam {
+  border-bottom: 0.125rem solid currentColor;
+  width: 100%;
+}
+.beam.below {
+  transform: translateY(-100%);
+}

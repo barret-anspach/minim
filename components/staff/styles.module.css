@@ -1,0 +1,27 @@
+.staff {
+  --bounds: 1;
+  --pitches: [b4] 0.125rem;
+  --start: m-start;
+  --end: m-end;
+  --translateY: 0rem;
+  grid-row: var(--bounds);
+  grid-column: var(--start) / var(--end);
+  display: contents;
+  height: 1rem;
+  color: currentColor;
+}
+.staff .line {
+  --pitch: b4;
+  --start: m-start;
+  --end: m-end;
+  --weight: 0.0325rem;
+  align-self: start;
+  grid-row: var(--pitch) / var(--pitch);
+  grid-column: var(--start) / var(--end);
+  width: 100%;
+  height: 0;
+  border: none;
+  border-bottom: var(--weight) solid currentColor;
+  margin: 0;
+  transform: translateY(-50%);
+}

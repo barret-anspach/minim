@@ -1,0 +1,32 @@
+.footer {
+  flex: 0 0 auto;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.25rem;
+  width: calc(100% + 1rem);
+  transform: translateX(-0.5rem);
+  padding: 0.25rem;
+  background: white;
+  outline: 1px solid blue;
+  outline-offset: -0.5px;
+  font-size: 12px;
+}
+.footer button {
+  cursor: pointer;
+  min-height: 48px;
+}
+@media print {
+  .editor, .score, .footer {
+    outline: none;
+  }
+  .editor {
+    display: contents;
+  }
+  .footer {
+    display: none;
+  }
+}

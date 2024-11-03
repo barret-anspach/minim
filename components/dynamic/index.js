@@ -1,0 +1,115 @@
+import Item from "../item";
+import styles from "./styles.module.css";
+
+export const dynamicMap = {
+  key: [
+    "dynamicPiano",
+    "dynamicMezzo",
+    "dynamicForte",
+    "dynamicRinforzando",
+    "dynamicSforzando",
+    "dynamicZ",
+    "dynamicNiente",
+    "dynamicPPPPPP",
+    "dynamicPPPPP",
+    "dynamicPPPP",
+    "dynamicPPP",
+    "dynamicPP",
+    "dynamicMP",
+    "dynamicMF",
+    "dynamicPF",
+    "dynamicFF",
+    "dynamicFFF",
+    "dynamicFFFF",
+    "dynamicFFFFF",
+    "dynamicFFFFFF",
+    "dynamicFortePiano",
+    "dynamicForzando",
+    "dynamicSforzando1",
+    "dynamicSforzandoPiano",
+    "dynamicSforzandoPianissimo",
+    "dynamicSforzato",
+    "dynamicSforzatoPiano",
+    "dynamicSforzatoFF",
+    "dynamicRinforzando1",
+    "dynamicRinforzando2",
+  ],
+  shorthand: [
+    "p",
+    "m",
+    "f",
+    "r",
+    "s",
+    "z",
+    "n",
+    "pppppp",
+    "ppppp",
+    "pppp",
+    "ppp",
+    "pp",
+    "mp",
+    "mf",
+    "pf",
+    "ff",
+    "fff",
+    "ffff",
+    "fffff",
+    "ffffff",
+    "fp",
+    "fz",
+    "sf",
+    "sfp",
+    "sfpp",
+    "sfz",
+    "sfzp",
+    "sffz",
+    "rf",
+    "rfz",
+  ],
+  value: [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ],
+};
+
+// Do we consider a Dynamic a marking on a chord? There are conditions where a dynamic isn't related to an event ...
+
+export default function Dynamic({ dynamic }) {
+  return (
+    <Item
+      className={styles.dynamic}
+      column={dynamic.column}
+      pitch={dynamic.row}
+    >
+      {dynamicMap.value[dynamicMap.shorthand.indexOf(dynamic.value)]}
+    </Item>
+  );
+}

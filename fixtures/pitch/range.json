@@ -628,6 +628,7 @@
       "sign": "G",
       "staffPosition": -2,
       "staffPitch": "g4",
+      "midline": "b4",
       "glyph": "",
       "keyAccidentals": {
         "sharp": ["f5", "c5", "g5", "d5", "a4", "e5", "b4"],
@@ -637,11 +638,11 @@
         {
           "node": "lowerBound",
           "base": {
-            "id": "g3",
+            "id": "g2",
             "pitchClass": "g",
-            "octave": 3,
+            "octave": 2,
             "units": {
-              "midi": 55
+              "midi": 43
             }
           }
         },
@@ -706,6 +707,7 @@
       "sign": "C",
       "staffPosition": 0,
       "staffPitch": "c4",
+      "midline": "c4",
       "glyph": "",
       "keyAccidentals": {
         "sharp": ["f4", "c4", "g4", "d4", "a3", "e4", "b3"],
@@ -714,20 +716,67 @@
       "bounds": [
         {
           "node": "lowerBound",
-          "id": "c3",
-          "pitchClass": "g",
-          "octave": 3,
-          "units": {
-            "midi": 55
+          "base": {
+            "id": "c0",
+            "pitchClass": "c",
+            "octave": 0,
+            "units": {
+              "midi": 12
+            }
           }
         },
         {
           "node": "upperBound",
-          "id": "e8",
-          "pitchClass": "e",
-          "octave": 8,
+          "base": {
+            "id": "g7",
+            "pitchClass": "g",
+            "octave": 7,
+            "units": {
+              "midi": 103
+            }
+          }
+        }
+      ],
+      "translateY": "-3.25rem",
+      "staffLinePitches": [
+        {
+          "id": "g4",
+          "pitchClass": "g",
+          "octave": 4,
           "units": {
-            "midi": 120
+            "midi": 67
+          }
+        },
+        {
+          "id": "e4",
+          "pitchClass": "e",
+          "octave": 4,
+          "units": {
+            "midi": 64
+          }
+        },
+        {
+          "id": "c4",
+          "pitchClass": "c",
+          "octave": 4,
+          "units": {
+            "midi": 60
+          }
+        },
+        {
+          "id": "a3",
+          "pitchClass": "a",
+          "octave": 3,
+          "units": {
+            "midi": 57
+          }
+        },
+        {
+          "id": "f3",
+          "pitchClass": "f",
+          "octave": 3,
+          "units": {
+            "midi": 53
           }
         }
       ]
@@ -737,6 +786,7 @@
       "sign": "F",
       "staffPosition": 2,
       "staffPitch": "f3",
+      "midline": "d3",
       "glyph": "",
       "keyAccidentals": {
         "sharp": ["f3", "c2", "g3", "d3", "a3", "e3", "b2"],
@@ -745,20 +795,67 @@
       "bounds": [
         {
           "node": "lowerBound",
-          "id": "c3",
-          "pitchClass": "g",
-          "octave": 3,
-          "units": {
-            "midi": 55
+          "base": {
+            "id": "c0",
+            "pitchClass": "c",
+            "octave": 0,
+            "units": {
+              "midi": 12
+            }
           }
         },
         {
           "node": "upperBound",
-          "id": "e8",
-          "pitchClass": "e",
-          "octave": 8,
+          "base": {
+            "id": "c6",
+            "pitchClass": "c",
+            "octave": 6,
+            "units": {
+              "midi": 84
+            }
+          }
+        }
+      ],
+      "translateY": "-1.125rem",
+      "staffLinePitches": [
+        {
+          "id": "a3",
+          "pitchClass": "a",
+          "octave": 3,
           "units": {
-            "midi": 120
+            "midi": 57
+          }
+        },
+        {
+          "id": "f3",
+          "pitchClass": "f",
+          "octave": 3,
+          "units": {
+            "midi": 53
+          }
+        },
+        {
+          "id": "d3",
+          "pitchClass": "d",
+          "octave": 3,
+          "units": {
+            "midi": 50
+          }
+        },
+        {
+          "id": "b2",
+          "pitchClass": "b",
+          "octave": 2,
+          "units": {
+            "midi": 47
+          }
+        },
+        {
+          "id": "g2",
+          "pitchClass": "g",
+          "octave": 2,
+          "units": {
+            "midi": 43
           }
         }
       ]

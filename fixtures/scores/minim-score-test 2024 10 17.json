@@ -1,0 +1,281 @@
+{
+  "data": {
+    "name": "String quartet",
+    "composer": "Barret Anspach",
+    "copyright": "Copyright © 2024. All rights reserved."
+  },
+  "scores": [
+    {
+      "id": "s0",
+      "flows": [
+        {
+          "id": "f0",
+          "global": {
+            "measures": [
+              {
+                "key": {
+                  "fifths": 0
+                },
+                "time": {
+                  "count": 4,
+                  "unit": 4
+                },
+                "layout": "score0_flow0_layout"
+              },
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ]
+          },
+          "layouts": [
+            {
+              "id": "score0_flow0_layout",
+              "content": [
+                {
+                  "type": "group",
+                  "content": [
+                    {
+                      "type": "group",
+                      "content": [
+                        {
+                          "type": "staff",
+                          "sources": [
+                            {
+                              "part": "vln1"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "staff",
+                          "sources": [
+                            {
+                              "part": "vln2"
+                            }
+                          ]
+                        }
+                      ],
+                      "symbol": "brace"
+                    },
+                    {
+                      "type": "staff",
+                      "sources": [
+                        {
+                          "part": "vla"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "staff",
+                      "sources": [
+                        {
+                          "part": "vc"
+                        }
+                      ]
+                    }
+                  ],
+                  "symbol": "bracket"
+                }
+              ]
+            }
+          ],
+          "parts": [
+            {
+              "id": "vln1",
+              "name": "Violin I",
+              "shortName": "Vln.I",
+              "global": {
+                "clefs": [
+                  {
+                    "clef": {
+                      "sign": "G",
+                      "staffPosition": -2
+                    },
+                    "staff": 1,
+                    "type": "clef"
+                  }
+                ],
+                "staves": 1
+              },
+              "sequences": [
+                {
+                  "content": [
+                    {
+                      "id": "flo0_par0_voi0_mea0",
+                      "type": "group",
+                      "repeatCount": 8,
+                      "sequence": [
+                        {
+                          "id": "flo0_par0_voi0_mea0_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "whole"
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "C"
+                              }
+                            },
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "D"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "vln2",
+              "name": "Violin II",
+              "shortName": "Vln.II",
+              "global": {
+                "clefs": [
+                  {
+                    "clef": {
+                      "sign": "G",
+                      "staffPosition": -2
+                    },
+                    "staff": 1,
+                    "type": "clef"
+                  }
+                ],
+                "staves": 1
+              },
+              "sequences": [
+                {
+                  "content": [
+                    {
+                      "id": "flo0_par1_voi0_mea0",
+                      "type": "group",
+                      "repeatCount": 8,
+                      "sequence": [
+                        {
+                          "id": "flo0_par1_voi0_mea0_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "whole"
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 4,
+                                "step": "G"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "vla",
+              "name": "Viola",
+              "shortName": "Vla.",
+              "global": {
+                "clefs": [
+                  {
+                    "clef": {
+                      "sign": "C",
+                      "staffPosition": 0
+                    },
+                    "staff": 1,
+                    "type": "clef"
+                  }
+                ],
+                "staves": 1
+              },
+              "sequences": [
+                {
+                  "content": [
+                    {
+                      "id": "flo0_par2_voi0_mea0",
+                      "type": "group",
+                      "repeatCount": 8,
+                      "sequence": [
+                        {
+                          "id": "flo0_par2_voi0_mea0_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "whole"
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 3,
+                                "step": "C"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "vc",
+              "name": "Cello",
+              "shortName": "Vc.",
+              "global": {
+                "clefs": [
+                  {
+                    "clef": {
+                      "sign": "F",
+                      "staffPosition": 2
+                    },
+                    "staff": 1,
+                    "type": "clef"
+                  }
+                ],
+                "staves": 1
+              },
+              "sequences": [
+                {
+                  "content": [
+                    {
+                      "id": "flo0_par3_voi0_mea0",
+                      "type": "group",
+                      "repeatCount": 8,
+                      "sequence": [
+                        {
+                          "id": "flo0_par3_voi0_mea0_eve0",
+                          "type": "event",
+                          "duration": {
+                            "base": "whole"
+                          },
+                          "notes": [
+                            {
+                              "pitch": {
+                                "octave": 2,
+                                "step": "E"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

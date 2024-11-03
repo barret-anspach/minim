@@ -1,42 +1,39 @@
-import { useLayoutEffect, useState } from 'react';
-import useResizeObserver from '@react-hook/resize-observer';
-
-import { useMeasuresContext } from '../contexts/MeasuresContext';
-import { approxEqual } from '../utils/methods';
+import { useLayoutEffect, useState } from "react";
+import useResizeObserver from "@react-hook/resize-observer";
 
 export const usePosition = (target, index) => {
-  const { context: { measures, page }, actions } = useMeasuresContext();
-  const [position, setPosition] = useState({first: false, last: false});
-  
-  useLayoutEffect(() => {
-    const offset = {
-      top: target.current.offsetTop,
-      left: target.current.offsetLeft,
-      right: Math.round(target.current.getBoundingClientRect().right),
-    }
-    setPosition({
-      first: approxEqual(offset.left, page.left),
-      last: !measures[index + 1]
-        || offset.top !== measures[index + 1].top
-        || approxEqual(page.right, offset.right),
-    })
-  }, [measures[index + 1], page.left, page.right, target]);
-  
-  useResizeObserver(target, (entry) => {
-    const offset = {
-      top: entry.target.offsetTop,
-      left: entry.target.offsetLeft,
-      right: Math.round(entry.target.getBoundingClientRect().right),
-    }
-    const _position = {
-      first: approxEqual(offset.left, page.left),
-      last: !measures[index + 1]
-        || offset.top !== measures[index + 1].top
-        || approxEqual(page.right, offset.right),
-    }
-    actions.updateMeasure({ index, measure: { ..._position, ...offset } })
-    setPosition(_position)
-  })
+  const [positions, setPositions] = useState([]);
 
-  return position;
+  useLayoutEffect(() => {
+    if (target) {
+      const parent = target.parentElement;
+      if (!parent || getComputedStyle(parent).display !== "flex") {
+        return false;
+      }
+      const firstChildOffsetLeft = target.offsetLeft;
+      let isNotFirst = false;
+      for (let i = 0; i < parent.children.length; i++) {
+        const child = parent.children[i];
+        if (child.offsetLeft < firstChildOffsetLeft) {
+          isNotFirst = true;
+          break;
+        }
+      }
+      setPositions((prev) => {
+        const newArr = [...prev];
+        newArr[index] = isNotFirst;
+        return newArr;
+      });
+    }
+  }, [index, target]);
+
+  useResizeObserver(target, (entry) => {
+    setPositions((prev) => {
+      const newArr = [...prev];
+      newArr[index] = entry.target.offsetLeft < target.offsetLeft;
+      return newArr;
+    });
+  });
+
+  return { systemStart: positions[index], systemEnd: positions[index + 1] };
 };

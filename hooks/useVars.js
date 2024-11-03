@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function useVars({
   varRef,
@@ -6,26 +6,32 @@ export default function useVars({
   conditionalStyles = [],
   key,
   value,
-  fallbackValue
+  fallbackValue,
 }) {
-  const [className, setClassName] = useState([...defaultStyles]);
-  const conditions = conditionalStyles.reduce((a, e) => [...a, e.condition], []);
+  const [className, setClassName] = useState(defaultStyles);
+  const conditions = useMemo(
+    () => conditionalStyles.reduce((a, e) => [...a, e.condition], []),
+    [conditionalStyles],
+  );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (varRef?.current !== undefined) {
       varRef.current.style.setProperty(key, value ?? fallbackValue);
     }
   }, [key, value, fallbackValue]);
 
-  useLayoutEffect(() => {
-    setClassName([...defaultStyles, ...conditionalStyles.map(expression => {
-      switch (expression.operator) {
-        case '&&':
-          return expression.condition && expression.style;
-        case 'ternary':
-          return expression.style[expression.condition ? 0 : 1];
-      }
-    })]);
+  useEffect(() => {
+    setClassName([
+      ...defaultStyles,
+      ...conditionalStyles.map((expression) => {
+        switch (expression.operator) {
+          case "&&":
+            return expression.condition && expression.style;
+          case "ternary":
+            return expression.style[expression.condition ? 0 : 1];
+        }
+      }),
+    ]);
   }, [...conditions]);
 
   return className;

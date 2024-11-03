@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import clsx from "clsx";
 
 import Flow from "../flow";
 import Period from "../period";
@@ -10,8 +11,9 @@ import { withNoSSR } from "../../hooks/withNoSSR";
 import { useMeasuresContext } from "../../contexts/MeasuresContext";
 
 import styles from "./styles.module.css";
+import Editor from "../Editor";
 
-function Score({ composition, view }) {
+function Score({ children, className, composition }) {
   const {
     context: { initialized, periods },
   } = useMeasuresContext();
@@ -81,7 +83,7 @@ function Score({ composition, view }) {
 
   return (
     initialized && (
-      <main className={styles.score} role="main">
+      <main className={clsx(styles.score, className)} role="main">
         {composition.data && (
           <header className={styles.header}>
             <div className={styles.title}>
@@ -91,7 +93,7 @@ function Score({ composition, view }) {
           </header>
         )}
         <div className={styles.systems}>
-          <Systems id="systems" view={view}>
+          <Systems id="systems">
             {Object.values(periods).map((period, _, periods) => (
               <Period
                 ref={(ref) => (periodRefs.current[period.index] = ref)}
@@ -120,6 +122,8 @@ function Score({ composition, view }) {
             ))}
           </Systems>
         </div>
+        {children}
+        {/* <Editor view={view} setView={handleView} /> */}
       </main>
     )
   );

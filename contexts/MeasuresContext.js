@@ -31,6 +31,9 @@ MeasuresContext.displayName = "MeasuresContext";
 
 function measuresReducer(context, action) {
   switch (action.type) {
+    case "reset": {
+      return initialState;
+    }
     case "setFlow": {
       const flows = context.flows;
       flows[action.flowId] = {
@@ -46,18 +49,6 @@ function measuresReducer(context, action) {
         staves: action.staves,
       };
       return { ...context, initialized: true, flows };
-    }
-    case "updatePeriod": {
-      return {
-        ...context,
-        periods: {
-          ...context.periods,
-          [action.key]: {
-            ...context.periods[action.key],
-            ...action.period,
-          },
-        },
-      };
     }
     case "setPeriods": {
       // PERIODS: sections of musical material (that may match the bounds of an
@@ -120,8 +111,11 @@ function measuresReducer(context, action) {
                     : null,
                 tempos:
                   // TODO: Account for mid-measure tempo change
-                  mi === 0 ||
-                  (mi > 0 && !areTempiEqual(mm[mi - 1].tempos, measure.tempos))
+                  measure?.tempos !== undefined &&
+                  (mi === 0 ||
+                    (mi > 0 &&
+                      mm[mi - 1]?.tempos !== undefined &&
+                      !areTempiEqual(mm[mi - 1].tempos, measure.tempos)))
                     ? // TODO: Account for mid-measure tempo change
                       measure.tempos.map((tempo) => ({
                         ...tempo,
@@ -488,6 +482,18 @@ function measuresReducer(context, action) {
         periods: periodEvents,
       };
     }
+    case "updatePeriod": {
+      return {
+        ...context,
+        periods: {
+          ...context.periods,
+          [action.key]: {
+            ...context.periods[action.key],
+            ...action.period,
+          },
+        },
+      };
+    }
     default: {
       return context;
     }
@@ -499,6 +505,9 @@ const MeasuresContextProvider = ({ children }) => {
 
   const actions = useMemo(
     () => ({
+      reset: () => {
+        dispatch({ type: "reset" });
+      },
       setFlow: ({ flow }) => {
         const layoutEvents = [];
 

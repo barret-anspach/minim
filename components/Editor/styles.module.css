@@ -1,27 +1,18 @@
-.editor {
-  display: flex;
-  flex-flow: column nowrap;
-  width: 100svw;
-  height: 100svh;
-  background: white;
-  outline: 1px solid blue;
-  outline-offset: -1px;
-}
-.score {
-  flex: 1 1 100%;
-  overflow: scroll;
-  outline: 1px solid blue;
-}
 .footer {
   flex: 0 0 auto;
+  position: sticky;
+  bottom: 0;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
   gap: 0.25rem;
+  width: calc(100% + 1rem);
+  transform: translateX(-0.5rem);
   padding: 0.25rem;
+  background: white;
   outline: 1px solid blue;
-  outline-offset: -1px;
+  outline-offset: -0.5px;
   font-size: 12px;
 }
 .footer button {

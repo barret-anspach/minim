@@ -6,6 +6,10 @@
   padding: 20vmin 2rem 5rem 10vmin;
   color: #091f4e;
 }
+.score .systems {
+  width: 100%;
+  overflow-x: scroll;
+}
 .header {
   font-family: 'Test Untitled Sans', sans-serif;
 }

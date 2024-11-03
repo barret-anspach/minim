@@ -1,0 +1,41 @@
+.editor {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100svw;
+  height: 100svh;
+  background: white;
+  outline: 1px solid blue;
+  outline-offset: -1px;
+}
+.score {
+  flex: 1 1 100%;
+  overflow: scroll;
+  outline: 1px solid blue;
+}
+.footer {
+  flex: 0 0 auto;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  outline: 1px solid blue;
+  outline-offset: -1px;
+  font-size: 12px;
+}
+.footer button {
+  cursor: pointer;
+  min-height: 48px;
+}
+@media print {
+  .editor, .score, .footer {
+    outline: none;
+  }
+  .editor {
+    display: contents;
+  }
+  .footer {
+    display: none;
+  }
+}

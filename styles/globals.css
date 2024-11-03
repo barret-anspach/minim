@@ -39,3 +39,9 @@ hr {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+
+@media print {
+  html, body {
+    font-size: 6.2mm;
+  }
+}

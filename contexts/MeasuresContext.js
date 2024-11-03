@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useMemo, useReducer } from "react";
 import {
   areClefsEqual,
   areTempiEqual,
@@ -497,244 +497,247 @@ function measuresReducer(context, action) {
 const MeasuresContextProvider = ({ children }) => {
   const [context, dispatch] = useReducer(measuresReducer, initialState);
 
-  const actions = {
-    setFlow: ({ flow }) => {
-      const layoutEvents = [];
+  const actions = useMemo(
+    () => ({
+      setFlow: ({ flow }) => {
+        const layoutEvents = [];
 
-      // TODO: To add: TEMPO
-      // TODO: parts and even staves within a flow might have different globally-set **key signatures**.
-      const measureEvents = flow.global.measures.reduce((acc, m, mi, mm) => {
-        const duration = m.time
-          ? timeSignatureToDuration(m.time.count, m.time.unit)
-          : acc[acc.length - 1].dimensions.length;
-        const clefs = Array.from(
-          { length: flow.parts.length },
-          (_, i) => i,
-        ).flatMap((partIndex) =>
-          flow.parts[partIndex].global.clefs.map((clef) => ({
-            ...clef,
-            partIndex,
-          })),
-        );
-
-        const count = Array.from({ length: m.repeatCount ?? 1 }, (_, i) => i);
-        let start = mi === 0 ? 0 : acc[acc.length - 1].position.end;
-
-        for (const i of count) {
-          start = i === 0 ? start : start + duration;
-          const end = start + duration;
-          const layout = getFlowLayoutBarlinesAtPoint({
-            flow,
-            clefs,
-            at: "start",
-            point: start,
-            measure: m,
-            measureIndex: mi,
-            measures: mm,
-          });
-
-          acc.push({
-            ...m,
-            type: "measureEvent",
-            id: `${flow.id}m${mi}r${i}`,
-            key: m.key ?? acc.at(-1).key,
-            clefs,
-            time: m.time ?? acc.at(-1).time,
-            layout,
-            dimensions: {
-              length: duration,
-            },
-            position: {
-              start,
-              end,
-            },
-            positionInSystem: {
-              first: false,
-              last: false,
-            },
-          });
-
-          layoutEvents.push(
-            {
-              type: "layoutEvent",
-              id: `${flow.id}m${mi + i}e${start}`,
-              at: start,
-              eventType: "measureStart",
-              measureBounds: { start, end },
-              flowId: flow.id,
-              layoutGroups: layout,
-            },
-            {
-              type: "layoutEvent",
-              id: `${flow.id}m${mi + i}e${end}`,
-              at: end,
-              eventType: "measureEnd",
-              measureBounds: { start, end },
-              flowId: flow.id,
-              layoutGroups: getFlowLayoutBarlinesAtPoint({
-                flow,
-                clefs,
-                at: "end",
-                point: end,
-                measure: m,
-                measureIndex: mi,
-                measures: mm,
-              }),
-            },
+        // TODO: To add: TEMPO
+        // TODO: parts and even staves within a flow might have different globally-set **key signatures**.
+        const measureEvents = flow.global.measures.reduce((acc, m, mi, mm) => {
+          const duration = m.time
+            ? timeSignatureToDuration(m.time.count, m.time.unit)
+            : acc[acc.length - 1].dimensions.length;
+          const clefs = Array.from(
+            { length: flow.parts.length },
+            (_, i) => i,
+          ).flatMap((partIndex) =>
+            flow.parts[partIndex].global.clefs.map((clef) => ({
+              ...clef,
+              partIndex,
+            })),
           );
-        }
-        return acc;
-      }, []);
 
-      const events = flow.parts.reduce((acc, part, partIndex) => {
-        part.sequences.map((voice) =>
-          voice.content.map((voiceItem) => {
-            const count = Array.from(
-              { length: voiceItem.repeatCount ?? 1 },
-              (_, i) => i,
+          const count = Array.from({ length: m.repeatCount ?? 1 }, (_, i) => i);
+          let start = mi === 0 ? 0 : acc[acc.length - 1].position.end;
+
+          for (const i of count) {
+            start = i === 0 ? start : start + duration;
+            const end = start + duration;
+            const layout = getFlowLayoutBarlinesAtPoint({
+              flow,
+              clefs,
+              at: "start",
+              point: start,
+              measure: m,
+              measureIndex: mi,
+              measures: mm,
+            });
+
+            acc.push({
+              ...m,
+              type: "measureEvent",
+              id: `${flow.id}m${mi}r${i}`,
+              key: m.key ?? acc.at(-1).key,
+              clefs,
+              time: m.time ?? acc.at(-1).time,
+              layout,
+              dimensions: {
+                length: duration,
+              },
+              position: {
+                start,
+                end,
+              },
+              positionInSystem: {
+                first: false,
+                last: false,
+              },
+            });
+
+            layoutEvents.push(
+              {
+                type: "layoutEvent",
+                id: `${flow.id}m${mi + i}e${start}`,
+                at: start,
+                eventType: "measureStart",
+                measureBounds: { start, end },
+                flowId: flow.id,
+                layoutGroups: layout,
+              },
+              {
+                type: "layoutEvent",
+                id: `${flow.id}m${mi + i}e${end}`,
+                at: end,
+                eventType: "measureEnd",
+                measureBounds: { start, end },
+                flowId: flow.id,
+                layoutGroups: getFlowLayoutBarlinesAtPoint({
+                  flow,
+                  clefs,
+                  at: "end",
+                  point: end,
+                  measure: m,
+                  measureIndex: mi,
+                  measures: mm,
+                }),
+              },
             );
-            for (const i of count) {
-              voiceItem.type === "group"
-                ? voiceItem.sequence.map((event) =>
-                    decorateEvent({
+          }
+          return acc;
+        }, []);
+
+        const events = flow.parts.reduce((acc, part, partIndex) => {
+          part.sequences.map((voice) =>
+            voice.content.map((voiceItem) => {
+              const count = Array.from(
+                { length: voiceItem.repeatCount ?? 1 },
+                (_, i) => i,
+              );
+              for (const i of count) {
+                voiceItem.type === "group"
+                  ? voiceItem.sequence.map((event) =>
+                      decorateEvent({
+                        acc,
+                        event,
+                        flowId: flow.id,
+                        i,
+                        part,
+                        partIndex,
+                        voice,
+                        voiceItem,
+                      }),
+                    )
+                  : decorateEvent({
                       acc,
-                      event,
+                      event: voiceItem,
                       flowId: flow.id,
                       i,
                       part,
                       partIndex,
                       voice,
-                      voiceItem,
-                    }),
-                  )
-                : decorateEvent({
-                    acc,
-                    event: voiceItem,
-                    flowId: flow.id,
-                    i,
-                    part,
-                    partIndex,
-                    voice,
-                  });
-            }
-          }),
-        );
-        return acc;
-      }, []);
-
-      const dynamics = events.filter((e) => e.type === "dynamic");
-      const eventsWithDynamicsAsMarkings = events
-        .filter((e) => e.type !== "dynamic")
-        .map((event) => {
-          const dynamic = dynamics.find(
-            (dynamic) =>
-              dynamic.position.at === event.position.start &&
-              dynamic.partIndex === event.partIndex &&
-              dynamic.staff === event.staff,
+                    });
+              }
+            }),
           );
-          if (dynamic) {
-            return {
-              ...event,
-              markings: {
-                ...event.markings,
-                dynamic: {
-                  type: "dynamic",
-                  value: dynamic.value,
-                  staff: dynamic.staff,
-                },
-              },
-            };
-          } else {
-            return event;
-          }
-        });
+          return acc;
+        }, []);
 
-      const eventGroupsWithBeams = events.filter((e) => e.eventGroup?.beams);
-      const beamGroups =
-        eventGroupsWithBeams.length === 0
-          ? []
-          : eventGroupsWithBeams
-              .reduce(
-                (acc, event) => {
-                  const b = event.eventGroup.beams.flatMap(
-                    (beam) => beam.events,
-                  );
-                  const bJSON = JSON.stringify(b);
-                  if (!acc.seen.has(bJSON)) {
-                    const count = Array.from(
-                      { length: event.eventGroup.repeatCount ?? 1 },
-                      (_, i) => i,
-                    );
-                    for (const i of count) {
-                      acc.result.push(b.map((e) => `${e}_rep${i}`));
-                    }
-                    acc.seen.add(bJSON);
-                  }
-                  return acc;
+        const dynamics = events.filter((e) => e.type === "dynamic");
+        const eventsWithDynamicsAsMarkings = events
+          .filter((e) => e.type !== "dynamic")
+          .map((event) => {
+            const dynamic = dynamics.find(
+              (dynamic) =>
+                dynamic.position.at === event.position.start &&
+                dynamic.partIndex === event.partIndex &&
+                dynamic.staff === event.staff,
+            );
+            if (dynamic) {
+              return {
+                ...event,
+                markings: {
+                  ...event.markings,
+                  dynamic: {
+                    type: "dynamic",
+                    value: dynamic.value,
+                    staff: dynamic.staff,
+                  },
                 },
-                { result: [], seen: new Set() },
-              )
-              .result.reduce(
-                (acc, beamGroup) => [
-                  ...acc,
-                  beamGroup.map((beamGroupId) =>
-                    eventGroupsWithBeams.find(
-                      (beamedEvent) => beamedEvent.renderId === beamGroupId,
+              };
+            } else {
+              return event;
+            }
+          });
+
+        const eventGroupsWithBeams = events.filter((e) => e.eventGroup?.beams);
+        const beamGroups =
+          eventGroupsWithBeams.length === 0
+            ? []
+            : eventGroupsWithBeams
+                .reduce(
+                  (acc, event) => {
+                    const b = event.eventGroup.beams.flatMap(
+                      (beam) => beam.events,
+                    );
+                    const bJSON = JSON.stringify(b);
+                    if (!acc.seen.has(bJSON)) {
+                      const count = Array.from(
+                        { length: event.eventGroup.repeatCount ?? 1 },
+                        (_, i) => i,
+                      );
+                      for (const i of count) {
+                        acc.result.push(b.map((e) => `${e}_rep${i}`));
+                      }
+                      acc.seen.add(bJSON);
+                    }
+                    return acc;
+                  },
+                  { result: [], seen: new Set() },
+                )
+                .result.reduce(
+                  (acc, beamGroup) => [
+                    ...acc,
+                    beamGroup.map((beamGroupId) =>
+                      eventGroupsWithBeams.find(
+                        (beamedEvent) => beamedEvent.renderId === beamGroupId,
+                      ),
                     ),
-                  ),
-                ],
-                [],
+                  ],
+                  [],
+                );
+
+        const beamEvents =
+          beamGroups.length === 0
+            ? []
+            : beamGroups.flatMap((beamGroup) =>
+                beamGroup.flatMap((event) => ({
+                  renderId: event.renderId,
+                  ...(event.duration ? { duration: event.duration } : {}),
+                  beam: {
+                    ...getBeamGroupStem(beamGroup, event.flowId),
+                    staff: event.staff,
+                  },
+                })),
               );
 
-      const beamEvents =
-        beamGroups.length === 0
-          ? []
-          : beamGroups.flatMap((beamGroup) =>
-              beamGroup.flatMap((event) => ({
-                renderId: event.renderId,
-                ...(event.duration ? { duration: event.duration } : {}),
-                beam: {
-                  ...getBeamGroupStem(beamGroup, event.flowId),
-                  staff: event.staff,
-                },
-              })),
-            );
+        const staves = getStavesForFlow(flow);
 
-      const staves = getStavesForFlow(flow);
+        const layoutGroups = flow.layouts.flatMap((layout) =>
+          getFlowLayoutAtPoint({
+            at: "start",
+            flow,
+            clefs: staves.flatMap((group) =>
+              group.staves.flatMap((staff) => staff.clef),
+            ),
+            point: 0,
+            layoutId: layout.id,
+          }),
+        );
 
-      const layoutGroups = flow.layouts.flatMap((layout) =>
-        getFlowLayoutAtPoint({
-          at: "start",
-          flow,
-          clefs: staves.flatMap((group) =>
-            group.staves.flatMap((staff) => staff.clef),
-          ),
-          point: 0,
-          layoutId: layout.id,
-        }),
-      );
-
-      dispatch({
-        type: "setFlow",
-        beamEvents,
-        beamGroups,
-        events: eventsWithDynamicsAsMarkings,
-        flowId: flow.id,
-        measureEvents,
-        layouts: flow.layouts,
-        layoutEvents: layoutEvents,
-        layoutGroups,
-        parts: flow.parts,
-        staves,
-      });
-    },
-    setPeriods: () => {
-      dispatch({ type: "setPeriods" });
-    },
-    updatePeriod: ({ key, period }) => {
-      dispatch({ type: "updatePeriod", key, period });
-    },
-  };
+        dispatch({
+          type: "setFlow",
+          beamEvents,
+          beamGroups,
+          events: eventsWithDynamicsAsMarkings,
+          flowId: flow.id,
+          measureEvents,
+          layouts: flow.layouts,
+          layoutEvents: layoutEvents,
+          layoutGroups,
+          parts: flow.parts,
+          staves,
+        });
+      },
+      setPeriods: () => {
+        dispatch({ type: "setPeriods" });
+      },
+      updatePeriod: ({ key, period }) => {
+        dispatch({ type: "updatePeriod", key, period });
+      },
+    }),
+    [],
+  );
 
   return (
     <MeasuresContext.Provider value={{ context, actions }}>

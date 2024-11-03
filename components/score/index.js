@@ -11,7 +11,7 @@ import { useMeasuresContext } from "../../contexts/MeasuresContext";
 
 import styles from "./styles.module.css";
 
-function Score({ composition }) {
+function Score({ composition, view }) {
   const {
     context: { initialized, periods },
   } = useMeasuresContext();
@@ -90,34 +90,36 @@ function Score({ composition }) {
             <h2>{composition.data.composer}</h2>
           </header>
         )}
-        <Systems id="systems">
-          {Object.values(periods).map((period, _, periods) => (
-            <Period
-              ref={(ref) => (periodRefs.current[period.index] = ref)}
-              key={`per${period.index}`}
-              index={period.index}
-              period={period}
-              systemStart={periodPositions[period.index]}
-              systemEnd={
-                periodPositions[period.index + 1] ??
-                period.index === periods.length - 1
-              }
-            >
-              {Object.keys(period.flows).map((flowId) => (
-                <Flow
-                  key={`per${period.index}_${flowId}`}
-                  id={flowId}
-                  period={period}
-                  systemStart={periodPositions[period.index]}
-                  systemEnd={
-                    periodPositions[period.index + 1] ??
-                    period.index === periods.length - 1
-                  }
-                />
-              ))}
-            </Period>
-          ))}
-        </Systems>
+        <div className={styles.systems}>
+          <Systems id="systems" view={view}>
+            {Object.values(periods).map((period, _, periods) => (
+              <Period
+                ref={(ref) => (periodRefs.current[period.index] = ref)}
+                key={`per${period.index}`}
+                index={period.index}
+                period={period}
+                systemStart={periodPositions[period.index]}
+                systemEnd={
+                  periodPositions[period.index + 1] ??
+                  period.index === periods.length - 1
+                }
+              >
+                {Object.keys(period.flows).map((flowId) => (
+                  <Flow
+                    key={`per${period.index}_${flowId}`}
+                    id={flowId}
+                    period={period}
+                    systemStart={periodPositions[period.index]}
+                    systemEnd={
+                      periodPositions[period.index + 1] ??
+                      period.index === periods.length - 1
+                    }
+                  />
+                ))}
+              </Period>
+            ))}
+          </Systems>
+        </div>
       </main>
     )
   );

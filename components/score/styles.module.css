@@ -21,10 +21,16 @@
   background: white;
   outline: 1px solid blue;
   outline-offset: -0.5px;
-  font-family: 'Test Untitled Sans', sans-serif;
+  font-family: "Test Untitled Sans", sans-serif;
+}
+.title {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.5rem;
 }
 .header h1,
-.header h2 {
+.header h2,
+.header p {
   margin: 0;
 }
 .header h1 {
@@ -32,6 +38,10 @@
   font-weight: 500;
 }
 .header h2 {
+  font-size: small;
+  font-weight: 400;
+}
+.header p {
   font-size: small;
   font-weight: 400;
 }
@@ -48,6 +58,8 @@
     background: none;
   }
   .header .title {
+    flex-flow: column nowrap;
+    align-items: center;
     margin-block: 1rem;
   }
   .header h1 {
@@ -59,6 +71,12 @@
   }
   .header h2 {
     font-size: large;
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: 0.2rem;
+  }
+  .header p {
+    font-size: large;
     text-align: right;
     font-weight: 400;
   }
@@ -66,6 +84,7 @@
     padding: 0;
   }
   .score #systems {
+    width: 8.5in;
     margin-top: 0;
   }
 }

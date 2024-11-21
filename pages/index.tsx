@@ -7,6 +7,7 @@ import { useMeasuresContext } from "../contexts/MeasuresContext";
 
 const Score = dynamic(() => import("../components/score"), { ssr: false });
 import score from "../fixtures/scores/minim-score-test.json";
+import styles from "./styles.module.css";
 
 export default function Minim() {
   const { actions } = useMeasuresContext();
@@ -16,6 +17,9 @@ export default function Minim() {
         movement.content.forEach((flow) => {
           actions.setFlow({ flow });
           actions.setPeriods();
+          // TODO: register each document and movement,
+          // and provide a means for the user to navigate
+          // among them.
         }),
       ),
     );
@@ -32,11 +36,19 @@ export default function Minim() {
       </Head>
       {score.documents.map((document) =>
         document.movements.map((movement) => (
-          <Score
-            key={`${document.id}_${movement.id}`}
-            compositionMetadata={document.metadata}
-            movementMetadata={movement.metadata}
-          />
+          <div className={styles.grid}>
+            <nav className={styles.nav}></nav>
+            {/* <div className={styles.textarea}>
+              Editor input and intermediate renderer go here
+            </div> */}
+            {/* <textarea className={styles.textarea} /> */}
+            <Score
+              className={styles.score}
+              key={`${document.id}_${movement.id}`}
+              compositionMetadata={document.metadata}
+              movementMetadata={movement.metadata}
+            />
+          </div>
         )),
       )}
     </>

@@ -1,0 +1,51 @@
+import { useMemo } from "react";
+import clsx from "clsx";
+
+import Item from "../item";
+
+import styles from "./styles.module.css";
+import { Minim } from "../../types/minim";
+
+type AugmentationDotsProps = {
+  className?: string;
+  event: Minim.Event.DecoratedDefaultEvent;
+  prefix: string;
+  pitch: Minim.Grid.Row;
+};
+
+const AugmentationDotGlyph = "";
+
+export default function AugmentationDots({
+  className,
+  event,
+  prefix,
+  pitch,
+}: AugmentationDotsProps): JSX.Element {
+  const dotArray = useMemo(
+    () => Array.from({ length: event.duration!.dots || 0 }, (_, i) => i),
+    [event.duration!.dots],
+  );
+  const column = useMemo(
+    () => `e${(event.position as Minim.Bounds).start}-ste-up`,
+    [(event.position as Minim.Bounds).start],
+  );
+
+  return event.duration !== undefined &&
+    event.duration.dots !== undefined &&
+    event.duration.dots > 0 ? (
+    <>
+      {dotArray.map((dotIndex) => (
+        <Item
+          key={`${prefix}_dot${dotIndex}`}
+          className={clsx(styles.dot, className)}
+          column={column}
+          pitch={pitch}
+        >
+          {AugmentationDotGlyph}
+        </Item>
+      ))}
+    </>
+  ) : (
+    <></>
+  );
+}

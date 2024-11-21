@@ -56,9 +56,9 @@ export default function useFlowEvents({ id, period, systemStart, systemEnd }) {
         }
         switchOrAddEvents(
           period.flows[id],
-          systemStart
-            ? period.flowsClipped[id].start || []
-            : period.flowsClipped[id].end || [],
+          systemStart ?
+            period.flowsClipped[id].start || []
+          : period.flowsClipped[id].end || [],
         );
       }
     }

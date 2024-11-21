@@ -1,0 +1,25 @@
+{
+  "extends": "@tsconfig/next/tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "types/*.d.ts",
+    "types/**/*.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "target": "ES2015",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "es2023"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
+  }
+}

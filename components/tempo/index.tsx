@@ -5,7 +5,7 @@ import { Minim } from "../../types/minim";
 import { MNX } from "../../types/mnx";
 import Event from "../event";
 import styles from "./styles.module.css";
-import { bravura, bravuraText, inter } from "../../utils/fonts";
+import { bravuraText, inter } from "../../utils/fonts";
 
 const tempoBaseMap = {
   key: durationMap.key,

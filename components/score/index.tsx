@@ -41,7 +41,7 @@ const Score: React.FC<ScoreProps> = function ({
         ri = -1;
       for (const period of positions) {
         const value = Object.values(periods)[i];
-        if (!!period) {
+        if (period) {
           ri++;
           result[ri] = [value];
         } else {

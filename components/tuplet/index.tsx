@@ -66,7 +66,7 @@ export default function Tuplet({
   if (event.type !== "tuplet") return <></>;
   return (
     <>
-      {event.content.map((tupletEvent, tupletEventIndex, tupletEvents) =>
+      {event.content.map((tupletEvent, tupletEventIndex) =>
         tupletEvent.notes?.map((_, noteIndex) => (
           <Chord
             key={`${id}_tup${tupletEventIndex}_not${noteIndex}`}

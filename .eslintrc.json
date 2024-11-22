@@ -13,7 +13,8 @@
     "prettier/prettier": [
       "error",
       {
-        "parser": "flow"
+        "parser": "flow",
+        "semi": false
       }
     ],
     "@stylistic/js/semi": ["error", "always"]

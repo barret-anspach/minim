@@ -2,7 +2,6 @@
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "prettier"
@@ -17,6 +16,6 @@
         "parser": "flow"
       }
     ],
-    "@typescript-eslint/semi": ["error", "always"]
+    "@stylistic/js/semi": ["error", "always"]
   }
 }

@@ -16,6 +16,7 @@
       {
         "parser": "flow"
       }
-    ]
+    ],
+    "@typescript-eslint/semi": ["error", "always"]
   }
 }

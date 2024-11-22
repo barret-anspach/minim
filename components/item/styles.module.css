@@ -1,7 +1,7 @@
 .item {
   --padEnd: 0rem;
-  --pitch: '';
-  --column: 'e 1';
+  --pitch: "";
+  --column: "e 1";
   --size: 4rem;
   align-self: start;
   justify-self: end;
@@ -11,7 +11,6 @@
   align-items: center;
   height: 0;
   padding-right: calc(var(--padEnd) / 4);
-  font-family: Bravura, sans-serif;
   font-size: calc(var(--size) / 4);
   line-height: 0;
 }

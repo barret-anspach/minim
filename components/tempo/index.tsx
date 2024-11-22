@@ -1,8 +1,11 @@
+import clsx from "clsx";
+
 import { durationMap } from "../../constants/durations";
 import { Minim } from "../../types/minim";
 import { MNX } from "../../types/mnx";
 import Event from "../event";
 import styles from "./styles.module.css";
+import { bravura, bravuraText, inter } from "../../utils/fonts";
 
 const tempoBaseMap = {
   key: durationMap.key,
@@ -40,21 +43,21 @@ export default function Tempo({ id, beat, pitch, tempo }: TempoProps) {
   // tuplets / etc to resolve the duration and semantic meaning of the tempo
   return (
     <Event className={styles.tempo} beat={beat} pitch={pitch}>
-      <span className={styles.pulse}>
+      <span className={clsx(styles.pulse, bravuraText.className)}>
         {
           tempoBaseMap.value[
             tempoBaseMap.key.findIndex((t) => t === tempo.value.base)
           ]
         }
-        {tempo.value.dots ?
-          Array.from({ length: tempo.value.dots }).map((_, dotIndex) => (
-            <span key={`${id}_dot${dotIndex}`} className={styles.dot}>
-              
-            </span>
-          ))
-        : null}
+        {tempo.value.dots
+          ? Array.from({ length: tempo.value.dots }).map((_, dotIndex) => (
+              <span key={`${id}_dot${dotIndex}`} className={styles.dot}>
+                
+              </span>
+            ))
+          : null}
       </span>
-      <span className={styles.mm}>= {tempo.bpm}</span>
+      <span className={clsx(styles.mm, inter.className)}>= {tempo.bpm}</span>
     </Event>
   );
 }

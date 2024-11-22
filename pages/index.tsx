@@ -8,6 +8,8 @@ import { useMeasuresContext } from "../contexts/MeasuresContext";
 const Score = dynamic(() => import("../components/score"), { ssr: false });
 import score from "../fixtures/scores/minim-score-test.json";
 import styles from "./styles.module.css";
+import { bravura } from "../utils/fonts";
+import clsx from "clsx";
 
 export default function Minim() {
   const { actions } = useMeasuresContext();
@@ -28,23 +30,24 @@ export default function Minim() {
   return (
     <>
       <Head>
-        <title>
-          {/* TODO: How to handle page title? */}
-          {score.documents[0].metadata.name}:{" "}
-          {score.documents[0].movements[0].metadata.name}
-        </title>
+        {/* TODO: How to handle page title? */}
+        <meta
+          property="og.title"
+          key="title"
+          content={`${score.documents[0].metadata.name}:${" "}
+          ${score.documents[0].movements[0].metadata.name}`}
+        />
       </Head>
       {score.documents.map((document) =>
         document.movements.map((movement) => (
-          <div className={styles.grid}>
-            <nav className={styles.nav}></nav>
+          <div key={`${document.id}_${movement.id}`} className={styles.grid}>
+            {/* <nav className={styles.nav}>This is the nav.</nav> */}
             {/* <div className={styles.textarea}>
               Editor input and intermediate renderer go here
             </div> */}
             {/* <textarea className={styles.textarea} /> */}
             <Score
-              className={styles.score}
-              key={`${document.id}_${movement.id}`}
+              className={clsx(styles.score, bravura.className)}
               compositionMetadata={document.metadata}
               movementMetadata={movement.metadata}
             />

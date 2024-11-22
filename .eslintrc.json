@@ -14,7 +14,7 @@
       "error",
       {
         "parser": "flow",
-        "semi": false
+        "semi": true
       }
     ],
     "@stylistic/js/semi": ["error", "always"]

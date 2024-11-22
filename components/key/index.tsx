@@ -27,34 +27,34 @@ export default function Key({
   const sign = useMemo(() => Math.sign(fifths), [fifths]);
   const accidentals = useMemo(
     () =>
-      (
-        sign === 0 ||
-        (prevFifths !== undefined && prevFifths !== fifths && fifths === 0)
-      ) ?
-        range.clefs[clefType].keyAccidentals[
-          Math.sign(prevFifths!) === 1 ? "sharp" : "flat"
-        ]
-          .slice(0, Math.abs(prevFifths!))
-          .map((pitch) => ({
-            pitch: `${id ?? ""}${pitch}`,
-            glyph:
-              accidentalMap.value[
-                accidentalMap.key.indexOf("accidentalNatural")
-              ],
-          }))
-      : range.clefs[clefType].keyAccidentals[sign === 1 ? "sharp" : "flat"]
-          .slice(0, unsignedInteger)
-          .map((pitch) => ({
-            pitch: `${id ?? ""}${pitch}`,
-            glyph:
-              accidentalMap.value[
-                accidentalMap.key.indexOf(
-                  sign === 0 ? "accidentalNatural"
-                  : sign === 1 ? "accidentalSharp"
-                  : "accidentalFlat",
-                )
-              ],
-          })),
+      sign === 0 ||
+      (prevFifths !== undefined && prevFifths !== fifths && fifths === 0)
+        ? range.clefs[clefType].keyAccidentals[
+            Math.sign(prevFifths!) === 1 ? "sharp" : "flat"
+          ]
+            .slice(0, Math.abs(prevFifths!))
+            .map((pitch) => ({
+              pitch: `${id ?? ""}${pitch}`,
+              glyph:
+                accidentalMap.value[
+                  accidentalMap.key.indexOf("accidentalNatural")
+                ],
+            }))
+        : range.clefs[clefType].keyAccidentals[sign === 1 ? "sharp" : "flat"]
+            .slice(0, unsignedInteger)
+            .map((pitch) => ({
+              pitch: `${id ?? ""}${pitch}`,
+              glyph:
+                accidentalMap.value[
+                  accidentalMap.key.indexOf(
+                    sign === 0
+                      ? "accidentalNatural"
+                      : sign === 1
+                        ? "accidentalSharp"
+                        : "accidentalFlat",
+                  )
+                ],
+            })),
     [clefType, fifths, id, prevFifths, sign, unsignedInteger],
   );
 

@@ -44,14 +44,9 @@ export default function Accidental({
     [note.pitch.alter],
   );
 
-  return note.pitch.alter && !accidentalStep.includes(note.pitch.step) ?
-      <Item
-        key={key}
-        className={styles.accidental}
-        column={column}
-        pitch={pitch}
-      >
-        <span className={styles.inner}>{glyph}</span>
-      </Item>
-    : null;
+  return note.pitch.alter && !accidentalStep.includes(note.pitch.step) ? (
+    <Item key={key} className={styles.accidental} column={column} pitch={pitch}>
+      <span className={styles.inner}>{glyph}</span>
+    </Item>
+  ) : null;
 }

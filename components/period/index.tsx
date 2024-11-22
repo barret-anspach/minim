@@ -70,7 +70,8 @@ const Period = forwardRef<HTMLDivElement, React.PropsWithChildren<PeriodProps>>(
       () =>
         overlapStaffRows(
           Object.entries(period.staves)
-            .filter(([id, _]) => period.measures[id].length > 0)
+            .filter(([id]) => period.measures[id].length > 0)
+            /* eslint-disable @typescript-eslint/no-unused-vars */
             .flatMap(([_, parts]) =>
               Object.values(parts).flatMap((part) => part.staves),
             ),

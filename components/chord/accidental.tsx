@@ -33,7 +33,7 @@ export default function Accidental({
   const key = useMemo(() => `${id}_not${noteIndex}_acc`, [id, noteIndex]);
   const column = useMemo(
     () => `e${(event.position as Minim.Bounds).start}-acc`,
-    [(event.position as Minim.Bounds).start],
+    [event.position],
   );
   const pitch = useMemo(
     () => `${pitchPrefix}s${note.staff ?? 1}${getPitchString(note)}`,

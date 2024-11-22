@@ -46,7 +46,7 @@ export default function Stem({
 }: StemProps) {
   const stem = useMemo(
     () => getStem(notes, rangeClef!.midline, direction, beam, pitchPrefix),
-    [beam, direction, notes, pitchPrefix, rangeClef.staffLinePitches],
+    [beam, direction, notes, pitchPrefix, rangeClef],
   );
   const _stemDirection = useMemo(
     () => beam?.direction ?? direction ?? stem.direction,
@@ -55,7 +55,7 @@ export default function Stem({
   const _stemColumn = useMemo(
     () =>
       `e${(event.position as Minim.Bounds).start}${_stemDirection === "up" ? "-ste-up" : "-not"}`,
-    [(event.position as Minim.Bounds).start, _stemDirection],
+    [event.position, _stemDirection],
   );
   const _beamColumn = `e${(event.position as Minim.Bounds).start}-not / e${(event.position as Minim.Bounds).start}-ste-up`;
   const style = useMemo(

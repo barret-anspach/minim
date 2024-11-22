@@ -340,7 +340,7 @@ export default function Markings({
       chordBounds,
       event.markings,
       event.partVoices,
-      (event.position as Minim.Bounds).start,
+      event.position,
       event.rest,
       event.staff,
       event.voice,

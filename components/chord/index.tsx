@@ -52,7 +52,7 @@ export default function Chord({ clef, event, id, period }: ChordProps) {
             pitchPrefix,
           )
         : undefined,
-    [beamEvent?.beam, event, pitchPrefix, rangeClef!.midline],
+    [beamEvent, event, pitchPrefix, rangeClef],
   );
   const chordBounds = useMemo(
     () =>

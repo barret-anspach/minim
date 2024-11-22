@@ -30,7 +30,7 @@ function Staff({
       "--start": start,
       "--end": end,
     }),
-    [end, id, staffBounds!.lower.id, staffBounds!.upper.id, start],
+    [end, id, staffBounds, start],
   );
 
   return (

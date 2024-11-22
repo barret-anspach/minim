@@ -7,7 +7,7 @@ import metadata from "../../public/fonts/bravura/bravura_metadata.json";
 import { Minim } from "../../types/minim";
 import { Properties } from "csstype";
 
-function RegularBarline({ type }: { type?: Minim.Defs.BarlineType }) {
+function RegularBarline() {
   return <div className={clsx(styles.line, styles.thinLine, styles.margin)} />;
 }
 
@@ -38,7 +38,7 @@ function Barline({
       "--column": column,
       "--row": row,
     }),
-    [column, row]
+    [column, row],
   );
 
   return (
@@ -46,15 +46,17 @@ function Barline({
       className={clsx(
         styles.barline,
         separation && styles.separation,
-        className
+        className,
       )}
       style={style}
     >
-      {children ?
+      {children ? (
         children
-      : type === "final" ?
+      ) : type === "final" ? (
         <FinalBarline />
-      : <RegularBarline type={type} />}
+      ) : (
+        <RegularBarline />
+      )}
     </div>
   );
 }

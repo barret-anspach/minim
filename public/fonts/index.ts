@@ -2,11 +2,11 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 
 export const bravura = localFont({
-  src: "./../public/fonts/bravura/woff/bravura.woff2",
+  src: "bravura/bravura.woff2",
   variable: "--music-font",
 });
 export const bravuraText = localFont({
-  src: "./../public/fonts/bravura/woff/bravura-text.woff2",
+  src: "bravura/bravura-text.woff2",
   variable: "--music-text-font",
 });
 export const inter = Inter({

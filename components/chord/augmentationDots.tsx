@@ -23,11 +23,11 @@ export default function AugmentationDots({
 }: AugmentationDotsProps): JSX.Element {
   const dotArray = useMemo(
     () => Array.from({ length: event.duration!.dots || 0 }, (_, i) => i),
-    [event.duration!.dots],
+    [event.duration],
   );
   const column = useMemo(
     () => `e${(event.position as Minim.Bounds).start}-ste-up`,
-    [(event.position as Minim.Bounds).start],
+    [event.position],
   );
 
   return event.duration !== undefined &&

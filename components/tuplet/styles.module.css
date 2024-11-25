@@ -7,10 +7,9 @@
 }
 .ratio {
   flex: 0;
-  font-family: 'Bravura', sans-serif;
   line-height: 0;
   height: 0.25rem;
-  background-color: white;
+  background-color: var(--background);
   text-align: center;
   padding: 0 0.125rem;
   transform: translateY(75%);

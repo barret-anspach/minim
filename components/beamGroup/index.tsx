@@ -27,19 +27,19 @@ export function BeamGroup({ beamGroup, prefix }: BeamGroupProps) {
         return `${beamGroup[0].beam.start} / ${beamGroup[0].beam.end}`;
       }
       case "start": {
-        return direction === "up" ?
-            `${beamGroup[0].beam.start} / e${(beamGroup.at(-1)!.position as Minim.Bounds).start}-ste-up`
+        return direction === "up"
+          ? `${beamGroup[0].beam.start} / e${(beamGroup.at(-1)!.position as Minim.Bounds).start}-ste-up`
           : `${beamGroup[0].beam.start} / e${(beamGroup.at(-1)!.position as Minim.Bounds).start}-not`;
       }
       case "end": {
-        return direction === "up" ?
-            `e${(beamGroup[0].position as Minim.Bounds).start}-ste-up / ${beamGroup.at(-1)!.beam.end}`
+        return direction === "up"
+          ? `e${(beamGroup[0].position as Minim.Bounds).start}-ste-up / ${beamGroup.at(-1)!.beam.end}`
           : `e${(beamGroup[0].position as Minim.Bounds).start}-not / ${beamGroup.at(-1)!.beam.end}`;
       }
       case "none":
       default: {
-        return direction === "up" ?
-            `e${(beamGroup[0].position as Minim.Bounds).start}-ste-up / e${(beamGroup.at(-1)!.position as Minim.Bounds).start}-ste-up`
+        return direction === "up"
+          ? `e${(beamGroup[0].position as Minim.Bounds).start}-ste-up / e${(beamGroup.at(-1)!.position as Minim.Bounds).start}-ste-up`
           : `e${(beamGroup[0].position as Minim.Bounds).start}-not / e${(beamGroup.at(-1)!.position as Minim.Bounds).start}-not`;
       }
     }

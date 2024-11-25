@@ -1,7 +1,6 @@
 .event {
   --beat: e1;
   --pitch: b4;
-  font-family: Bravura, sans-serif;
   height: 0;
   width: 0;
   display: flex;

@@ -9,7 +9,7 @@
   row-gap: 0rem;
   width: 100%;
   height: 100%;
-  background: white;
+  background: var(--background);
 }
 .systems.block {
   flex-flow: row wrap;

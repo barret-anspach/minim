@@ -8,18 +8,14 @@
     "types/**/*.d.ts",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "ES2015",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext",
-      "es2023"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext", "es2023"],
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "@/public/fonts/*": ["./public/fonts/bravura/woff/*"]
+    }
   }
 }

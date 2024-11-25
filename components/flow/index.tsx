@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 
 import Chord from "../chord";
 import Tuplet from "../tuplet";

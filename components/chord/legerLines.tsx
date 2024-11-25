@@ -28,7 +28,7 @@ export default function LegerLines({ event, id }: LegerLinesProps) {
   );
   const column = useMemo(
     () => `e${(event.position as Minim.Bounds).start}-not`,
-    [(event.position as Minim.Bounds).start],
+    [event.position],
   );
 
   return (

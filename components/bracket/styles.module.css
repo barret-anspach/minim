@@ -1,10 +1,9 @@
 .brace,
 .bracket {
-  --row: 'f0s1f5/f0s2f3';
-  --column: 'e0-bracket';
+  --row: "f0s1f5/f0s2f3";
+  --column: "e0-bracket";
   grid-row: var(--row);
   grid-column: var(--column);
-  font-family: 'bravura', sans-serif;
   margin-right: 0.1rem;
 }
 

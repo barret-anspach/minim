@@ -10,7 +10,7 @@ import {
 import styles from "./styles.module.css";
 import { Minim } from "../../types/minim";
 import { MNX } from "../../types/mnx";
-const metadata = require("../../public/fonts/bravura/bravura_metadata.json");
+import metadata from "../../public/fonts/bravura/bravura_metadata.json";
 
 const flagMap = {
   key: ["eighth", "16th", "32nd", "64th"],
@@ -46,7 +46,7 @@ export default function Stem({
 }: StemProps) {
   const stem = useMemo(
     () => getStem(notes, rangeClef!.midline, direction, beam, pitchPrefix),
-    [beam, direction, notes, pitchPrefix, rangeClef.staffLinePitches],
+    [beam, direction, notes, pitchPrefix, rangeClef],
   );
   const _stemDirection = useMemo(
     () => beam?.direction ?? direction ?? stem.direction,
@@ -55,7 +55,7 @@ export default function Stem({
   const _stemColumn = useMemo(
     () =>
       `e${(event.position as Minim.Bounds).start}${_stemDirection === "up" ? "-ste-up" : "-not"}`,
-    [(event.position as Minim.Bounds).start, _stemDirection],
+    [event.position, _stemDirection],
   );
   const _beamColumn = `e${(event.position as Minim.Bounds).start}-not / e${(event.position as Minim.Bounds).start}-ste-up`;
   const style = useMemo(
@@ -66,55 +66,55 @@ export default function Stem({
     [_stemColumn, stem.row.end, stem.row.start],
   );
 
-  return event.dimensions.length < DURATION.WHOLE ?
-      <>
-        <svg
-          viewBox={`0 0 1 1`}
-          width={`${metadata.engravingDefaults.stemThickness / 4}rem`}
-          height="100%"
-          preserveAspectRatio="none"
-          overflow="visible"
-          className={clsx([
-            styles.stem,
+  return event.dimensions.length < DURATION.WHOLE ? (
+    <>
+      <svg
+        viewBox={`0 0 1 1`}
+        width={`${metadata.engravingDefaults.stemThickness / 4}rem`}
+        height="100%"
+        preserveAspectRatio="none"
+        overflow="visible"
+        className={clsx([
+          styles.stem,
+          _stemDirection === "up" ? styles.up : styles.down,
+        ])}
+        style={style}
+      >
+        <rect x={0} y={0} width={1} height={1} fill="currentColor" />
+      </svg>
+      {!beam && event.dimensions.length < DURATION.QUARTER && (
+        <Item
+          className={clsx(
+            styles.flag,
             _stemDirection === "up" ? styles.up : styles.down,
-          ])}
-          style={style}
+          )}
+          column={_stemColumn}
+          pitch={`${stem.row.start}/${stem.row.end}`}
         >
-          <rect x={0} y={0} width={1} height={1} fill="currentColor" />
-        </svg>
-        {!beam && event.dimensions.length < DURATION.QUARTER && (
-          <Item
-            className={clsx(
-              styles.flag,
-              _stemDirection === "up" ? styles.up : styles.down,
-            )}
-            column={_stemColumn}
-            pitch={`${stem.row.start}/${stem.row.end}`}
-          >
-            {
-              flagMap.value[
-                flagMap.key.findIndex((k) => k === event.duration!.base)
-              ][_stemDirection]
-            }
-          </Item>
-        )}
-        {/* TODO: temporary fix; whole beaming situation needs an overhaul. */}
-        {beam && event.dimensions.length < DURATION.EIGHTH && (
-          <Item
-            className={clsx(
-              styles.beam,
-              _stemDirection === "up" ? styles.above : styles.below,
-            )}
-            column={_beamColumn}
-            pitch={`${pitchPrefix}s${beam.staff}`.concat(
-              getDiatonicTransposition(
-                beam.pitch,
-                getSubBeamCountFromBeamEvent(event) *
-                  (beam.direction === "up" ? 2 : -2),
-              ),
-            )}
-          />
-        )}
-      </>
-    : null;
+          {
+            flagMap.value[
+              flagMap.key.findIndex((k) => k === event.duration!.base)
+            ][_stemDirection]
+          }
+        </Item>
+      )}
+      {/* TODO: temporary fix; whole beaming situation needs an overhaul. */}
+      {beam && event.dimensions.length < DURATION.EIGHTH && (
+        <Item
+          className={clsx(
+            styles.beam,
+            _stemDirection === "up" ? styles.above : styles.below,
+          )}
+          column={_beamColumn}
+          pitch={`${pitchPrefix}s${beam.staff}`.concat(
+            getDiatonicTransposition(
+              beam.pitch,
+              getSubBeamCountFromBeamEvent(event) *
+                (beam.direction === "up" ? 2 : -2),
+            ),
+          )}
+        />
+      )}
+    </>
+  ) : null;
 }

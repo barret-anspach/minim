@@ -31,7 +31,7 @@ function Item({
       "--pitch": pitch,
       "--size": size ? `${size}rem` : "4rem",
     }),
-    [column, padEnd, pitch, size]
+    [column, padEnd, pitch, size],
   );
   return (
     <span

@@ -12,7 +12,6 @@
 }
 .pulse,
 .mm {
-  font-family: var(--musicTextFont, "Bravura Text"), sans-serif;
   line-height: 1;
 }
 .pulse {
@@ -23,7 +22,6 @@
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: normal;
-  font-family: var(--textFont, "Test Untitled Sans"), sans-serif;
   font-size: 0.5rem;
   font-weight: 500;
   height: fit-content;

@@ -43,16 +43,16 @@ export default function Chord({ clef, event, id, period }: ChordProps) {
   );
   const stem = useMemo(
     () =>
-      "notes" in event && event.notes ?
-        getStem(
-          event.notes,
-          rangeClef!.midline,
-          beamEvent?.beam.direction ?? null,
-          beamEvent?.beam ?? null,
-          pitchPrefix,
-        )
-      : undefined,
-    [beamEvent?.beam, event, pitchPrefix, rangeClef!.midline],
+      "notes" in event && event.notes
+        ? getStem(
+            event.notes,
+            rangeClef!.midline,
+            beamEvent?.beam.direction ?? null,
+            beamEvent?.beam ?? null,
+            pitchPrefix,
+          )
+        : undefined,
+    [beamEvent, event, pitchPrefix, rangeClef],
   );
   const chordBounds = useMemo(
     () =>

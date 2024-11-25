@@ -18,10 +18,9 @@
   gap: 0.5rem;
   width: 100%;
   padding: 0.5rem;
-  background: white;
-  outline: 1px solid blue;
-  outline-offset: -0.5px;
-  font-family: "Test Untitled Sans", sans-serif;
+  background: var(--background);
+  outline: 1px solid var(--color);
+  font-family: var(--text);
 }
 .title {
   display: flex;

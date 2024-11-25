@@ -152,17 +152,19 @@ export default function Markings({
     (region: Minim.Defs.MarkingRegion): Record<MNX.Defs.UpOrDown, string> => {
       const direction = getStemDirection();
       const highestPitch = getHighestPitch(
-        event.rest ? rangeClef.midline
-        : direction === "up" ?
-          (beam?.pitch ?? stem?.pitch.start ?? chordBounds.upper)
-        : chordBounds.upper,
+        event.rest
+          ? rangeClef.midline
+          : direction === "up"
+            ? (beam?.pitch ?? stem?.pitch.start ?? chordBounds.upper)
+            : chordBounds.upper,
         staffBounds.upper,
       );
       const lowestPitch = getLowestPitch(
-        event.rest ? rangeClef.midline
-        : direction === "down" ?
-          (beam?.pitch ?? stem?.pitch.start ?? chordBounds.lower)
-        : chordBounds.lower,
+        event.rest
+          ? rangeClef.midline
+          : direction === "down"
+            ? (beam?.pitch ?? stem?.pitch.start ?? chordBounds.lower)
+            : chordBounds.lower,
         staffBounds.lower,
       );
       // Multiple voices on the event's staff?
@@ -229,49 +231,43 @@ export default function Markings({
           const region = regions[name];
           const pitch = markingPitch(region);
           const stemDirection =
-            "pointing" in options && options.pointing !== undefined ?
-              options.pointing
-            : getStemDirection();
-          const noteOnLine =
-            event.rest ?
-              true // TODO: Not always true!!! Workaround for now.
+            "pointing" in options && options.pointing !== undefined
+              ? options.pointing
+              : getStemDirection();
+          const noteOnLine = event.rest
+            ? true // TODO: Not always true!!! Workaround for now.
             : isNoteOnLine(
                 rangeClef.staffLinePitches[0].id,
                 chordBounds[stemDirection === "up" ? "lower" : "upper"],
               );
           const position =
-            "pointing" in options && options.pointing !== undefined ?
-              options.pointing
-              // Are there multiple voices on the event's staff?
-            : (
-              event.partVoices > 0 &&
-              voiceNumbersByPartStaff[event.staff].length > 1
-            ) ?
-              event.voice % event.partVoices === 1 ?
-                "up"
-              : "down"
-            : region === "below" ? "down"
-            : region === "above" ? "up"
-            : (
-              stemDirection === "up" // region === "note" or "outside"
-            ) ?
-              "down"
-            : "up";
+            "pointing" in options && options.pointing !== undefined
+              ? options.pointing
+              : // Are there multiple voices on the event's staff?
+                event.partVoices > 0 &&
+                  voiceNumbersByPartStaff[event.staff].length > 1
+                ? event.voice % event.partVoices === 1
+                  ? "up"
+                  : "down"
+                : region === "below"
+                  ? "down"
+                  : region === "above"
+                    ? "up"
+                    : stemDirection === "up" // region === "note" or "outside"
+                      ? "down"
+                      : "up";
           const key =
-            (
-              name === "dynamic" &&
-              "value" in options &&
-              options.value !== undefined
-            ) ?
-              (dynamicMap.key[
-                dynamicMap.shorthand.indexOf(options.value)
-              ] as GlyphMember)
-            : (`${articulationMap.key[articulationMap.shorthand.indexOf(name as (typeof articulationMap.shorthand)[number])]}${
-                position === "up" ? "Above" : "Below"
-              }` as GlyphMember);
-          const height =
-            metadata.glyphBBoxes[key] ?
-              `${
+            name === "dynamic" &&
+            "value" in options &&
+            options.value !== undefined
+              ? (dynamicMap.key[
+                  dynamicMap.shorthand.indexOf(options.value)
+                ] as GlyphMember)
+              : (`${articulationMap.key[articulationMap.shorthand.indexOf(name as (typeof articulationMap.shorthand)[number])]}${
+                  position === "up" ? "Above" : "Below"
+                }` as GlyphMember);
+          const height = metadata.glyphBBoxes[key]
+            ? `${
                 (metadata.glyphBBoxes[key].bBoxNE[1] -
                   metadata.glyphBBoxes[key].bBoxSW[1]) /
                 4
@@ -282,36 +278,33 @@ export default function Markings({
             properties: {
               column: `e${(event.position as Minim.Bounds).start}-not`,
               item:
-                (
-                  name === "dynamic" &&
-                  "value" in options &&
-                  options.value !== undefined
-                ) ?
-                  {
-                    type: "dynamic",
-                    glyph:
-                      dynamicMap.value[
-                        dynamicMap.shorthand.indexOf(options.value)
-                      ],
-                    height,
-                    key,
-                  }
-                : {
-                    type: "marking",
-                    glyph:
-                      articulationMap[position === "up" ? "above" : "below"][
-                        articulationMap.shorthand.indexOf(
-                          name as (typeof articulationMap.shorthand)[number],
-                        )
-                      ],
-                    height,
-                    key,
-                  },
+                name === "dynamic" &&
+                "value" in options &&
+                options.value !== undefined
+                  ? {
+                      type: "dynamic",
+                      glyph:
+                        dynamicMap.value[
+                          dynamicMap.shorthand.indexOf(options.value)
+                        ],
+                      height,
+                      key,
+                    }
+                  : {
+                      type: "marking",
+                      glyph:
+                        articulationMap[position === "up" ? "above" : "below"][
+                          articulationMap.shorthand.indexOf(
+                            name as (typeof articulationMap.shorthand)[number],
+                          )
+                        ],
+                      height,
+                      key,
+                    },
               key: `${id}_art_${region}${index}`,
               noteOnLine,
-              noteWithinStaff:
-                event.rest ?
-                  true // TODO: Not always true!!! Workaround for now.
+              noteWithinStaff: event.rest
+                ? true // TODO: Not always true!!! Workaround for now.
                 : getDiatonicInterval(
                     staffBounds.upper,
                     chordBounds[stemDirection === "up" ? "lower" : "upper"],
@@ -330,8 +323,8 @@ export default function Markings({
               ...options,
             },
           };
-          return !acc[position] ?
-              {
+          return !acc[position]
+            ? {
                 ...acc,
                 [position]: [marking],
               }
@@ -347,7 +340,7 @@ export default function Markings({
       chordBounds,
       event.markings,
       event.partVoices,
-      (event.position as Minim.Bounds).start,
+      event.position,
       event.rest,
       event.staff,
       event.voice,
@@ -370,34 +363,34 @@ export default function Markings({
           markingsAtPosition
             .sort((a, b) => {
               const lookup =
-                position === "up" ?
-                  Object.keys(regions)
-                : Object.keys(regions).reverse();
+                position === "up"
+                  ? Object.keys(regions)
+                  : Object.keys(regions).reverse();
               return lookup.indexOf(a.name) - lookup.indexOf(b.name);
             })
             .reduce((markingsAcc, { name, properties }, index) => {
               const interval =
-                index === 0 ?
-                  (
-                    properties.region === "note" &&
+                index === 0
+                  ? properties.region === "note" &&
                     properties.noteOnLine &&
                     properties.noteWithinStaff
-                  ) ?
-                    properties.position === "up" ?
-                      3
-                    : -3
-                  : properties.position === "up" ? 2
-                  : -2
-                : properties.position === "up" ? 1
-                : -1;
+                    ? properties.position === "up"
+                      ? 3
+                      : -3
+                    : properties.position === "up"
+                      ? 2
+                      : -2
+                  : properties.position === "up"
+                    ? 1
+                    : -1;
               const pitch = getDiatonicTransposition(
                 properties.pitch,
                 interval,
               );
               const row = `${properties.rowPrefix}${pitch}`;
 
-              return index === 0 ?
-                  {
+              return index === 0
+                ? {
                     column: properties.column,
                     position: properties.position,
                     key: properties.key,

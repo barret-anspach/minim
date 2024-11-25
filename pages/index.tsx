@@ -8,7 +8,7 @@ import { useMeasuresContext } from "../contexts/MeasuresContext";
 const Score = dynamic(() => import("../components/score"), { ssr: false });
 import score from "../fixtures/scores/minim-score-test.json";
 import styles from "./styles.module.css";
-import { bravura } from "../utils/fonts";
+import { bravura } from "../public/fonts";
 import clsx from "clsx";
 
 export default function Minim() {

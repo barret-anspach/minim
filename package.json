@@ -1,8 +1,40 @@
 {
-  "name": "minim",
+  "name": "@quonset/minim",
   "version": "0.0.1",
-  "description": "MNX notation renderer",
   "private": false,
+  "description": "MNX notation renderer",
+  "keywords": [
+    "mnx",
+    "music",
+    "music notation",
+    "notation",
+    "scoring application",
+    "scoring",
+    "music renderer"
+  ],
+  "homepage": "https://github.com/barret-anspach/minim#readme",
+  "bugs": {
+    "url": "https://github.com/barret-anspach/minim/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barret-anspach/minim.git"
+  },
+  "license": "MIT",
+  "author": "Barret Anspach",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/src/index.js",
+      "import": "./dist/esm/src/index.js",
+      "types": "./dist/esm/src/index.d.ts"
+    }
+  },
+  "main": "./dist/cjs/src/index.js",
+  "types": "./dist/esm/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "npm run clean && npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.esm.json && npm run copy-assets:esm",
@@ -13,19 +45,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "npm run build"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/cjs/src/index.js",
-  "module": "./dist/esm/src/index.js",
-  "types": "./dist/esm/src/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/cjs/src/index.js",
-      "import": "./dist/esm/src/index.js",
-      "types": "./dist/esm/src/index.d.ts"
-    }
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -59,5 +78,6 @@
   "engines": {
     "node": ">=20.x"
   },
+  "module": "./dist/esm/src/index.js",
   "engineStrict": true
 }

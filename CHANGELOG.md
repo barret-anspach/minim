@@ -1,3 +1,10 @@
+#### v0.0.4
+
+2025 Dec 19
+
+- Fixed utils/getPitches > `overlapStaffRows()`, where half-space distance was still defined in `rem`, not `em`
+- Fixed and utils/methods > `getColumnArray()`, where note column width was defined in `rem`, not `em`
+
 #### v0.0.3
 
 2025 Dec 19

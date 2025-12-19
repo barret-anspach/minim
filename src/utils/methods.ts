@@ -805,7 +805,7 @@ export function getColumnArray({
     },
     {
       lines: ["trailing-space"],
-      value: `minmax(0.1rem, ${columnWidth})`,
+      value: `minmax(0.1em, ${columnWidth})`,
     },
     {
       lines: ["flow-end", "me-cle"],

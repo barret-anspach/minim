@@ -1,0 +1,36 @@
+.tempo {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: normal;
+  width: fit-content;
+  height: fit-content;
+  gap: 0.5ch;
+  padding-bottom: 0.08rem;
+  border-bottom: 0.04rem solid black;
+  transform: translateY(-0.12rem);
+}
+.pulse,
+.mm {
+  line-height: 1;
+}
+.pulse {
+  height: 0;
+  font-size: 1rem;
+}
+.mm {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: normal;
+  font-size: 0.5rem;
+  font-weight: 500;
+  height: fit-content;
+}
+
+.musicTextFont {
+  font-family: var(--music-text-font, "Bravura Text"), sans-serif;
+}
+.textFont {
+  font-family: var(--text-font, "Inter"), sans-serif;
+}

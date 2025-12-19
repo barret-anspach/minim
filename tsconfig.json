@@ -1,21 +1,28 @@
 {
-  "extends": "@tsconfig/next/tsconfig.json",
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "types/*.d.ts",
-    "types/**/*.d.ts",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"],
   "compilerOptions": {
-    "target": "ES2015",
-    "lib": ["dom", "dom.iterable", "esnext", "es2023"],
+    "target": "es2015",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "rootDir": "./",
+    "baseUrl": "./",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node10",
+    "resolveJsonModule": true,
     "paths": {
-      "@/public/fonts/*": ["./public/fonts/bravura/woff/*"]
+      "@/*": ["./*"]
     }
-  }
+  },
+  "include": [
+    "./src/**/*.tsx",
+    "./src/**/*.ts",
+    "./src/**/styles.module.css",
+    "./src/styles/globals.css",
+    "public/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
 }

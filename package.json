@@ -1,37 +1,63 @@
 {
-  "name": "minim",
-  "private": true,
+  "name": "quonset",
+  "version": "0.0.1",
+  "description": "MNX notation renderer",
+  "private": false,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.esm.json && npm run copy-assets:esm",
+    "build:cjs": "tsc -p tsconfig.cjs.json && npm run copy-assets:cjs",
+    "clean": "rimraf dist/",
+    "copy-assets:esm": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/esm/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/esm/public",
+    "copy-assets:cjs": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/cjs/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/cjs/public",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "types": "./dist/esm/src/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/src/index.js",
+      "import": "./dist/esm/src/index.js",
+      "types": "./dist/esm/src/index.d.ts"
+    }
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
     "clsx": "^2.1.1",
     "lodash.debounce": "^4.0.8",
-    "next": "15",
-    "prettier": "^3.3.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "prettier": "^3.3.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
     "@stylistic/eslint-plugin-js": "^2.11.0",
-    "@tsconfig/next": "^2.0.3",
+    "@tsconfig/node-lts": "^24.0.0",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "22.9.1",
-    "@types/react": "17.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
-    "@typescript-eslint/parser": "^8.15.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "copyfiles": "^2.4.1",
     "csstype": "^3.1.3",
     "eslint": "^9",
-    "eslint-config-next": "^15",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "typescript": "^5.6.3"
+    "rimraf": "^6.1.2",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=20.x"
   },
   "engineStrict": true
 }

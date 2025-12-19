@@ -1,0 +1,33 @@
+.score {
+  background: var(--background);
+  height: fit-content;
+
+  font-family: var(--music-font);
+  box-sizing: border-box;
+  color: var(--color);
+}
+
+.score *,
+.score *:before,
+.score *:after {
+  box-sizing: inherit;
+}
+
+.score a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.score hr {
+  color: currentColor;
+}
+
+.musicFont {
+  font-family: var(--music-font, "Bravura"), sans-serif;
+}
+.musicTextFont {
+  font-family: var(--music-text-font, "Bravura Text"), sans-serif;
+}
+.textFont {
+  font-family: var(--text-font, "Inter"), sans-serif;
+}

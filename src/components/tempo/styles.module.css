@@ -7,7 +7,7 @@
   height: fit-content;
   gap: 0.5ch;
   padding-bottom: 0.08em;
-  border-bottom: 0.04rem solid black;
+  border-bottom: 0.04em solid currentColor;
   transform: translateY(-0.12em);
 }
 .pulse,

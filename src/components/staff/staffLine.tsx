@@ -23,7 +23,7 @@ export default function StaffLine({
       "--pitch": pitch,
       "--start": start,
       "--end": end,
-      "--weight": `${weight}rem`,
+      "--weight": `${weight}em`,
     }),
     [end, pitch, start, weight],
   );

@@ -273,7 +273,7 @@ export default function Markings({
                 (metadata.glyphBBoxes[key].bBoxNE[1] -
                   metadata.glyphBBoxes[key].bBoxSW[1]) /
                 4
-              }rem`
+              }em`
             : "0";
           const marking = {
             name,

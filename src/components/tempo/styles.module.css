@@ -6,9 +6,9 @@
   width: fit-content;
   height: fit-content;
   gap: 0.5ch;
-  padding-bottom: 0.08rem;
+  padding-bottom: 0.08em;
   border-bottom: 0.04rem solid black;
-  transform: translateY(-0.12rem);
+  transform: translateY(-0.12em);
 }
 .pulse,
 .mm {
@@ -16,14 +16,14 @@
 }
 .pulse {
   height: 0;
-  font-size: 1rem;
+  font-size: 1em;
 }
 .mm {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: normal;
-  font-size: 0.5rem;
+  font-size: 0.5em;
   font-weight: 500;
   height: fit-content;
 }

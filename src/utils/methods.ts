@@ -797,7 +797,7 @@ export function getColumnArray({
     },
     {
       lines: ["not"],
-      value: "0.25rem",
+      value: "0.25em",
     },
     {
       lines: ["ste-up"],

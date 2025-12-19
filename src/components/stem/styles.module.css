@@ -1,5 +1,5 @@
 .stem {
-  --stem-length: 1rem;
+  --stem-length: 1em;
   grid-row: var(--pitch);
   grid-column: var(--column);
   height: 100%;

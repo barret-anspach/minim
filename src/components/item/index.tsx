@@ -28,9 +28,9 @@ function Item({
   const style = useMemo(
     () => ({
       "--column": column ?? "e0",
-      "--padEnd": padEnd ? `${padEnd}rem` : "0.1rem",
+      "--padEnd": padEnd ? `${padEnd}em` : "0.1em",
       "--pitch": pitch,
-      "--size": size ? `${size}rem` : "4rem",
+      "--size": size ? `${size}em` : "4em",
     }),
     [column, padEnd, pitch, size],
   );

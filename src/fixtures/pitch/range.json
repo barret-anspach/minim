@@ -658,7 +658,7 @@
           }
         }
       ],
-      "translateY": "-2.5rem",
+      "translateY": "-2.5em",
       "staffLinePitches": [
         {
           "id": "f5",
@@ -737,7 +737,7 @@
           }
         }
       ],
-      "translateY": "-3.25rem",
+      "translateY": "-3.25em",
       "staffLinePitches": [
         {
           "id": "g4",
@@ -816,7 +816,7 @@
           }
         }
       ],
-      "translateY": "-1.125rem",
+      "translateY": "-1.125em",
       "staffLinePitches": [
         {
           "id": "a3",

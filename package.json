@@ -1,6 +1,6 @@
 {
   "name": "@quonset/minim",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "description": "MNX notation renderer",
   "keywords": [
@@ -22,7 +22,6 @@
   },
   "license": "MIT",
   "author": "Barret Anspach",
-  "type": "commonjs",
   "exports": {
     ".": {
       "require": "./dist/cjs/src/index.js",

@@ -101,7 +101,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
     const style = useMemo(
       () => ({
         "--duration": period.dimensions.length,
-        "--indent": index === 0 ? "3rem" : "auto",
+        "--indent": index === 0 ? "3em" : "auto",
         "--rows": rows,
         "--columns": columns,
       }),

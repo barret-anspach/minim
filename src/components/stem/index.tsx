@@ -75,7 +75,7 @@ export default function Stem({
     <>
       <svg
         viewBox={`0 0 1 1`}
-        width={`${metadata.engravingDefaults.stemThickness / 4}rem`}
+        width={`${metadata.engravingDefaults.stemThickness / 4}em`}
         height="100%"
         preserveAspectRatio="none"
         overflow="visible"

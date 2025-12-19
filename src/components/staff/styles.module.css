@@ -1,20 +1,20 @@
 .staff {
   --bounds: 1;
-  --pitches: [b4] 0.125rem;
+  --pitches: [b4] 0.125em;
   --start: m-start;
   --end: m-end;
-  --translateY: 0rem;
+  --translateY: 0em;
   grid-row: var(--bounds);
   grid-column: var(--start) / var(--end);
   display: contents;
-  height: 1rem;
+  height: 1em;
   color: currentColor;
 }
 .staff .line {
   --pitch: b4;
   --start: m-start;
   --end: m-end;
-  --weight: 0.0325rem;
+  --weight: 0.0325em;
   align-self: start;
   grid-row: var(--pitch) / var(--pitch);
   grid-column: var(--start) / var(--end);

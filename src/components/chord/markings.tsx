@@ -133,6 +133,7 @@ export default function Markings({
   pitchPrefix,
   rangeClef,
   stem,
+  ...rest
 }: MarkingsProps) {
   const staffBounds = {
     upper: rangeClef.staffLinePitches[0].id,
@@ -416,10 +417,12 @@ export default function Markings({
     <>
       {markings.map((marking) => (
         <Item
+          data-marking
           key={marking.key}
           className={clsx(styles.markings, styles[marking.position])}
           column={marking.column}
           pitch={marking.row}
+          {...rest}
         >
           {marking.items.map((item, itemIndex) => (
             <span

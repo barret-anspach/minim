@@ -706,10 +706,13 @@ export function getColumnsForPeriod({
   final: boolean;
 }) {
   const uniqueStarts = Object.groupBy(
-    Object.values(flows).flat() as Minim.Event.EventItem[],
+    Object.values(flows).flat() as (
+      | Minim.Event.EventItem
+      | Minim.Event.DisplayItem
+    )[],
     (e) =>
       ["event", "tuplet"].includes(e.type)
-        ? (e.position as Minim.Bounds).start
+        ? ((e as Minim.Event.EventItem).position as Minim.Bounds).start
         : (e as typeof e & Minim.At).at,
   );
 
@@ -717,11 +720,23 @@ export function getColumnsForPeriod({
   // that we can THEN use to insert last columns and properly format
   const columns = Object.entries(uniqueStarts)
     .reduce((acc, [start], index, starts) => {
+      const nextEntryFirstStart =
+        index < starts.length - 1 ? starts[index + 1][1]![0] : null;
+      const nextEntryFirstStartPosition = !nextEntryFirstStart
+        ? null
+        : (
+              nextEntryFirstStart as
+                | Minim.Event.EventItem
+                | Minim.Event.DisplayItem
+            ).type === "displayEvent"
+          ? (nextEntryFirstStart as Minim.Event.DisplayItem).at
+          : (
+              (nextEntryFirstStart as Minim.Event.EventItem)
+                .position as Minim.Bounds
+            ).start;
       const columnWidth =
         index < starts.length - 1
-          ? (starts[index + 1][1]![0].position as Minim.Bounds).start -
-            parseInt(start) +
-            "fr"
+          ? nextEntryFirstStartPosition - parseInt(start) + "fr"
           : end - parseInt(start) + "fr" || "auto";
       if (index === starts.length - 1) {
         // Add start- and end-positions for the last event of a period's flows

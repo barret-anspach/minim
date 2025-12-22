@@ -117,6 +117,7 @@ export default function Dynamic({
   const glyph = dynamicMap.value[dynamicMap.shorthand.indexOf(dynamic.value)];
   return (
     <Item
+      data-dynamic
       className={styles.dynamic}
       column={dynamic.column}
       pitch={dynamic.row}

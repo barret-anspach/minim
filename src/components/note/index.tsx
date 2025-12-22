@@ -14,6 +14,7 @@ import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+// import Duration from "../duration/index.js";
 
 type NoteProps = {
   column: Minim.Grid.Column;
@@ -47,7 +48,17 @@ export default function Note({
   );
   return (
     <>
+      {/* <Duration
+        data-note-duration
+        column={column}
+        event={event}
+        id={`${id}_dur${noteIndex}`}
+        note={note}
+        noteIndex={noteIndex}
+        pitchPrefix={pitchPrefix}
+      /> */}
       <Item
+        data-note
         className={clsx(styles.notehead, className)}
         key={key}
         column={column}

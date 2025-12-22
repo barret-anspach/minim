@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import clsx from "clsx";
 
 import styles from "./styles.module.css";
@@ -16,14 +16,20 @@ export default function Event({
   className,
   beat,
   pitch,
-}: React.PropsWithChildren<EventProps>) {
+  ...rest
+}: PropsWithChildren<EventProps>) {
   const style = useMemo(
     () => ({ "--beat": beat, "--pitch": pitch }),
     [beat, pitch],
   );
 
   return (
-    <span className={clsx(styles.event, className)} style={style}>
+    <span
+      data-event
+      className={clsx(styles.event, className)}
+      style={style}
+      {...rest}
+    >
       {children}
     </span>
   );

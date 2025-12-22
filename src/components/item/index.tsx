@@ -24,6 +24,7 @@ function Item({
   pitch,
   size,
   text = false,
+  ...rest
 }: PropsWithChildren<ItemProps>) {
   const style = useMemo(
     () => ({
@@ -43,6 +44,7 @@ function Item({
         className,
       ])}
       style={style}
+      {...rest}
     >
       {children}
     </span>

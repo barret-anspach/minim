@@ -43,6 +43,7 @@ function Barline({
 
   return (
     <div
+      data-barline
       className={clsx(
         styles.barline,
         separation && styles.separation,

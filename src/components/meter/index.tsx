@@ -59,7 +59,7 @@ export default function Meter({
     case "regular":
     default: {
       return (
-        <StaffDisplayItem type="tim" start={start}>
+        <StaffDisplayItem type="tim" start={start} data-meter>
           <Item pitch={meter.numerator.pitch}>
             {meter.numerator.glyphs.map((glyph) => glyph)}
           </Item>

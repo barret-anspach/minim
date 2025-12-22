@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { PropsWithChildren } from "react";
 
 import styles from "./styles.module.css";
 
@@ -15,7 +16,8 @@ function StaffDisplayItem({
   children,
   type,
   start,
-}: React.PropsWithChildren<StaffDisplayItemProps>) {
+  ...rest
+}: PropsWithChildren<StaffDisplayItemProps>) {
   return (
     <span
       className={clsx(
@@ -25,6 +27,7 @@ function StaffDisplayItem({
         start.includes("me-") && styles.end,
       )}
       style={{ "--start": start }}
+      {...rest}
     >
       {children}
     </span>

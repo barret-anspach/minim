@@ -1,6 +1,13 @@
 "use client";
 
-import { FC, useCallback, useLayoutEffect, useRef, useState } from "react";
+import {
+  FC,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
 
@@ -21,8 +28,13 @@ const Score: FC<ScoreProps> = function ({ className }) {
     context: { initialized, periods },
   } = useMeasuresContext();
   const periodRefs = useRef<HTMLDivElement[]>([]);
+  const initialPeriodPositions = useMemo(
+    () =>
+      Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+    [periods],
+  );
   const [periodPositions, setPeriodPositions] = useState<boolean[]>(
-    Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+    initialPeriodPositions,
   );
   // TODO: In using periodPositions to determine which periods are in a given system,
   // we can set flex–basis on periods to "soften" some of flexbox's spacing choices,
@@ -63,13 +75,20 @@ const Score: FC<ScoreProps> = function ({ className }) {
           (entries) => {
             const firstChildOffsetLeft = (entries[0].target as HTMLDivElement)
               .offsetLeft;
-            const newArr = [...periodPositions];
+            const newArr = [
+              ...(periodPositions.length === 0
+                ? initialPeriodPositions
+                : periodPositions),
+            ];
             for (let i = 0; i < entries.length; i++) {
               newArr[i] =
                 (entries[i].target as HTMLDivElement).offsetLeft ===
                 firstChildOffsetLeft;
             }
-            if (periodPositions.some((p, i) => p !== newArr[i])) {
+            if (
+              newArr.length !== periodPositions.length ||
+              periodPositions.some((p, i) => p !== newArr[i])
+            ) {
               setPeriodPositions(newArr);
               // setSystems(getSystemsFromPeriodPositions(newArr));
             }
@@ -97,7 +116,7 @@ const Score: FC<ScoreProps> = function ({ className }) {
       observer.disconnect();
       window.removeEventListener("beforeprint", onResize);
     };
-  }, [getSystemsFromPeriodPositions, periodPositions]);
+  }, [getSystemsFromPeriodPositions, periodPositions, initialPeriodPositions]);
 
   return initialized ? (
     <main className={clsx(styles.score, className)} role="main">

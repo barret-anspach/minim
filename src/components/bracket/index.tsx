@@ -125,7 +125,7 @@ export default function Bracket({
     }
     case "brace": {
       return (
-        <div className={styles.brace} style={style}>
+        <div className={styles.brace} style={style} data-brace>
           <Brace size={size} />
         </div>
       );
@@ -133,7 +133,7 @@ export default function Bracket({
     case "bracket":
     default: {
       return (
-        <div className={styles.bracket} style={style}>
+        <div className={styles.bracket} style={style} data-bracket>
           <span className={styles.bracketTop}></span>
           <div className={styles.bracketBar} />
           <span className={styles.bracketBottom}></span>

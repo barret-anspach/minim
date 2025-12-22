@@ -42,18 +42,19 @@
 .legerLine {
   position: relative;
   justify-self: start;
-  width: 100%;
+  width: 120%;
+  left: -20%;
 }
 .legerLine:after {
   content: "";
   position: absolute;
   border-bottom: 0.0325em solid currentColor;
   width: calc(100% + 0.27em);
-  transform: translate(-0.12rem, -50%);
+  transform: translateX(-0.12rem);
 }
 .wide:after {
   width: calc(100% + 0.37em);
-  transform: translate(-0.17rem, -50%);
+  transform: translateX(-0.17rem);
 }
 
 .tie {

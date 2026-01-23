@@ -77,6 +77,9 @@ export function overlapStaffRows(
   staves: Minim.Layout.Staff[],
   options = defaultOptions,
 ) {
+  if (staves.length === 1) {
+    return staves[0].pitches;
+  }
   const result: string[][] = staves.reduce(
     (acc, staff, i, staves) => {
       // Compare only two staves at a time.

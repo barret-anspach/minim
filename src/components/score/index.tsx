@@ -1,6 +1,13 @@
 "use client";
 
-import { FC, useCallback, useLayoutEffect, useRef, useState } from "react";
+import {
+  FC,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
 
@@ -20,6 +27,10 @@ const Score: FC<ScoreProps> = function ({ className }) {
   const {
     context: { initialized, periods },
   } = useMeasuresContext();
+  const periodKeysLength = useMemo(
+    () => Object.keys(periods).length,
+    [periods],
+  );
   const periodRefs = useRef<HTMLDivElement[]>([]);
   const [periodPositions, setPeriodPositions] = useState<boolean[]>(
     Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
@@ -57,6 +68,14 @@ const Score: FC<ScoreProps> = function ({ className }) {
   );
 
   useLayoutEffect(() => {
+    if (periodKeysLength > 0) {
+      setPeriodPositions(
+        Array.from({ length: periodKeysLength }, (_, i) => i === 0),
+      );
+    }
+  }, [periodKeysLength]);
+
+  useLayoutEffect(() => {
     function onResize() {
       const observer = new ResizeObserver(
         debounce(
@@ -89,6 +108,7 @@ const Score: FC<ScoreProps> = function ({ className }) {
 
       return observer;
     }
+
     const observer = onResize();
     // Calculate layout/period positions when printing
     window.addEventListener("beforeprint", onResize);

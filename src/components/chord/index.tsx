@@ -68,7 +68,7 @@ export default function Chord({ clef, event, id, period }: ChordProps) {
   return (
     <Fragment key={id}>
       <LegerLines event={event} id={pitchPrefix} />
-      <Rest event={event} id={pitchPrefix} />
+      <Rest event={event} id={pitchPrefix} pitchPrefix={pitchPrefix} />
 
       {event.notes &&
         event.notes.map((note, noteIndex) => (

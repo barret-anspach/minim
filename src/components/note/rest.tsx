@@ -12,9 +12,10 @@ type Props = {
     position: Minim.Bounds;
   };
   id: string;
+  pitchPrefix: string;
 };
 
-export default function Rest({ event, id }: Props) {
+export default function Rest({ event, id, pitchPrefix }: Props) {
   const key = useMemo(() => `${id}_res`, [id]);
   const column = useMemo(
     () => `e${event.position.start}-not`,
@@ -22,7 +23,7 @@ export default function Rest({ event, id }: Props) {
   );
   // TODO: Calculate Rest position
   const pitch = useMemo(
-    () => `${event.flowId}s${event.staff}b4`,
+    () => `${pitchPrefix}s${event.staff}b4`,
     [event.flowId, event.staff],
   );
   return event.rest && event.display !== "none" && event.duration ? (

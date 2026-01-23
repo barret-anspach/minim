@@ -19,7 +19,7 @@ type Context = {
   periods: Minim.Period.PeriodItem[];
 };
 
-type SetFlowProps = { flow: Minim.Document.FlowItem };
+type SetFlowProps = { flow: Minim.Document.FlowItem; flowIndex: number };
 type SetFlowPayloadProps = Minim.Component.Flow;
 type UpdatePeriodProps = {
   key: string;
@@ -147,8 +147,8 @@ const MeasuresContextProvider = ({
       reset: () => {
         dispatch({ type: "reset", payload: null });
       },
-      setFlow: ({ flow }: SetFlowProps) => {
-        const payload: SetFlowPayloadProps = setFlow({ flow });
+      setFlow: ({ flow, flowIndex }: SetFlowProps) => {
+        const payload: SetFlowPayloadProps = setFlow({ flow, flowIndex });
         dispatch({ type: "setFlow", payload });
       },
       setPeriods: () => {

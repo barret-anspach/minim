@@ -589,12 +589,23 @@ export function getLegerLines({
   return legerLines.length === 0 ? null : [...new Set(legerLines.flat())];
 }
 
+export function getFlowId({
+  flow,
+  flowIndex,
+}: {
+  flow: Partial<Minim.Component.Flow | Minim.Document.FlowItem>;
+  flowIndex: number;
+}) {
+  return flow.id ?? `flo${flowIndex}`;
+}
+
 export function decorateEvent({
   event,
   i,
   acc,
   flowId,
   voice,
+  voiceIndex,
   voiceItem = null,
   part,
   partIndex,
@@ -604,10 +615,13 @@ export function decorateEvent({
   acc: Minim.Event.EventItem[];
   flowId: MNX.Defs.ID;
   voice: Minim.Part.Sequence;
+  voiceIndex: Minim.Defs.Index;
   voiceItem?: Minim.Event.EventGroup | null;
-  part: Minim.Part.PartItem;
+  part: Minim.Part.PartItem & MNX.Part.PartItem;
   partIndex: Minim.Defs.Index;
 }) {
+  const partId = part.id ?? `${flowId}_par${partIndex}`;
+  const id = event.id ?? `${partId}_voi${voice.voice ?? voiceIndex}_eve${i}`;
   const _duration =
     event.type === "tuplet"
       ? event.outer.duration !== undefined
@@ -627,9 +641,10 @@ export function decorateEvent({
     acc[acc.length - 1].staff !== staffNumber;
   const prevEventPosition =
     acc.length > 0
-      ? !["event", "tuplet"].includes(acc[acc.length - 1].type)
-        ? (acc[acc.length - 1].position as Minim.At).at
-        : (acc[acc.length - 1].position as Minim.Bounds).end
+      ? ["event", "tuplet"].includes(acc[acc.length - 1].type) ||
+        !("type" in acc[acc.length - 1])
+        ? (acc[acc.length - 1].position as Minim.Bounds).end
+        : (acc[acc.length - 1].position as Minim.At).at
       : 0;
   const positionStart = positionRestartConditions ? 0 : prevEventPosition;
   const position =
@@ -643,45 +658,64 @@ export function decorateEvent({
       : ({
           at: positionStart,
         } as Minim.At);
-  acc.push({
+  const partVoices =
+    "sequences" in part
+      ? part.sequences.length
+      : (part as MNX.Part.PartItem).measures.reduce(
+          (pmAcc, pmeas) => Math.max(pmAcc, pmeas.sequences.length),
+          0,
+        );
+  const clefs = getPartClefsForPart({ part });
+  const decoratedEvent: Minim.Event.EventItem = {
     ...event,
-    renderId: `${event.id}_rep${i}`,
+    renderId: `${id}_rep${i}`,
     flowId,
-    partId: part.id,
+    partId,
     partIndex,
-    partVoices: part.sequences.length,
+    partVoices,
     // TODO: rename to 'voiceNumber'
     voice: voiceNumber,
     eventGroup: voiceItem,
-    clef: part.global.clefs[staffNumber - 1],
-    clefs: part.global.clefs,
+    clef: clefs[staffNumber - 1],
+    clefs,
     // TODO: rename to 'staffNumber'
     staff: staffNumber,
-    staves: Array.from({ length: part.global.staves || 1 }, (_, i) => i + 1),
+    staves: Array.from({ length: part.global?.staves || 1 }, (_, i) => i + 1),
     index: acc[acc.length - 1] ? acc[acc.length - 1]?.index + i + 1 : i,
     position,
     dimensions: {
       length: _duration,
     },
-  });
+  };
+  if (!("type" in decoratedEvent)) {
+    (decoratedEvent as Minim.Event.EventItem).type = "event";
+  }
+  acc.push(decoratedEvent);
 }
 
-export function getStavesForFlow(flow: Minim.Document.FlowItem) {
+export function getStavesForFlow({
+  flow,
+  flowIndex,
+}: {
+  flow: Minim.Document.FlowItem;
+  flowIndex: number;
+}) {
+  const flowId = getFlowId({ flow, flowIndex });
   return (flow.parts as Minim.Part.PartItem[]).map((part, partIndex) => ({
     part: {
       ...part,
       partIndex,
     },
-    staves: Array.from({ length: part.global.staves || 1 }, (_, i) => {
+    staves: Array.from({ length: part.global?.staves || 1 }, (_, i) => {
       const clef = {
-        ...part.global.clefs.find((c) => c.staff === i + 1),
+        ...getPartClefsForPart({ part }).find((c) => (c.staff ?? 1) === i + 1),
         partIndex,
       };
       const { pitches, pitchesArray, prefix, rangeClef, staffBounds } =
-        getPitches(clef?.clef, `${flow.id}p${partIndex}s${i + 1}`);
+        getPitches(clef?.clef, `${flowId}p${partIndex}s${i + 1}`);
       return {
         clef,
-        flowId: flow.id,
+        flowId,
         partIndex,
         pitches,
         pitchesArray,
@@ -839,6 +873,45 @@ export function getColumnArray({
   return result;
 }
 
+export function getPartClefsForPart({
+  part,
+}: {
+  part: MNX.Part.PartItem & Minim.Part.PartItem;
+}) {
+  return (
+    part.global?.clefs ??
+    part.measures.reduce(
+      (measAcc, meas) => [...(measAcc ?? []), ...(meas.clefs ?? [])],
+      [] as MNX.Part.Clef[],
+    )
+  );
+}
+
+export function getMeasureClefsForPart({
+  part,
+  partIndex,
+}: {
+  part: MNX.Part.PartItem & Minim.Part.PartItem;
+  partIndex: number;
+}): Minim.Event.MeasureClef[] {
+  return (
+    part.global?.clefs?.map((clef) => ({
+      ...clef,
+      partIndex,
+    })) ??
+    part.measures.reduce(
+      (measAcc, meas) => [
+        ...(measAcc ?? []),
+        ...(meas.clefs
+          ? meas.clefs.map((clef) => ({ ...clef, partIndex }))
+          : []),
+      ],
+      [] as Minim.Event.MeasureClef[],
+    )
+  );
+}
+
+/** Evaluate clef sign and position equivalency */
 export function areClefsEqual(
   clefsA: MNX.Part.Clef[],
   clefsB: MNX.Part.Clef[],
@@ -877,19 +950,55 @@ export function getRowString(
   return rowString;
 }
 
+export function getOrCreateFlowLayoutByLayoutID({
+  flow,
+  layoutId,
+}: {
+  flow: Minim.Component.Flow | Minim.Document.FlowItem;
+  layoutId: MNX.Defs.ID;
+}) {
+  return (
+    flow.layouts?.find(
+      (layout) =>
+        layout.id ===
+        (layoutId ??
+          (
+            (flow.type === "componentFlow"
+              ? flow.measures
+              : flow.global.measures) as Minim.Document.MeasureItem[]
+          ).find((m: Minim.Document.MeasureItem) => m.layout)?.layout),
+    ) ?? {
+      id: layoutId,
+      content: flow.parts.map((part, partIndex) => ({
+        type: "staff",
+        sources: Array.from(
+          { length: part.global?.staves ?? 1 },
+          (_, i) => i,
+        ).map((staffIndex) => ({
+          part: part.id ?? partIndex.toString(),
+          staff: staffIndex + 1,
+        })),
+      })),
+    }
+  );
+}
+
 export function getFlowLayoutAtPoint({
   at,
   flow,
+  flowIndex,
   clefs,
   point,
   layoutId,
 }: {
   at: Minim.Defs.StartOrEnd;
   flow: Minim.Component.Flow | Minim.Document.FlowItem;
+  flowIndex: number;
   clefs: Minim.Event.MeasureClef[];
   point: Minim.DisplayUnit.Position;
   layoutId?: MNX.Defs.ID;
 }) {
+  const flowId = getFlowId({ flow, flowIndex });
   function group(
     content: MNX.Layout.SystemLayoutContentItem[],
   ): Minim.Layout.SystemLayoutContentItem[] {
@@ -899,26 +1008,19 @@ export function getFlowLayoutAtPoint({
           ? {
               ...item,
               type: item.type,
-              flowId: flow.id,
+              flowId,
               content: group(item.content),
               symbol: item.symbol,
             }
-          : item, // item.type === "staff"
+          : { ...item, flowId }, // item.type === "staff"
     );
   }
 
-  const layout = flow.layouts.find(
-    (layout) =>
-      layout.id ===
-      (layoutId ??
-        (
-          (flow.type === "componentFlow"
-            ? flow.measures
-            : flow.global.measures) as Minim.Document.MeasureItem[]
-        ).find((m: Minim.Document.MeasureItem) => m.layout)?.layout),
-  );
+  const layout = getOrCreateFlowLayoutByLayoutID({ flow, layoutId });
   const groups = group(layout!.content);
-  const partIds = flow.parts.map((part) => part.id);
+  const partIds = flow.parts.map(
+    (part, partIndex) => part.id ?? partIndex.toString(),
+  );
 
   function getGroupRow(
     group: Minim.Layout.SystemLayoutContentItem,
@@ -935,7 +1037,7 @@ export function getFlowLayoutAtPoint({
                 memberSourceIndex,
                 memberSources,
                 clefs,
-                flow.id,
+                flowId,
                 partIds,
               ),
           );
@@ -944,7 +1046,7 @@ export function getFlowLayoutAtPoint({
     } else {
       // type="staff"
       return group.sources.flatMap((member, memberIndex, members) =>
-        getRowString(member, memberIndex, members, clefs, flow.id, partIds),
+        getRowString(member, memberIndex, members, clefs, flowId, partIds),
       );
     }
   }
@@ -960,6 +1062,7 @@ export function getFlowLayoutAtPoint({
 export function getFlowLayoutBarlinesAtPoint({
   at,
   flow,
+  flowIndex,
   clefs,
   point,
   measure,
@@ -967,6 +1070,7 @@ export function getFlowLayoutBarlinesAtPoint({
 }: {
   at: Minim.Defs.StartOrEnd;
   flow: Minim.Component.Flow | Minim.Document.FlowItem;
+  flowIndex: number;
   clefs: Minim.Event.MeasureClef[];
   point: Minim.DisplayUnit.Position;
   measure: Minim.Event.Measure;
@@ -975,6 +1079,7 @@ export function getFlowLayoutBarlinesAtPoint({
   const groups = getFlowLayoutAtPoint({
     at,
     flow,
+    flowIndex,
     clefs,
     point,
     layoutId: measure.layout,
@@ -983,8 +1088,10 @@ export function getFlowLayoutBarlinesAtPoint({
     // TODO: should account for measure.repeatCount
     const isLastMeasure =
       measureIndex ===
-      (flow.type === "documentFlow" ? flow.global.measures : flow.measures)
-        .length -
+      (flow.type === "documentFlow" || !flow.type
+        ? (flow as Minim.Document.FlowItem).global.measures
+        : flow.measures
+      ).length -
         1;
     return {
       ...group,

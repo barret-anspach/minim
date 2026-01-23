@@ -5,6 +5,7 @@
   grid-row: var(--row);
   grid-column: var(--column);
   margin-right: 0.1rem;
+  font-size: 1rem;
 }
 
 .brace {

@@ -5,12 +5,25 @@ import {
   getBeamGroupStem,
   getStavesForFlow,
   getFlowLayoutAtPoint,
+  getMeasureClefsForPart,
+  getOrCreateFlowLayoutByLayoutID,
+  getFlowId,
 } from "./../utils/methods.js";
 
 import { Minim } from "./../types/minim/index.js";
 import { MNX } from "./../types/mnx/index.js";
+import { KEY_DEFAULT, TIME_DEFAULT } from "../constants/defaults.js";
 
-export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
+export function setFlow({
+  flow,
+  flowIndex,
+}: {
+  flow: Minim.Document.FlowItem;
+  flowIndex: number;
+}) {
+  const isMNX = flow.parts.some((part) => part.measures);
+
+  const id = getFlowId({ flow, flowIndex });
   const layoutEvents: Minim.Event.Layout[] = [];
 
   // TODO: To add: TEMPO
@@ -20,14 +33,12 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
       const duration = m.time
         ? timeSignatureToDuration(m.time.count, m.time.unit)
         : acc[acc.length - 1].dimensions.length;
-      const clefs = Array.from(
+      // Grab clefs either from each part's global defs, or from parts' measure defs.
+      const clefs: Minim.Event.MeasureClef[] = Array.from(
         { length: flow.parts.length },
         (_, i) => i,
       ).flatMap((partIndex) =>
-        flow.parts[partIndex].global.clefs.map((clef) => ({
-          ...clef,
-          partIndex,
-        })),
+        getMeasureClefsForPart({ part: flow.parts[partIndex], partIndex }),
       );
 
       const count = Array.from({ length: m.repeatCount ?? 1 }, (_, i) => i);
@@ -39,12 +50,12 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
         const measure: Minim.Event.Measure = {
           ...m,
           type: "measureEvent",
-          id: `${flow.id}m${mi}r${i}`,
-          key: m.key ?? acc.at(-1)!.key,
+          id: `${id}m${mi}r${i}`,
+          key: m.key ?? acc.at(-1)?.key ?? KEY_DEFAULT,
           clefs,
-          tempos: m.tempos ?? acc.at(-1)!.tempos,
-          time: m.time ?? acc.at(-1)!.time,
-          layout: m.layout ?? acc.at(-1)!.layout,
+          tempos: m.tempos ?? acc.at(-1)?.tempos,
+          time: m.time ?? acc.at(-1)?.time ?? TIME_DEFAULT,
+          layout: m.layout ?? acc.at(-1)?.layout,
           dimensions: {
             length: duration,
           },
@@ -55,6 +66,7 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
         };
         const layout = getFlowLayoutBarlinesAtPoint({
           flow: flow as Minim.Document.FlowItem,
+          flowIndex,
           clefs,
           at: "start",
           point: start,
@@ -67,22 +79,23 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
         layoutEvents.push(
           {
             type: "layoutEvent",
-            id: `${flow.id}m${mi + i}e${start}`,
+            id: `${id}m${mi + i}e${start}`,
             at: start,
             eventType: "measureStart",
             measureBounds: { start, end },
-            flowId: flow.id,
+            flowId: id,
             layoutGroups: layout,
           },
           {
             type: "layoutEvent",
-            id: `${flow.id}m${mi + i}e${end}`,
+            id: `${id}m${mi + i}e${end}`,
             at: end,
             eventType: "measureEnd",
             measureBounds: { start, end },
-            flowId: flow.id,
+            flowId: id,
             layoutGroups: getFlowLayoutBarlinesAtPoint({
               flow,
+              flowIndex,
               clefs,
               at: "end",
               point: end,
@@ -97,54 +110,103 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
     [],
   );
 
+  function decorateEvents({
+    acc,
+    part,
+    partIndex,
+    voice,
+    voiceIndex,
+    voiceItem,
+  }: {
+    acc: Minim.Event.EventItem[];
+    part: MNX.Part.PartItem;
+    partIndex: number;
+    voice: Minim.Part.Sequence;
+    voiceIndex: Minim.Defs.Index;
+    voiceItem: Minim.Part.SequenceItemOrGroup;
+  }) {
+    const count = Array.from(
+      {
+        length:
+          "repeatCount" in voiceItem && voiceItem.repeatCount !== undefined
+            ? voiceItem.repeatCount
+            : 1,
+      },
+      (_, i) => i,
+    );
+
+    for (const i of count) {
+      if (voiceItem.type === "group") {
+        voiceItem.sequence.map((event) =>
+          decorateEvent({
+            acc,
+            event,
+            flowId: id,
+            i,
+            part: part as Minim.Part.PartItem,
+            partIndex,
+            voice,
+            voiceIndex,
+            voiceItem,
+          }),
+        );
+      } else {
+        decorateEvent({
+          acc,
+          event: voiceItem,
+          flowId: id,
+          i,
+          part: part as Minim.Part.PartItem,
+          partIndex,
+          voice,
+          voiceIndex,
+        });
+      }
+    }
+  }
+
   const events: Minim.Event.EventItem[] = flow.parts.reduce(
     (acc, part, partIndex) => {
-      (part as Minim.Part.PartItem).sequences.map((voice) =>
-        voice.content.map((voiceItem) => {
-          const count = Array.from(
-            {
-              length:
-                "repeatCount" in voiceItem &&
-                voiceItem.repeatCount !== undefined
-                  ? voiceItem.repeatCount
-                  : 1,
-            },
-            (_, i) => i,
+      if ("sequences" in part) {
+        (part as Minim.Part.PartItem).sequences.forEach((voice, voiceIndex) =>
+          voice.content.forEach((voiceItem) => {
+            decorateEvents({
+              acc,
+              part,
+              partIndex,
+              voice,
+              voiceIndex,
+              voiceItem,
+            });
+          }),
+        );
+      } else {
+        (part as MNX.Part.PartItem).measures.forEach((measure) => {
+          measure.sequences.forEach(
+            (voice: MNX.Part.Sequence & Minim.Part.Sequence, voiceIndex) =>
+              (voice.content as Minim.Part.SequenceItemOrGroup[]).forEach(
+                (voiceItem) => {
+                  decorateEvents({
+                    acc,
+                    part,
+                    partIndex,
+                    voice,
+                    voiceIndex,
+                    voiceItem,
+                  });
+                },
+              ),
           );
-          for (const i of count) {
-            if (voiceItem.type === "group") {
-              voiceItem.sequence.map((event) =>
-                decorateEvent({
-                  acc,
-                  event,
-                  flowId: flow.id,
-                  i,
-                  part: part as Minim.Part.PartItem,
-                  partIndex,
-                  voice,
-                  voiceItem,
-                }),
-              );
-            } else {
-              decorateEvent({
-                acc,
-                event: voiceItem,
-                flowId: flow.id,
-                i,
-                part: part as Minim.Part.PartItem,
-                partIndex,
-                voice,
-              });
-            }
-          }
-        }),
-      );
+        });
+      }
+
       return acc;
     },
     [],
   );
 
   const dynamics = events.filter((e) => e.type === "dynamic");
+
   const eventsWithDynamicsAsMarkings = events
     .filter((e): e is Minim.Event.DecoratedDefaultEvent => e.type === "event")
     .map((event) => {
@@ -155,6 +217,7 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
           dynamic.partIndex === event.partIndex &&
           dynamic.staff === event.staff,
       );
+
       if (dynamic) {
         return {
           ...event,
@@ -172,13 +235,32 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
       }
     });
 
-  const eventGroupsWithBeams = events.filter(
-    (e) =>
-      "eventGroup" in e &&
-      e.eventGroup !== null &&
-      e.eventGroup.beams &&
-      e.eventGroup.beams.length > 0,
-  );
+  // TODO: can we distinguish between whether this flow is a Minim (sequence) flow or an MNX (measure) flow?
+  // If so, ternary where if MNX ? events.filter(...) : flow.parts.flatMap(...)
+  const eventGroupsWithBeams = !isMNX
+    ? events.filter(
+        (e) =>
+          "eventGroup" in e &&
+          e.eventGroup !== null &&
+          e.eventGroup.beams &&
+          e.eventGroup.beams.length > 0,
+      )
+    : flow.parts
+        .flatMap((part) => part.measures.flatMap((meas) => meas.beams))
+        .flatMap((beamListItem, beamListItemIndex) =>
+          beamListItem.events.map((e) => ({
+            ...events.find((ev) => e === ev.id),
+            eventGroup: {
+              type: "group",
+              id: `grp${beamListItemIndex}`,
+              sequence: events.filter((ev) =>
+                beamListItem.events.includes(ev.id),
+              ),
+              beams: [beamListItem],
+            } as Minim.Event.EventGroup,
+          })),
+        );
+
   const beamGroups =
     eventGroupsWithBeams.length === 0
       ? []
@@ -230,12 +312,16 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
           })),
         );
 
-  const staves = getStavesForFlow(flow);
+  const staves = getStavesForFlow({ flow, flowIndex });
 
-  const layoutGroups = flow.layouts.flatMap((layout) =>
+  const layouts = flow.layouts ?? [
+    getOrCreateFlowLayoutByLayoutID({ flow, layoutId: `sco0_flo0_lay0` }),
+  ];
+  const layoutGroups = layouts.flatMap((layout) =>
     getFlowLayoutAtPoint({
       at: "start",
       flow,
+      flowIndex,
       clefs: staves.flatMap((group) =>
         group.staves.flatMap((staff) => staff.clef),
       ),
@@ -248,9 +334,9 @@ export function setFlow({ flow }: { flow: Minim.Document.FlowItem }) {
     beamEvents,
     beamGroups,
     events: eventsWithDynamicsAsMarkings,
-    id: flow.id,
+    id,
     measures: measureEvents,
-    layouts: flow.layouts,
+    layouts,
     layoutEvents: layoutEvents,
     layoutGroups,
     parts: flow.parts,

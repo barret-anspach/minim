@@ -6,7 +6,6 @@ import { MeasuresContextProvider } from "./contexts/MeasuresContext.js";
 import type { Minim } from "./types/minim/index.js";
 
 import "./styles/globals.css";
-import clsx from "clsx";
 
 export default function Minim({
   score,
@@ -18,7 +17,7 @@ export default function Minim({
 }) {
   return (
     <MeasuresContextProvider>
-      <View className={clsx("minim", className)} score={score} {...rest} />
+      <View className={className} score={score} {...rest} />
     </MeasuresContextProvider>
   );
 }

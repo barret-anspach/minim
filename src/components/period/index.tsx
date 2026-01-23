@@ -122,7 +122,8 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
           flow.layoutGroups.map((group, groupIndex) => (
             <Fragment key={`${flowId}per${index}grp${groupIndex}_system-start`}>
               {(index === 0 || systemStart) &&
-                period.measures[flowId].length > 0 && (
+                period.measures[flowId].length > 0 &&
+                !!group.symbol && (
                   <Bracket
                     type={group.symbol}
                     column={`e${period.position.start}-bracket`}

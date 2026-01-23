@@ -18,15 +18,15 @@ export default function View({ className, score, ...rest }: Props) {
   const { actions } = useMeasuresContext();
 
   useEffect(() => {
-    score.content.forEach((flow) => {
-      actions.setFlow({ flow });
+    score.content.forEach((flow, flowIndex) => {
+      actions.setFlow({ flow, flowIndex });
       actions.setPeriods();
     });
   }, [actions, score.content]);
 
   return (
     <Score
-      className={clsx(styles.score, styles.musicFont, className)}
+      className={clsx("minim", styles.score, styles.musicFont, className)}
       {...rest}
     />
   );

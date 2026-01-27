@@ -235,8 +235,25 @@ export function setFlow({
       }
     });
 
-  // TODO: can we distinguish between whether this flow is a Minim (sequence) flow or an MNX (measure) flow?
-  // If so, ternary where if MNX ? events.filter(...) : flow.parts.flatMap(...)
+  // TODO: beam.events can be nested in MNX
+  function parseBeams(beams: MNX.Defs.BeamListItem[]) {
+    return beams.flatMap((beamListItem, beamListItemIndex) => {
+      let res = beamListItem.events.map((e) => ({
+        ...events.find((ev) => e === ev.id),
+        eventGroup: {
+          type: "group",
+          id: `grp${beamListItemIndex}`,
+          sequence: events.filter((ev) => beamListItem.events.includes(ev.id)),
+          beams: beamListItem.beams,
+        } as Minim.Event.EventGroup,
+      }));
+      if (beamListItem.beams?.length > 0) {
+        res = [...res, ...parseBeams(beamListItem.beams)];
+      }
+      return res;
+    });
+  }
+
   const eventGroupsWithBeams = !isMNX
     ? events.filter(
         (e) =>
@@ -245,21 +262,11 @@ export function setFlow({
           e.eventGroup.beams &&
           e.eventGroup.beams.length > 0,
       )
-    : flow.parts
-        .flatMap((part) => part.measures.flatMap((meas) => meas.beams))
-        .flatMap((beamListItem, beamListItemIndex) =>
-          beamListItem.events.map((e) => ({
-            ...events.find((ev) => e === ev.id),
-            eventGroup: {
-              type: "group",
-              id: `grp${beamListItemIndex}`,
-              sequence: events.filter((ev) =>
-                beamListItem.events.includes(ev.id),
-              ),
-              beams: [beamListItem],
-            } as Minim.Event.EventGroup,
-          })),
-        );
+    : parseBeams(
+        flow.parts.flatMap((part) =>
+          part.measures.flatMap((meas) => meas.beams),
+        ),
+      );
 
   const beamGroups =
     eventGroupsWithBeams.length === 0
@@ -267,6 +274,7 @@ export function setFlow({
       : eventGroupsWithBeams
           .reduce(
             (acc, event) => {
+              // TODO: This is all wrong now. Redo the whole beam thing, please.
               const b = event.eventGroup!.beams!.flatMap((beam) => beam.events);
               const bJSON = JSON.stringify(b);
               if (!acc.seen.has(bJSON)) {

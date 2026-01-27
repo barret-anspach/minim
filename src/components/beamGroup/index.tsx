@@ -69,7 +69,7 @@ export function BeamGroup({ beamGroup, prefix }: BeamGroupProps) {
                 column={column}
                 pitch={getDiatonicTransposition(
                   pitch,
-                  direction === "up" ? 2 * subBeam : -2 * subBeam,
+                  direction === "up" ? -2 * subBeam : 2 * subBeam,
                 )}
               />
             ),

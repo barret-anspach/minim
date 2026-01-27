@@ -115,7 +115,7 @@ export default function Stem({
             getDiatonicTransposition(
               beam.pitch,
               getSubBeamCountFromBeamEvent(event) *
-                (beam.direction === "up" ? 2 : -2),
+                (beam.direction === "up" ? -2 : 2),
             ),
           )}
         />

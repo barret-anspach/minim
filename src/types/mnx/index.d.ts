@@ -53,6 +53,11 @@ export namespace MNX {
       "2048th" = "2048th",
       "4096th" = "4096th",
     }
+    export enum BeamHookDirection {
+      left = "left",
+      right = "right",
+      auto = "auto",
+    }
     export enum EnclosureSymbol {
       parentheses = "parentheses",
       brackets = "brackets",
@@ -92,9 +97,9 @@ export namespace MNX {
       enclosure?: Enclosure;
     };
     export type BeamListItem = {
+      direction?: MNX.Defs.BeamHookDirection;
       events: ID[];
-      hooks?: Hook[];
-      inner?: BeamListItem[];
+      beams?: BeamListItem[];
     };
     export type Breath = {
       symbol?: string;

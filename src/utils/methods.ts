@@ -316,12 +316,12 @@ export function getDiatonicInterval(
     b: getPitchParts(b),
   };
   if (_res.a.octave === _res.b.octave) {
-    return _res.a.stepIndex - _res.b.stepIndex;
+    return _res.b.stepIndex - _res.a.stepIndex;
   } else {
     return (
-      _res.a.octave * 7 +
-      _res.a.stepIndex -
-      (_res.b.octave * 7 + _res.b.stepIndex)
+      _res.b.octave * 7 +
+      _res.b.stepIndex -
+      (_res.a.octave * 7 + _res.a.stepIndex)
     );
   }
 }
@@ -366,7 +366,7 @@ export function getStemDirectionForChord(
     const isMidline = Math.sign(getDiatonicInterval(midline, pitch));
     return {
       bounds,
-      direction: isMidline > 0 ? "up" : "down",
+      direction: isMidline > 0 ? "down" : "up",
     };
   } else {
     // interval between midline and upper bound
@@ -376,7 +376,8 @@ export function getStemDirectionForChord(
     // Is midline above? Then stem is 'up'
     return {
       bounds,
-      direction: lowerInterval > upperInterval ? "up" : "down",
+      direction:
+        Math.abs(lowerInterval) > Math.abs(upperInterval) ? "up" : "down",
     };
   }
 }
@@ -1199,7 +1200,7 @@ export function getSubBeamCountFromBeamEvent(
         : beamEvent.duration!.base,
   );
   const _duration = durationMap.value[_durationIndex];
-  return _duration <= DURATION.EIGHTH ? _eighthIndex - _durationIndex : 0;
+  return _duration <= DURATION.EIGHTH ? _durationIndex - _eighthIndex : 0;
 }
 export function getBeamGroupsForPeriod({
   flows,
@@ -1209,7 +1210,7 @@ export function getBeamGroupsForPeriod({
   flows: Minim.Collection<Minim.Component.Flow>;
   start: Minim.DisplayUnit.Position;
   end: Minim.DisplayUnit.Position;
-}) {
+}): Minim.Collection<Minim.Event.BeamGroup[]> {
   return Object.entries(flows).reduce(
     (acc, [flowId, flow]) => ({
       ...acc,
@@ -1342,7 +1343,7 @@ export function getEventStartsForPeriod({
 }
 
 export function getPeriodIntersections({
-  eventStarts,
+  // eventStarts,
   measureStarts,
 }: {
   eventStarts: Minim.DisplayUnit.Position[][];
@@ -1350,8 +1351,8 @@ export function getPeriodIntersections({
 }): Minim.DisplayUnit.Position[] {
   const periods = [
     ...new Set([
-      // intersection of event starts
-      ...eventStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
+      // REMOVING: intersection of event starts
+      // ...eventStarts.reduce((a, b) => a.filter((c) => b.includes(c))),
       // TODO: should this be a true intersection of measure starts?
       ...measureStarts.flat(),
     ]),

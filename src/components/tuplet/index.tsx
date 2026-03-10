@@ -97,7 +97,7 @@ export default function Tuplet({
             points="0,1 0,0 1,0"
             fill="none"
             stroke="black"
-            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}rem`}
+            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}em`}
             vectorEffect={"non-scaling-stroke"}
           />
         </svg>
@@ -114,7 +114,7 @@ export default function Tuplet({
             points="0,0 1,0 1,1"
             fill="none"
             stroke="black"
-            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}rem`}
+            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}em`}
             vectorEffect={"non-scaling-stroke"}
           />
         </svg>

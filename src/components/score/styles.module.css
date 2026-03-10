@@ -7,9 +7,9 @@
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: baseline;
-  gap: 0.5rem;
+  gap: 0.5em;
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.5em;
   background: var(--background);
   outline: 1px solid var(--color);
   font-family: var(--text);
@@ -17,7 +17,7 @@
 .title {
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.5rem;
+  gap: 0.5em;
 }
 .header h1,
 .header h2,
@@ -39,7 +39,7 @@
 
 @media print {
   /* .score {
-    padding: 2rem;
+    padding: 2em;
   } */
   .header {
     position: relative;
@@ -51,20 +51,20 @@
   .header .title {
     flex-flow: column nowrap;
     align-items: center;
-    margin-block: 1rem;
+    margin-block: 1em;
   }
   .header h1 {
     font-size: large;
     font-weight: 500;
     text-transform: uppercase;
     text-align: center;
-    letter-spacing: 0.4rem;
+    letter-spacing: 0.4em;
   }
   .header h2 {
     font-size: large;
     font-weight: 400;
     text-align: center;
-    letter-spacing: 0.2rem;
+    letter-spacing: 0.2em;
   }
   .header p {
     font-size: large;

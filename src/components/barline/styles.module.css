@@ -1,7 +1,7 @@
 .barline {
   --column: m-bar;
   --row: 1 / -1;
-  --separation: 0.1rem;
+  --separation: 0.1em;
   justify-self: end;
   width: auto;
   height: 100%;
@@ -27,7 +27,7 @@
 }
 .barline .line.thinLine.period {
   border-right: 0.12rem dotted orangered;
-  transform: translateX(0.04rem);
+  transform: translateX(0.04em);
 }
 .barline .line.thickLine {
   border-right: 0.125rem solid currentColor;

@@ -34,7 +34,7 @@ function Barline({
 }: PropsWithChildren<BarlineProps>) {
   const style: Properties = useMemo(
     () => ({
-      "--separation": `${metadata.engravingDefaults.barlineSeparation / 4}rem`,
+      "--separation": `${metadata.engravingDefaults.barlineSeparation / 4}em`,
       "--column": column,
       "--row": row,
     }),

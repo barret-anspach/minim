@@ -1,11 +1,11 @@
 .notehead {
   justify-self: center;
   text-align: center;
-  width: 0.27rem;
+  width: 0.27em;
 }
 .dot {
-  margin-left: 0.12rem;
+  margin-left: 0.12em;
 }
 .up {
-  transform: translateY(-0.12rem);
+  transform: translateY(-0.12em);
 }

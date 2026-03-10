@@ -1,3 +1,11 @@
+#### v0.0.7
+
+2026 Mar 10
+
+- Fixed `View`: `useEffect` cleanup, which resets MeasuresContext.
+- Fixed `Score`: ResizeObserver ... though may want to revert to a previous fix (on branch `chore/rem-to-em`).
+- Removed unnecessary dependencies (clsx); moved prettier to devDependencies.
+
 #### v0.0.6
 
 2025 Dec 21

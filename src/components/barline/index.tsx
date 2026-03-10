@@ -1,21 +1,21 @@
 import { PropsWithChildren, useMemo } from "react";
-import clsx from "clsx";
 import { Properties } from "csstype";
 
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
+import { cx } from "./../../utils/classNames";
 
 function RegularBarline() {
-  return <div className={clsx(styles.line, styles.thinLine, styles.margin)} />;
+  return <div className={cx(styles.line, styles.thinLine, styles.margin)} />;
 }
 
 function FinalBarline() {
   return (
     <>
-      <div className={clsx(styles.line, styles.thinLine, styles.separation)} />
-      <div className={clsx(styles.line, styles.thickLine)} />
+      <div className={cx(styles.line, styles.thinLine, styles.separation)} />
+      <div className={cx(styles.line, styles.thickLine)} />
     </>
   );
 }
@@ -43,11 +43,7 @@ function Barline({
 
   return (
     <div
-      className={clsx(
-        styles.barline,
-        separation && styles.separation,
-        className,
-      )}
+      className={cx(styles.barline, separation && styles.separation, className)}
       style={style}
     >
       {children ? (

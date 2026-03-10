@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import clsx from "clsx";
 
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
+import { cx } from "./../../utils/classNames";
 
 type EventProps = {
   className?: string;
@@ -23,7 +23,7 @@ export default function Event({
   );
 
   return (
-    <span className={clsx(styles.event, className)} style={style}>
+    <span className={cx(styles.event, className)} style={style}>
       {children}
     </span>
   );

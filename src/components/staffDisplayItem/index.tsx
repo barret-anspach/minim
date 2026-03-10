@@ -1,8 +1,7 @@
-import clsx from "clsx";
-
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
+import { cx } from "./../../utils/classNames";
 
 type StaffDisplayItemTypes = "brace" | "bracket" | "art" | "key" | "tim";
 
@@ -18,7 +17,7 @@ function StaffDisplayItem({
 }: React.PropsWithChildren<StaffDisplayItemProps>) {
   return (
     <span
-      className={clsx(
+      className={cx(
         styles.staffDisplayItem,
         ["key", "brace"].includes(type) && styles.row,
         ["tim", "bracket", "art"].includes(type) && styles.column,

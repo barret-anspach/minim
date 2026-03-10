@@ -1,10 +1,10 @@
 import { JSX, useMemo } from "react";
-import clsx from "clsx";
 
 import Item from "./../../components/item/index.js";
 
 import styles from "./styles.module.css";
 import { Minim } from "./../../types/minim/index.js";
+import { cx } from "./../../utils/classNames";
 
 type AugmentationDotsProps = {
   className?: string;
@@ -37,7 +37,7 @@ export default function AugmentationDots({
       {dotArray.map((dotIndex) => (
         <Item
           key={`${prefix}_dot${dotIndex}`}
-          className={clsx(styles.dot, className)}
+          className={cx(styles.dot, className)}
           column={column}
           pitch={pitch}
         >

@@ -696,6 +696,27 @@ export function getStavesForFlow(flow: Minim.Document.FlowItem) {
   }));
 }
 
+export function isEventDisplayItem(
+  event: Minim.Event.EventItem | Minim.Event.DisplayItem,
+): event is Minim.Event.DisplayItem {
+  return (<Minim.Event.DisplayItem>event).at !== undefined;
+}
+export function isEventEventItem(
+  event: Minim.Event.EventItem | Minim.Event.DisplayItem,
+): event is Minim.Event.EventItem {
+  return (<Minim.Event.EventItem>event).position !== undefined;
+}
+export function hasPositionAt(
+  position: Minim.Bounds | Minim.At,
+): position is Minim.At {
+  return (<Minim.At>position).at !== undefined;
+}
+export function hasPositionBounds(
+  position: Minim.Bounds | Minim.At,
+): position is Minim.Bounds {
+  return (<Minim.Bounds>position).start !== undefined;
+}
+
 export function getColumnsForPeriod({
   flows,
   end,
@@ -706,10 +727,17 @@ export function getColumnsForPeriod({
   final: boolean;
 }) {
   const uniqueStarts = Object.groupBy(
-    Object.values(flows).flat() as Minim.Event.EventItem[],
+    Object.values(flows).flat() as (
+      | Minim.Event.DisplayItem
+      | Minim.Event.EventItem
+    )[],
     (e) =>
       ["event", "tuplet"].includes(e.type)
-        ? (e.position as Minim.Bounds).start
+        ? isEventEventItem(e)
+          ? hasPositionBounds(e.position)
+            ? (e.position as Minim.Bounds).start
+            : e.position.at
+          : e.at
         : (e as typeof e & Minim.At).at,
   );
 
@@ -717,12 +745,18 @@ export function getColumnsForPeriod({
   // that we can THEN use to insert last columns and properly format
   const columns = Object.entries(uniqueStarts)
     .reduce((acc, [start], index, starts) => {
-      const columnWidth =
-        index < starts.length - 1
-          ? (starts[index + 1][1]![0].position as Minim.Bounds).start -
-            parseInt(start) +
-            "fr"
-          : end - parseInt(start) + "fr" || "auto";
+      let columnWidth: string = "";
+      if (index < starts.length - 1) {
+        const nextEvent = starts[index + 1][1]![0];
+        const nextStart = isEventDisplayItem(nextEvent)
+          ? nextEvent.at
+          : isEventEventItem(nextEvent) && hasPositionBounds(nextEvent.position)
+            ? nextEvent.position.start
+            : (nextEvent.position as Minim.At).at;
+        columnWidth = nextStart - parseInt(start) + "fr";
+      } else {
+        columnWidth = end - parseInt(start) + "fr" || "auto";
+      }
       if (index === starts.length - 1) {
         // Add start- and end-positions for the last event of a period's flows
         return `${acc}${makeColumn({ start, columnWidth })}${makeColumn({ start: end, columnWidth: "auto", final })}`;

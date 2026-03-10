@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import clsx from "clsx";
 
 import Item from "./../../components/item/index.js";
 
@@ -16,6 +15,7 @@ import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
 
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
+import { cx } from "./../../utils/classNames";
 
 const flagMap = {
   key: ["eighth", "16th", "32nd", "64th"],
@@ -79,7 +79,7 @@ export default function Stem({
         height="100%"
         preserveAspectRatio="none"
         overflow="visible"
-        className={clsx([
+        className={cx([
           styles.stem,
           _stemDirection === "up" ? styles.up : styles.down,
         ])}
@@ -89,7 +89,7 @@ export default function Stem({
       </svg>
       {!beam && event.dimensions.length < DURATION.QUARTER && (
         <Item
-          className={clsx(
+          className={cx(
             styles.flag,
             _stemDirection === "up" ? styles.up : styles.down,
           )}
@@ -106,7 +106,7 @@ export default function Stem({
       {/* TODO: temporary fix; whole beaming situation needs an overhaul. */}
       {beam && event.dimensions.length < DURATION.EIGHTH && (
         <Item
-          className={clsx(
+          className={cx(
             styles.beam,
             _stemDirection === "up" ? styles.above : styles.below,
           )}

@@ -1,6 +1,6 @@
 {
   "name": "@quonset/minim",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "private": false,
   "description": "MNX notation renderer",
   "keywords": [
@@ -22,35 +22,29 @@
   },
   "license": "MIT",
   "author": "Barret Anspach",
-  "type": "commonjs",
+  "type": "module",
   "exports": {
     ".": {
-      "require": "./dist/cjs/src/index.js",
       "import": "./dist/esm/src/index.js",
       "types": "./dist/esm/src/index.d.ts"
     }
   },
-  "main": "./dist/cjs/src/index.js",
+  "main": "./dist/esm/src/index.js",
   "types": "./dist/esm/src/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc -p tsconfig.esm.json && npm run copy-assets:esm",
-    "build:cjs": "tsc -p tsconfig.cjs.json && npm run copy-assets:cjs",
+    "build": "npm run clean && npm run build:esm",
+    "build:esm": "tsc -p tsconfig.json && npm run copy-assets:esm",
     "clean": "rimraf dist/",
     "copy-assets:esm": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/esm/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/esm/public",
-    "copy-assets:cjs": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/cjs/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/cjs/public",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@fontsource-variable/inter": "^5.2.8",
-    "clsx": "^2.1.1",
-    "lodash.debounce": "^4.0.8",
-    "prettier": "^3.3.3"
+    "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
@@ -68,6 +62,7 @@
     "eslint": "^9",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
     "rimraf": "^6.1.2",
     "typescript": "^5.9.3"
   },

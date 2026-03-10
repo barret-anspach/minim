@@ -5,7 +5,6 @@ import {
   PropsWithChildren,
   useMemo,
 } from "react";
-import clsx from "clsx";
 
 import Barline from "./../../components/barline/index.js";
 import { BeamGroup } from "./../../components/beamGroup/index.js";
@@ -24,6 +23,7 @@ import { getColumnsForPeriod } from "./../../utils/methods.js";
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
+import { cx } from "./../../utils/classNames";
 
 type PeriodProps = {
   index: Minim.Defs.Index;
@@ -111,7 +111,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
     return (
       <section
         ref={ref}
-        className={clsx(
+        className={cx(
           styles.period,
           systemStart && styles.first,
           systemEnd && styles.last,

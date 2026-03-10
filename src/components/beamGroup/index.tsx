@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useMemo } from "react";
 
 import Item from "./../../components/item/index.js";
@@ -11,6 +10,7 @@ import {
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
+import { cx } from "./../../utils/classNames";
 
 type BeamGroupProps = {
   beamGroup: Minim.Event.BeamGroup;
@@ -52,9 +52,7 @@ export function BeamGroup({ beamGroup, prefix }: BeamGroupProps) {
   return (
     <>
       <Item
-        className={clsx(styles.beam, {
-          [`${styles.below}`]: direction === "down",
-        })}
+        className={cx(styles.beam, direction === "down" && styles.below)}
         column={column}
         pitch={row}
       />

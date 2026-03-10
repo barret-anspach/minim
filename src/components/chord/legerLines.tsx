@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import clsx from "clsx";
 
 import Item from "./../../components/item/index.js";
 
@@ -9,6 +8,7 @@ import { DURATION } from "./../../constants/durations.js";
 import styles from "./styles.module.css";
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+import { cx } from "./../../utils/classNames";
 
 type LegerLinesProps = {
   event: Minim.Event.DecoratedDefaultEvent;
@@ -38,7 +38,7 @@ export default function LegerLines({ event, id }: LegerLinesProps) {
         legerLines.map((legerLine, legerLineIndex) => (
           <Item
             key={`${id}_leg${legerLineIndex}`}
-            className={clsx(
+            className={cx(
               styles.legerLine,
               event.dimensions.length >= DURATION.WHOLE && styles.wide,
             )}

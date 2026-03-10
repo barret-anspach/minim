@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import clsx from "clsx";
 
 import { dynamicMap } from "./../../components/dynamic/index.js";
 import Item from "./../../components/item/index.js";
@@ -17,6 +16,7 @@ import styles from "./styles.module.css";
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+import { cx } from "./../../utils/classNames";
 
 // N.B. keys are in sorted stack order for position === "up".
 export const articulationMap = {
@@ -417,14 +417,14 @@ export default function Markings({
       {markings.map((marking) => (
         <Item
           key={marking.key}
-          className={clsx(styles.markings, styles[marking.position])}
+          className={cx(styles.markings, styles[marking.position])}
           column={marking.column}
           pitch={marking.row}
         >
           {marking.items.map((item, itemIndex) => (
             <span
               key={`${marking.key}_i${itemIndex}`}
-              className={clsx(styles.articulation, styles[item.type])}
+              className={cx(styles.articulation, styles[item.type])}
               style={{ height: item.height }}
             >
               {item.glyph}

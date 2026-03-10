@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 import Item from "./../../components/item/index.js";
 
 import {
@@ -12,6 +10,7 @@ import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+import { cx } from "./../../utils/classNames";
 
 type TieProps = {
   event: Minim.Event.Clip;
@@ -45,7 +44,7 @@ export default function Tie({
   const row = `${pitchPrefix}s${note.staff ?? 1}${pitch}`;
   return note.tie ? (
     <Item
-      className={clsx(
+      className={cx(
         styles.tie,
         styles[stem.direction === "up" ? "below" : "above"],
         styles[event.clipPosition],
@@ -54,7 +53,7 @@ export default function Tie({
       pitch={row}
     >
       <svg
-        className={clsx(
+        className={cx(
           styles.tieCurve,
           styles[stem.direction === "up" ? "below" : "above"],
           styles[event.clipPosition],
@@ -75,7 +74,7 @@ export default function Tie({
         />
       </svg>
       <svg
-        className={clsx(
+        className={cx(
           styles.tieExtensionLine,
           styles[stem.direction === "up" ? "below" : "above"],
           styles[event.clipPosition],

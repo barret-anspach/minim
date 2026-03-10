@@ -1,3 +1,10 @@
+#### v0.0.5
+
+2025 Dec 19
+
+- Fixed overlooked use of `rem` utils/getPitches > `getPitches()`
+- Fixed a handful of uses of `rem` in various components' CSS style modules
+
 #### v0.0.4
 
 2025 Dec 19

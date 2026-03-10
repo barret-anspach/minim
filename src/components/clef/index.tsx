@@ -26,6 +26,7 @@ export default function Clef({ clef, column = "m-cle", id }: ClefProps) {
 
   return (
     <Item
+      data-clef
       pitch={`${id ?? ""}${_clef.staffPitch}`}
       column={column}
       padEnd={metadata.engravingDefaults.barlineSeparation}

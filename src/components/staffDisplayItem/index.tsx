@@ -1,3 +1,5 @@
+import { PropsWithChildren } from "react";
+
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
@@ -14,7 +16,8 @@ function StaffDisplayItem({
   children,
   type,
   start,
-}: React.PropsWithChildren<StaffDisplayItemProps>) {
+  ...rest
+}: PropsWithChildren<StaffDisplayItemProps>) {
   return (
     <span
       className={cx(
@@ -24,6 +27,7 @@ function StaffDisplayItem({
         start.includes("me-") && styles.end,
       )}
       style={{ "--start": start }}
+      {...rest}
     >
       {children}
     </span>

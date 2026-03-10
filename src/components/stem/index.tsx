@@ -106,6 +106,7 @@ export default function Stem({
       {/* TODO: temporary fix; whole beaming situation needs an overhaul. */}
       {beam && event.dimensions.length < DURATION.EIGHTH && (
         <Item
+          data-stem
           className={cx(
             styles.beam,
             _stemDirection === "up" ? styles.above : styles.below,

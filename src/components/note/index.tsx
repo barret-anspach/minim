@@ -47,7 +47,17 @@ export default function Note({
   );
   return (
     <>
+      {/* <Duration
+        data-note-duration
+        column={column}
+        event={event}
+        id={`${id}_dur${noteIndex}`}
+        note={note}
+        noteIndex={noteIndex}
+        pitchPrefix={pitchPrefix}
+      /> */}
       <Item
+        data-note
         className={cx(styles.notehead, className)}
         key={key}
         column={column}

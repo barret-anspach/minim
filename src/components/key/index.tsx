@@ -60,7 +60,7 @@ export default function Key({
   );
 
   return (
-    <StaffDisplayItem type="key" start={column}>
+    <StaffDisplayItem type="key" start={column} data-key>
       {accidentals.length > 0 &&
         accidentals.map((accidental, index) => (
           <Item

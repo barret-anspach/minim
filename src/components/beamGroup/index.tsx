@@ -53,6 +53,8 @@ export function BeamGroup({ beamGroup, prefix }: BeamGroupProps) {
     <>
       <Item
         className={cx(styles.beam, direction === "down" && styles.below)}
+        data-beam
+        data-beam-group
         column={column}
         pitch={row}
       />
@@ -62,6 +64,8 @@ export function BeamGroup({ beamGroup, prefix }: BeamGroupProps) {
           Array.from({ length: subBeamCount(beamEvent) }, (_, i) => i + 1).map(
             (subBeam) => (
               <Item
+                data-beam
+                data-sub-beam
                 key={`${prefix}_sub${subBeam}`}
                 className={styles.beam}
                 column={column}

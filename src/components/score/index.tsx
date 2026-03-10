@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 
 import Flow from "./../../components/flow/index.js";
@@ -21,8 +21,13 @@ const Score: FC<ScoreProps> = function ({ className }) {
     context: { initialized, periods },
   } = useMeasuresContext();
   const periodRefs = useRef<HTMLDivElement[]>([]);
+  const initialPeriodPositions = useMemo(
+    () =>
+      Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+    [periods],
+  );
   const [periodPositions, setPeriodPositions] = useState<boolean[]>(
-    Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+    initialPeriodPositions,
   );
 
   // TODO: In using periodPositions to determine which periods are in a given system,
@@ -64,7 +69,11 @@ const Score: FC<ScoreProps> = function ({ className }) {
           (entries) => {
             const firstChildOffsetLeft = (entries[0].target as HTMLDivElement)
               .offsetLeft;
-            const newArr = [...periodPositions];
+            const newArr = [
+              ...(periodPositions.length === 0
+                ? initialPeriodPositions
+                : periodPositions),
+            ];
             for (let i = 0; i < entries.length; i++) {
               newArr[i] =
                 (entries[i].target as HTMLDivElement).offsetLeft ===
@@ -101,7 +110,12 @@ const Score: FC<ScoreProps> = function ({ className }) {
       observer.disconnect();
       window.removeEventListener("beforeprint", onResize);
     };
-  }, [getSystemsFromPeriodPositions, Object.keys(periods), periodPositions]);
+  }, [
+    getSystemsFromPeriodPositions,
+    initialPeriodPositions,
+    Object.keys(periods),
+    periodPositions,
+  ]);
 
   return initialized ? (
     <main className={cx(styles.score, className)} role="main">

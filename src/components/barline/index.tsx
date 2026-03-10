@@ -44,6 +44,7 @@ function Barline({
   return (
     <div
       className={cx(styles.barline, separation && styles.separation, className)}
+      data-barline
       style={style}
     >
       {children ? (

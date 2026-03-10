@@ -1,3 +1,9 @@
+#### v0.0.6
+
+2025 Dec 21
+
+- Added `data-*` attributes to various components, to better facilitate third-party component styling.
+
 #### v0.0.5
 
 2025 Dec 19

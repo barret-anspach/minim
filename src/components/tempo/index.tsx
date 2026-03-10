@@ -43,7 +43,7 @@ export default function Tempo({ id, beat, pitch, tempo }: TempoProps) {
   // TODO: more generally, we'll need to be able to render multiple notes with ties /
   // tuplets / etc to resolve the duration and semantic meaning of the tempo
   return (
-    <Event className={styles.tempo} beat={beat} pitch={pitch}>
+    <Event data-tempo className={styles.tempo} beat={beat} pitch={pitch}>
       <span className={cx(styles.pulse, styles.musicTextFont)}>
         {
           tempoBaseMap.value[

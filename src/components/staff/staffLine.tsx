@@ -28,5 +28,5 @@ export default function StaffLine({
     [end, pitch, start, weight],
   );
 
-  return <hr className={styles.line} style={style} />;
+  return <hr className={styles.line} style={style} data-staff-line />;
 }

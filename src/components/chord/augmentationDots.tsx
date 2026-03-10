@@ -36,6 +36,7 @@ export default function AugmentationDots({
     <>
       {dotArray.map((dotIndex) => (
         <Item
+          data-augmentation-dot
           key={`${prefix}_dot${dotIndex}`}
           className={cx(styles.dot, className)}
           column={column}

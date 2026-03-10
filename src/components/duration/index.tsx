@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import clsx from "clsx";
 
 import Item from "./../../components/item/index.js";
 
@@ -12,6 +11,7 @@ import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+import { cx } from "./../../utils/classNames.js";
 
 type NoteProps = {
   column: Minim.Grid.Column;
@@ -50,7 +50,7 @@ export default function Duration({
   return (
     <Item
       data-duration
-      className={clsx(styles.duration, className)}
+      className={cx(styles.duration, className)}
       key={key}
       column={col}
       pitch={pitch}

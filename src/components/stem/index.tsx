@@ -15,7 +15,7 @@ import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
 
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 const flagMap = {
   key: ["eighth", "16th", "32nd", "64th"],

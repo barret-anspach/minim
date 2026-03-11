@@ -8,7 +8,7 @@ import { useMeasuresContext } from "./../../contexts/MeasuresContext.js";
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./../../styles/styles.module.css";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type Props = ComponentProps<"main"> & {
   score: Minim.Document.MovementItem;

@@ -3,7 +3,7 @@ import { PropsWithChildren, useMemo } from "react";
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type ItemProps = {
   pitch: Minim.Grid.Row;

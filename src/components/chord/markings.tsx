@@ -16,7 +16,7 @@ import styles from "./styles.module.css";
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 // N.B. keys are in sorted stack order for position === "up".
 export const articulationMap = {

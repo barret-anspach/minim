@@ -1,7 +1,7 @@
 import React from "react";
 
 import styles from "./styles.module.css";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 interface SystemsProps {
   className?: string;

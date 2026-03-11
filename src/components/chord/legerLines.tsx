@@ -8,7 +8,7 @@ import { DURATION } from "./../../constants/durations.js";
 import styles from "./styles.module.css";
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type LegerLinesProps = {
   event: Minim.Event.DecoratedDefaultEvent;

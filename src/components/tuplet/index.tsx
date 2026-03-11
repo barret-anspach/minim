@@ -13,7 +13,7 @@ import { MNX } from "./../../types/mnx/index.js";
 import { Minim } from "./../../types/minim/index.js";
 
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 const tupletMap = {
   key: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],

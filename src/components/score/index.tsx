@@ -10,7 +10,7 @@ import Systems from "./../../components/systems/index.js";
 import { useMeasuresContext } from "./../../contexts/MeasuresContext.js";
 
 import styles from "./styles.module.css";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type ScoreProps = {
   className?: string;
@@ -110,12 +110,7 @@ const Score: FC<ScoreProps> = function ({ className }) {
       observer.disconnect();
       window.removeEventListener("beforeprint", onResize);
     };
-  }, [
-    getSystemsFromPeriodPositions,
-    initialPeriodPositions,
-    Object.keys(periods),
-    periodPositions,
-  ]);
+  }, [getSystemsFromPeriodPositions, initialPeriodPositions, periodPositions]);
 
   return initialized ? (
     <main className={cx(styles.score, className)} role="main">

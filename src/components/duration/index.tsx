@@ -46,7 +46,7 @@ export default function Duration({
   const col = useMemo(() => {
     return `${column} / e${noteIndex + getDurationFromNoteValueQuantity({ duration: event.duration, multiple: 1 })}`;
   }, [column, event.duration]);
-  window.console.log("duration col:", col);
+
   return (
     <Item
       data-duration

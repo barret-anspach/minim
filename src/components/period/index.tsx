@@ -23,7 +23,7 @@ import { getColumnsForPeriod } from "./../../utils/methods.js";
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type PeriodProps = {
   index: Minim.Defs.Index;

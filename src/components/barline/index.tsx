@@ -5,7 +5,7 @@ import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 function RegularBarline() {
   return <div className={cx(styles.line, styles.thinLine, styles.margin)} />;

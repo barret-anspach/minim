@@ -4,7 +4,7 @@ import Item from "./../../components/item/index.js";
 
 import styles from "./styles.module.css";
 import { Minim } from "./../../types/minim/index.js";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type AugmentationDotsProps = {
   className?: string;

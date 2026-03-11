@@ -10,7 +10,7 @@ import {
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type BeamGroupProps = {
   beamGroup: Minim.Event.BeamGroup;

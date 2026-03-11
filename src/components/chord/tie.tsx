@@ -10,7 +10,7 @@ import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
-import { cx } from "./../../utils/classNames";
+import { cx } from "./../../utils/classNames.js";
 
 type TieProps = {
   event: Minim.Event.Clip;

@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { ComponentProps, PropsWithChildren } from "react";
 
 import styles from "./styles.module.css";
 
@@ -17,7 +17,7 @@ function StaffDisplayItem({
   type,
   start,
   ...rest
-}: PropsWithChildren<StaffDisplayItemProps>) {
+}: ComponentProps<"span"> & PropsWithChildren<StaffDisplayItemProps>) {
   return (
     <span
       className={cx(

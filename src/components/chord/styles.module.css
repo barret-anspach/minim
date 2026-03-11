@@ -50,11 +50,11 @@
   position: absolute;
   border-bottom: 0.0325em solid currentColor;
   width: calc(100% + 0.27em);
-  transform: translateX(-0.12rem);
+  transform: translateX(-0.12em);
 }
 .wide:after {
   width: calc(100% + 0.37em);
-  transform: translateX(-0.17rem);
+  transform: translateX(-0.17em);
 }
 
 .tie {

@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo } from "react";
+import { ComponentProps, PropsWithChildren, useMemo } from "react";
 
 import styles from "./styles.module.css";
 
@@ -17,7 +17,7 @@ export default function Event({
   beat,
   pitch,
   ...rest
-}: PropsWithChildren<EventProps>) {
+}: ComponentProps<"span"> & PropsWithChildren<EventProps>) {
   const style = useMemo(
     () => ({ "--beat": beat, "--pitch": pitch }),
     [beat, pitch],

@@ -16,7 +16,7 @@ Add `@quonset/minim` as a dependency to your project:
 npm i @quonset/minim --save
 ```
 
-Import `@quonset/minim` into your project, import a valid [https://w3c.github.io/mnx/docs/](MNX) document (saved with a `.json` extension), and pass the document to Minim:
+Import `@quonset/minim` into your project, import a valid [MNX](https://w3c.github.io/mnx/docs/) document (saved with a `.json` extension), and pass the document to Minim:
 
 ```js
 import Minim from '@quonset/minim';

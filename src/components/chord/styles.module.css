@@ -119,7 +119,7 @@
 }
 
 .beam {
-  border-bottom: 0.125emsolid currentColor;
+  border-bottom: 0.125em solid currentColor;
   width: 100%;
 }
 .beam.below {

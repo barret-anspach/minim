@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import clsx from "clsx";
 
 import Chord from "./../../components/chord/index.js";
 
@@ -14,6 +13,7 @@ import { MNX } from "./../../types/mnx/index.js";
 import { Minim } from "./../../types/minim/index.js";
 
 import metadata from "./../../../public/fonts/bravura/bravura_metadata.json";
+import { cx } from "./../../utils/classNames.js";
 
 const tupletMap = {
   key: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
@@ -89,7 +89,7 @@ export default function Tuplet({
       {/** TODO: Ratio display will break when multiple exceeds 9 (e.g. "12:8") */}
       <div className={styles.tuplet} style={style}>
         <svg
-          className={clsx(styles.bracket, styles.bracketLeft)}
+          className={cx(styles.bracket, styles.bracketLeft)}
           viewBox="0 0 1 1"
           preserveAspectRatio="none"
         >
@@ -97,7 +97,7 @@ export default function Tuplet({
             points="0,1 0,0 1,0"
             fill="none"
             stroke="black"
-            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}rem`}
+            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}em`}
             vectorEffect={"non-scaling-stroke"}
           />
         </svg>
@@ -106,7 +106,7 @@ export default function Tuplet({
           {tupletMap.value[event.outer.multiple]}
         </span>
         <svg
-          className={clsx(styles.bracket, styles.bracketRight)}
+          className={cx(styles.bracket, styles.bracketRight)}
           viewBox="0 0 1 1"
           preserveAspectRatio="none"
         >
@@ -114,7 +114,7 @@ export default function Tuplet({
             points="0,0 1,0 1,1"
             fill="none"
             stroke="black"
-            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}rem`}
+            strokeWidth={`${metadata.engravingDefaults.tupletBracketThickness / 4}em`}
             vectorEffect={"non-scaling-stroke"}
           />
         </svg>

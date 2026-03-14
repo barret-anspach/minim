@@ -1,7 +1,7 @@
 import React from "react";
-import clsx from "clsx";
 
 import styles from "./styles.module.css";
+import { cx } from "./../../utils/classNames.js";
 
 interface SystemsProps {
   className?: string;
@@ -16,7 +16,7 @@ export default function Systems({
   ...rest
 }: SystemsProps) {
   return (
-    <article className={clsx(styles.systems, className)} id={id} {...rest}>
+    <article className={cx(styles.systems, className)} id={id} {...rest}>
       {children}
     </article>
   );

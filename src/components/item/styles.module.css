@@ -1,8 +1,8 @@
 .item {
-  --padEnd: 0rem;
+  --padEnd: 0em;
   --pitch: "";
   --column: "e 1";
-  --size: 4rem;
+  --size: 4em;
   align-self: start;
   justify-self: end;
   grid-row: var(--pitch);
@@ -16,7 +16,7 @@
 }
 .item.text {
   justify-self: center;
-  font-size: 0.7rem;
+  font-size: 0.7em;
 }
 .item.label {
   line-height: 0.75;

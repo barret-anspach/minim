@@ -1,12 +1,12 @@
 .accidental {
-  margin-right: 0.04rem;
+  margin-right: 0.04em;
 }
 .markings {
   display: flex;
   flex-flow: column nowrap;
   justify-self: center;
   height: auto;
-  gap: 0.15rem;
+  gap: 0.15em;
 }
 .markings.up {
   justify-content: flex-end;
@@ -30,30 +30,31 @@
 .articulation.dynamic {
   align-items: center;
   /* Workaround for glyph not exactly centered */
-  margin-top: 0.08rem;
+  margin-top: 0.08em;
 }
 .dot {
-  margin-left: 0.12rem;
+  margin-left: 0.12em;
   justify-self: start;
 }
 .dot.up {
-  transform: translateY(-0.12rem);
+  transform: translateY(-0.12em);
 }
 .legerLine {
   position: relative;
   justify-self: start;
-  width: 100%;
+  width: 120%;
+  left: -20%;
 }
 .legerLine:after {
-  content: '';
+  content: "";
   position: absolute;
-  border-bottom: 0.0325rem solid currentColor;
-  width: calc(100% + 0.27rem);
-  transform: translate(-0.12rem, -50%);
+  border-bottom: 0.0325em solid currentColor;
+  width: calc(100% + 0.27em);
+  transform: translateX(-0.12em);
 }
 .wide:after {
-  width: calc(100% + 0.37rem);
-  transform: translate(-0.17rem, -50%);
+  width: calc(100% + 0.37em);
+  transform: translateX(-0.17em);
 }
 
 .tie {
@@ -65,22 +66,22 @@
   align-items: center;
   justify-content: stretch;
   transform-origin: bottom left;
-  transform:  scaleY(0.75) translateY(-0.0625rem);
+  transform: scaleY(0.75) translateY(-0.0625em);
 }
 .tie.below {
   transform-origin: top left;
-  transform:  scaleY(0.75) translateY(0.0625rem);
+  transform: scaleY(0.75) translateY(0.0625em);
 }
 .tie.end {
-  padding-left: 0.12rem;
+  padding-left: 0.12em;
 }
 .tie.start {
-  padding-right: 0.12rem;
+  padding-right: 0.12em;
 }
 .tieCurve {
   flex: 0 0 auto;
-  width: 0.375rem;
-  height: 0.25rem;
+  width: 0.375em;
+  height: 0.25em;
   align-self: flex-end;
 }
 .tieCurve.below {
@@ -104,7 +105,7 @@
 .tieExtensionLine {
   flex: 1 1 0;
   width: auto; /* <-- 100% might be causing mobile browsers to flex-grow the tie extension and max out an entire system */
-  height: 0.25rem;
+  height: 0.25em;
   overflow: visible;
   align-self: flex-end;
   transform: scale(1, -1.5);
@@ -118,7 +119,7 @@
 }
 
 .beam {
-  border-bottom: 0.125rem solid currentColor;
+  border-bottom: 0.125em solid currentColor;
   width: 100%;
 }
 .beam.below {

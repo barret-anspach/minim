@@ -52,6 +52,7 @@ export default function Accidental({
 
   return note.pitch.alter && !key?.accidentalStep.includes(note.pitch.step) ? (
     <Item
+      data-accidental
       key={accidentalKey}
       className={styles.accidental}
       column={column}

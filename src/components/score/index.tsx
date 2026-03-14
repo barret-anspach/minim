@@ -1,7 +1,6 @@
 "use client";
 
-import { FC, useCallback, useLayoutEffect, useRef, useState } from "react";
-import clsx from "clsx";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 
 import Flow from "./../../components/flow/index.js";
@@ -11,6 +10,7 @@ import Systems from "./../../components/systems/index.js";
 import { useMeasuresContext } from "./../../contexts/MeasuresContext.js";
 
 import styles from "./styles.module.css";
+import { cx } from "./../../utils/classNames.js";
 
 type ScoreProps = {
   className?: string;
@@ -21,9 +21,15 @@ const Score: FC<ScoreProps> = function ({ className }) {
     context: { initialized, periods },
   } = useMeasuresContext();
   const periodRefs = useRef<HTMLDivElement[]>([]);
-  const [periodPositions, setPeriodPositions] = useState<boolean[]>(
-    Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+  const initialPeriodPositions = useMemo(
+    () =>
+      Array.from({ length: Object.keys(periods).length }, (_, i) => i === 0),
+    [periods],
   );
+  const [periodPositions, setPeriodPositions] = useState<boolean[]>(
+    initialPeriodPositions,
+  );
+
   // TODO: In using periodPositions to determine which periods are in a given system,
   // we can set flex–basis on periods to "soften" some of flexbox's spacing choices,
   // and even provide a means to customize period spacing.
@@ -56,20 +62,27 @@ const Score: FC<ScoreProps> = function ({ className }) {
     [],
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     function onResize() {
       const observer = new ResizeObserver(
         debounce(
           (entries) => {
             const firstChildOffsetLeft = (entries[0].target as HTMLDivElement)
               .offsetLeft;
-            const newArr = [...periodPositions];
+            const newArr = [
+              ...(periodPositions.length === 0
+                ? initialPeriodPositions
+                : periodPositions),
+            ];
             for (let i = 0; i < entries.length; i++) {
               newArr[i] =
                 (entries[i].target as HTMLDivElement).offsetLeft ===
                 firstChildOffsetLeft;
             }
-            if (periodPositions.some((p, i) => p !== newArr[i])) {
+            if (
+              periodPositions.some((p, i) => p !== newArr[i]) ||
+              periodPositions.length === 0
+            ) {
               setPeriodPositions(newArr);
               // setSystems(getSystemsFromPeriodPositions(newArr));
             }
@@ -78,7 +91,6 @@ const Score: FC<ScoreProps> = function ({ className }) {
           { leading: true, trailing: true },
         ),
       );
-
       if (periodRefs.current) {
         periodRefs.current.forEach((ref) => {
           if (ref) {
@@ -86,10 +98,11 @@ const Score: FC<ScoreProps> = function ({ className }) {
           }
         });
       }
-
       return observer;
     }
+
     const observer = onResize();
+
     // Calculate layout/period positions when printing
     window.addEventListener("beforeprint", onResize);
 
@@ -97,10 +110,10 @@ const Score: FC<ScoreProps> = function ({ className }) {
       observer.disconnect();
       window.removeEventListener("beforeprint", onResize);
     };
-  }, [getSystemsFromPeriodPositions, periodPositions]);
+  }, [getSystemsFromPeriodPositions, initialPeriodPositions, periodPositions]);
 
   return initialized ? (
-    <main className={clsx(styles.score, className)} role="main">
+    <main className={cx(styles.score, className)} role="main">
       <Systems id="systems" className={styles.systems}>
         {Object.values(periods).map((period, _, periods) => (
           <Period

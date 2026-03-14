@@ -5,7 +5,6 @@ import {
   PropsWithChildren,
   useMemo,
 } from "react";
-import clsx from "clsx";
 
 import Barline from "./../../components/barline/index.js";
 import { BeamGroup } from "./../../components/beamGroup/index.js";
@@ -24,6 +23,7 @@ import { getColumnsForPeriod } from "./../../utils/methods.js";
 import { Minim } from "./../../types/minim/index.js";
 
 import styles from "./styles.module.css";
+import { cx } from "./../../utils/classNames.js";
 
 type PeriodProps = {
   index: Minim.Defs.Index;
@@ -101,7 +101,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
     const style = useMemo(
       () => ({
         "--duration": period.dimensions.length,
-        "--indent": index === 0 ? "3rem" : "auto",
+        "--indent": index === 0 ? "3em" : "auto",
         "--rows": rows,
         "--columns": columns,
       }),
@@ -111,40 +111,49 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
     return (
       <section
         ref={ref}
-        className={clsx(
+        className={cx(
           styles.period,
           systemStart && styles.first,
           systemEnd && styles.last,
         )}
         style={style}
+        data-period
+        {...(systemStart ? { ["data-system-start"]: true } : {})}
+        {...(systemEnd ? { ["data-system-end"]: true } : {})}
+        {...(index === 0 ? { ["data-period-first"]: true } : {})}
+        {...(final ? { ["data-period-last"]: true } : {})}
       >
-        {Object.entries(flows).map(([flowId, flow]) =>
-          flow.layoutGroups.map((group, groupIndex) => (
-            <Fragment key={`${flowId}per${index}grp${groupIndex}_system-start`}>
-              {(index === 0 || systemStart) &&
-                period.measures[flowId].length > 0 && (
-                  <Bracket
-                    type={group.symbol}
-                    column={`e${period.position.start}-bracket`}
-                    row={`${group.row[0]}/${group.row.at(-1)}`}
+        {Object.entries(flows).map(
+          ([flowId, flow]) =>
+            flow.layoutGroups.length > 0 &&
+            flow.layoutGroups.map((group, groupIndex) => (
+              <Fragment
+                key={`${flowId}per${index}grp${groupIndex}_system-start`}
+              >
+                {(index === 0 || systemStart) &&
+                  period.measures[flowId]?.length > 0 && (
+                    <Bracket
+                      type={group.symbol}
+                      column={`e${period.position.start}-bracket`}
+                      row={`${group.row[0]}/${group.row.at(-1)}`}
+                    />
+                  )}
+                {(index === 0 || systemStart) && (
+                  <Barline
+                    type={"regular"}
+                    column={`e${period.position.start}-bar`}
+                    row={`${systemBarlineRows[0]}/${systemBarlineRows.at(-1)}`}
+                    separation={true}
                   />
                 )}
-              {(index === 0 || systemStart) && (
-                <Barline
-                  type={"regular"}
-                  column={`e${period.position.start}-bar`}
-                  row={`${systemBarlineRows[0]}/${systemBarlineRows.at(-1)}`}
-                  separation={true}
-                />
-              )}
-              {/* <Barline
+                {/* <Barline
               type={"period"}
               column={`e${period.position.start}-bar`}
               row={`${systemBarlineRows[0]}/${systemBarlineRows.at(-1)}`}
               separation={true}
             /> */}
-            </Fragment>
-          )),
+              </Fragment>
+            )),
         )}
         {Object.entries(period.beamGroups).map(([flowId, flow]) =>
           flow.map(
@@ -164,6 +173,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
               <Fragment key={`${id}s${staffIndex + 1}_items`}>
                 {period.index === 0 && staffIndex === 0 && (
                   <Item
+                    data-instrument
                     className={styles.partLabel}
                     column={`e0-text`}
                     pitch={`${id}p${part.partIndex}s${staffIndex + 1}${staffBounds!.upper.id} /
@@ -177,6 +187,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                   staffIndex === 0 &&
                   period.measures[id].length > 0 && (
                     <Item
+                      data-instrument
                       className={styles.partLabel}
                       column={`e${period.position.start}-text`}
                       pitch={`${id}p${part.partIndex}s${staffIndex + 1}${staffBounds!.upper.id} /
@@ -187,6 +198,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                   )}
                 {period.measures[id].length > 0 && (
                   <Staff
+                    data-staff
                     id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     key={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     rangeClef={rangeClef}
@@ -203,6 +215,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                 )}
                 {clef && systemStart && period.measures[id].length > 0 && (
                   <Clef
+                    data-clef
                     id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     clef={clef.clef}
                     column={`e${period.position.start}-cle`}
@@ -210,6 +223,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                 )}
                 {period.key[id] && systemStart && (
                   <Key
+                    data-key
                     id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                     clefType={rangeClef!.type}
                     column={`e${period.position.start}-key`}
@@ -227,6 +241,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                             (event.eventType === "measureEnd" &&
                               systemEnd)) && (
                             <Key
+                              data-key
                               id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                               clefType={rangeClef!.type}
                               column={event.key.column}
@@ -240,6 +255,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                           staffIndex === 0 &&
                           event.tempos.map((tempo, tempoIndex) => (
                             <Tempo
+                              data-tempo
                               key={`${id}p${part.partIndex}s${staffIndex + 1}tempo${tempoIndex}`}
                               id={`${id}p${part.partIndex}s${staffIndex + 1}tempo${tempoIndex}`}
                               beat={tempo.column}
@@ -252,6 +268,7 @@ const Period = forwardRef<HTMLDivElement, PropsWithChildren<PeriodProps>>(
                             (event.eventType === "measureEnd" &&
                               systemEnd)) && (
                             <Meter
+                              data-meter
                               id={`${id}p${part.partIndex}s${staffIndex + 1}`}
                               clef={clef.clef}
                               count={event.time.count}

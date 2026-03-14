@@ -23,10 +23,10 @@ export default function StaffLine({
       "--pitch": pitch,
       "--start": start,
       "--end": end,
-      "--weight": `${weight}rem`,
+      "--weight": `${weight}em`,
     }),
     [end, pitch, start, weight],
   );
 
-  return <hr className={styles.line} style={style} />;
+  return <hr className={styles.line} style={style} data-staff-line />;
 }

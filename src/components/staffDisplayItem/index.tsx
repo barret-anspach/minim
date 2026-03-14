@@ -1,8 +1,9 @@
-import clsx from "clsx";
+import { ComponentProps, PropsWithChildren } from "react";
 
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
+import { cx } from "./../../utils/classNames.js";
 
 type StaffDisplayItemTypes = "brace" | "bracket" | "art" | "key" | "tim";
 
@@ -15,16 +16,18 @@ function StaffDisplayItem({
   children,
   type,
   start,
-}: React.PropsWithChildren<StaffDisplayItemProps>) {
+  ...rest
+}: ComponentProps<"span"> & PropsWithChildren<StaffDisplayItemProps>) {
   return (
     <span
-      className={clsx(
+      className={cx(
         styles.staffDisplayItem,
         ["key", "brace"].includes(type) && styles.row,
         ["tim", "bracket", "art"].includes(type) && styles.column,
         start.includes("me-") && styles.end,
       )}
       style={{ "--start": start }}
+      {...rest}
     >
       {children}
     </span>

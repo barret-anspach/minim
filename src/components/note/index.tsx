@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import clsx from "clsx";
 
 import AugmentationDots from "./../../components/chord/augmentationDots.js";
 import Item from "./../../components/item/index.js";
@@ -14,6 +13,7 @@ import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+import { cx } from "./../../utils/classNames.js";
 
 type NoteProps = {
   column: Minim.Grid.Column;
@@ -47,8 +47,18 @@ export default function Note({
   );
   return (
     <>
+      {/* <Duration
+        data-note-duration
+        column={column}
+        event={event}
+        id={`${id}_dur${noteIndex}`}
+        note={note}
+        noteIndex={noteIndex}
+        pitchPrefix={pitchPrefix}
+      /> */}
       <Item
-        className={clsx(styles.notehead, className)}
+        data-note
+        className={cx(styles.notehead, className)}
         key={key}
         column={column}
         pitch={pitch}
@@ -56,7 +66,7 @@ export default function Note({
         {getNoteGlyph(event.duration!.base)}
       </Item>
       <AugmentationDots
-        className={clsx(noteOnLine && styles.up)}
+        className={cx(noteOnLine && styles.up)}
         event={event}
         prefix={key}
         pitch={pitch}

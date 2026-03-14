@@ -16,13 +16,13 @@ type Context = {
     [k: Minim.Component.Flow["id"]]: Minim.Component.Flow;
   };
   initialized: boolean;
-  periods: Minim.Period.PeriodItem[];
+  periods: Record<number, Minim.Period.PeriodItem>;
 };
 
 type SetFlowProps = { flow: Minim.Document.FlowItem };
 type SetFlowPayloadProps = Minim.Component.Flow;
 type UpdatePeriodProps = {
-  key: string;
+  key: number;
   period: Minim.Period.PeriodItem;
 };
 type Actions = {
@@ -41,7 +41,7 @@ type DispatchAction =
 const initialState: Context = {
   initialized: false,
   flows: {},
-  periods: [],
+  periods: {},
 };
 
 const initialActions: Actions = {
@@ -60,7 +60,11 @@ MeasuresContext.displayName = "MeasuresContext";
 function measuresReducer(context: Context, action: DispatchAction) {
   switch (action.type) {
     case "reset": {
-      return initialState;
+      return {
+        initialized: false,
+        flows: {},
+        periods: {},
+      };
     }
     case "setFlow": {
       const flows = context.flows;
@@ -117,12 +121,13 @@ function measuresReducer(context: Context, action: DispatchAction) {
       };
     }
     case "updatePeriod": {
-      const periodIndex = parseInt(action.payload.key, 10);
-      const periods = context.periods.map((period, index) =>
-        index === periodIndex
-          ? { ...period, ...action.payload.period }
-          : period,
-      );
+      const periods = {
+        ...context.periods,
+        [action.payload.key]: {
+          ...context.periods[action.payload.key],
+          ...action.payload.period,
+        },
+      };
 
       return {
         ...context,

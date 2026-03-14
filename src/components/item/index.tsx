@@ -1,9 +1,9 @@
 import { PropsWithChildren, useMemo } from "react";
-import clsx from "clsx";
 
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
+import { cx } from "./../../utils/classNames.js";
 
 type ItemProps = {
   pitch: Minim.Grid.Row;
@@ -24,25 +24,27 @@ function Item({
   pitch,
   size,
   text = false,
+  ...rest
 }: PropsWithChildren<ItemProps>) {
   const style = useMemo(
     () => ({
       "--column": column ?? "e0",
-      "--padEnd": padEnd ? `${padEnd}rem` : "0.1rem",
+      "--padEnd": padEnd ? `${padEnd}em` : "0.1em",
       "--pitch": pitch,
-      "--size": size ? `${size}rem` : "4rem",
+      "--size": size ? `${size}em` : "4em",
     }),
     [column, padEnd, pitch, size],
   );
   return (
     <span
-      className={clsx([
+      className={cx([
         styles.item,
         label && styles.label,
         text && styles.text,
         className,
       ])}
       style={style}
+      {...rest}
     >
       {children}
     </span>

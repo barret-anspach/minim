@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
-import clsx from "clsx";
+import { ComponentProps, PropsWithChildren, useMemo } from "react";
 
 import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
+import { cx } from "./../../utils/classNames.js";
 
 type EventProps = {
   className?: string;
@@ -16,14 +16,20 @@ export default function Event({
   className,
   beat,
   pitch,
-}: React.PropsWithChildren<EventProps>) {
+  ...rest
+}: ComponentProps<"span"> & PropsWithChildren<EventProps>) {
   const style = useMemo(
     () => ({ "--beat": beat, "--pitch": pitch }),
     [beat, pitch],
   );
 
   return (
-    <span className={clsx(styles.event, className)} style={style}>
+    <span
+      data-event
+      className={cx(styles.event, className)}
+      style={style}
+      {...rest}
+    >
       {children}
     </span>
   );

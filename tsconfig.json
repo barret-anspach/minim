@@ -11,7 +11,9 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "module": "esnext",
     "moduleResolution": "node10",
+    "outDir": "./dist/esm",
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["./*"]

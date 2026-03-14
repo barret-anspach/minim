@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 import Item from "./../../components/item/index.js";
 
 import {
@@ -12,6 +10,7 @@ import styles from "./styles.module.css";
 
 import { Minim } from "./../../types/minim/index.js";
 import { MNX } from "./../../types/mnx/index.js";
+import { cx } from "./../../utils/classNames.js";
 
 type TieProps = {
   event: Minim.Event.Clip;
@@ -45,7 +44,7 @@ export default function Tie({
   const row = `${pitchPrefix}s${note.staff ?? 1}${pitch}`;
   return note.tie ? (
     <Item
-      className={clsx(
+      className={cx(
         styles.tie,
         styles[stem.direction === "up" ? "below" : "above"],
         styles[event.clipPosition],
@@ -54,15 +53,15 @@ export default function Tie({
       pitch={row}
     >
       <svg
-        className={clsx(
+        className={cx(
           styles.tieCurve,
           styles[stem.direction === "up" ? "below" : "above"],
           styles[event.clipPosition],
         )}
         overflow="visible"
         preserveAspectRatio="none"
-        width="0.375rem"
-        height="0.25rem"
+        width="0.375em"
+        height="0.25em"
         viewBox="0 0 13 13"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +74,7 @@ export default function Tie({
         />
       </svg>
       <svg
-        className={clsx(
+        className={cx(
           styles.tieExtensionLine,
           styles[stem.direction === "up" ? "below" : "above"],
           styles[event.clipPosition],
@@ -83,7 +82,7 @@ export default function Tie({
         overflow="visible"
         preserveAspectRatio="none"
         width="100%"
-        height="0.25rem"
+        height="0.25em"
         viewBox="0 0 1 13"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

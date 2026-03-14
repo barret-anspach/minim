@@ -41,7 +41,7 @@ export function getPitches(
     pitches: steps.reduce(
       (acc, curr, index) =>
         index !== steps.length
-          ? `${acc}[${prefix ?? ""}${curr.id}] 0.125rem `
+          ? `${acc}[${prefix ?? ""}${curr.id}] 0.125em `
           : `${acc}[${prefix ?? ""}${curr.id}]`,
       "",
     ),
@@ -218,7 +218,7 @@ export function overlapStaffRows(
   return result.reduce(
     (acc, curr, index) =>
       index !== result.length
-        ? `${acc}[${curr.join(" ")}] 0.125rem `
+        ? `${acc}[${curr.join(" ")}] 0.125em `
         : `${acc}[${curr.join(" ")}]`,
     "",
   );

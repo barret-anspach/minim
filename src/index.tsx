@@ -6,6 +6,9 @@ import { MeasuresContextProvider } from "./contexts/MeasuresContext.js";
 import type { Minim } from "./types/minim/index.js";
 import { cx } from "./utils/classNames.js";
 
+export type { Minim } from "./types/minim/index.js";
+export type { MNX } from "./types/mnx/index.js";
+
 import "./styles/globals.css";
 
 export default function Minim({

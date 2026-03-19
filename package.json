@@ -38,7 +38,7 @@
     "build": "npm run clean && npm run build:esm",
     "build:esm": "tsc -p tsconfig.json && npm run copy-assets:esm",
     "clean": "rimraf dist/",
-    "copy-assets:esm": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/esm/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/esm/public",
+    "copy-assets:esm": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/esm/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/esm/public && copyfiles -u 1 src/types/*.d.ts src/types/**/*.d.ts dist/esm/src",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "npm run build"

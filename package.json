@@ -1,6 +1,6 @@
 {
   "name": "@quonset/minim",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": false,
   "description": "MNX notation renderer",
   "keywords": [
@@ -38,7 +38,7 @@
     "build": "npm run clean && npm run build:esm",
     "build:esm": "tsc -p tsconfig.json && npm run copy-assets:esm",
     "clean": "rimraf dist/",
-    "copy-assets:esm": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/esm/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/esm/public",
+    "copy-assets:esm": "copyfiles -u 1 src/**/*.css src/**/**/*.css src/**/*.json src/**/**/*.json dist/esm/src && copyfiles -u 1 public/**/*.woff2 public/*.svg dist/esm/public && copyfiles -u 1 src/types/*.d.ts src/types/**/*.d.ts dist/esm/src",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "npm run build"
@@ -63,7 +63,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
-    "rimraf": "^6.1.2",
+    "rimraf": "^6.1.3",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

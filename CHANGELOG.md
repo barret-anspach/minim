@@ -1,3 +1,9 @@
+#### v0.0.8
+
+2026 Mar 19
+
+- `Minim` and `MNX` type namespaces are now exported from the package's main entrypoint, allowing consumers to import them directly from `@quonset/minim`.
+
 #### v0.0.7
 
 2026 Mar 10

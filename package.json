@@ -1,6 +1,6 @@
 {
   "name": "@quonset/minim",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": false,
   "description": "MNX notation renderer",
   "keywords": [

@@ -49,6 +49,6 @@ TBD. At the moment, this package is under slow but active development. Hoping to
 - the version number already incremented, and
 - a CHANGELOG entry describing the work you did.
 
-2. When that PR is merged into `master`, and while on `master`, run: `npm publish --access public --tag <version number, e.g. 0.0.7>`
+2. When that PR is merged into `master`, and while on `master`, run: `npm publish --access public`
 
 - Follow semantic versioning (0.0.1 for feature fixes/bugs, 0.1.0 for new features that are backward-compatible, and 1.0.0 for new features that break backward-compatibility).

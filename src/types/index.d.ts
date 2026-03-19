@@ -1,5 +1,6 @@
 import { DataType } from "csstype";
 import { Minim } from "./minim";
+import { MNX } from "./mnx";
 
 declare module "csstype" {
   export interface Properties {
@@ -21,3 +22,5 @@ declare module "csstype" {
     "--weight"?: string;
   }
 }
+
+export { Minim, MNX };
